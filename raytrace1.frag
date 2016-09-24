@@ -11,8 +11,11 @@ const vec3 o0=vec3(0.0, 0.0, 0.0);
 
 const vec4 e4=vec4(0.0, 0.0, 0.0, 1.0);
 
+const int SPHERE = 5;
+
 struct Obj
 {
+    int type;
     vec3 center;
     mat3 matrix;
 };
@@ -20,6 +23,7 @@ struct Obj
 Obj getobj() {
     // vec4 loc=vec4(0.0, 0.0, 0.0, 0.0);
     Obj obj;
+    obj.type = SPHERE;
     obj.matrix = mat3(e1, e2*2.0, e3);
     obj.center= e3*6.0;  // Ellipsoid
     return obj;
@@ -47,7 +51,7 @@ bool solveQuadratic(in vec3 abc, out float x0, out float x1)
     return true;
 }
 
-bool intersect(in Ray ray, vec3 center, out float t)
+bool intersect(in Ray ray, vec3 center, out float t, out vec3 where)
 {
     const float radius2 = 1.0;
 
@@ -74,7 +78,18 @@ bool intersect(in Ray ray, vec3 center, out float t)
 
     t = t0;
 
+    where = t * ray.dir + ray.org;
     return true;
+}
+
+bool raycast(in Ray ray, in Obj obj, out float t, out vec3 where)
+{
+    if (obj.type == SPHERE) {
+        bool did = intersect(ray, obj.center, t, where);
+        return did;
+    }
+    // error: unrecognised object type
+    return false;
 }
 
 float min(vec2 v) {
@@ -125,11 +140,15 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     // mat4 invobj = inverse(obj);
 
     float t;
-    bool did = intersect(r, obj.center, t);
+    vec3 where;
+    bool did = raycast(r, obj, t, where);
+
+    vec3 radial = where - obj.center;
 
     float c;
     if (did) {
-        c = t / 5.0;
+        // c = t / 5.0;
+        c = -radial.z * 1.0;
     } else {
         c = 0.0;  // why omitting this causes apparent noise?
     }
