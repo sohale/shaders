@@ -83,10 +83,17 @@ float min(vec2 v) {
 
 vec2 screen_uv(vec2 fragCoord) {
     float mindim = min(iResolution.xy) / 2.0;
-    vec2 uv = fragCoord.xy / mindim;
+    vec2 center = iResolution.xy / 2.0;
+    vec2 uv = (fragCoord.xy - center.xy) / mindim;
     vec2 uv2 = vec2(uv.x, uv.y);
     return uv2;
 }
+
+struct Camera {
+    mat3 screen_mat;
+    vec3 screen_center;
+    vec3 origin;
+};
 
 const mat3 camera_screen_mat = mat3(e1, e2, o0);
 const vec3 camera_screen_center = -e3;
@@ -118,9 +125,15 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     // mat4 invobj = inverse(obj);
 
     float t;
-    intersect(r, obj.center, t);
-    t = t / 5.0;
+    bool did = intersect(r, obj.center, t);
+
+    float c;
+    if (did) {
+        c = t / 5.0;
+    } else {
+        c = 0.0;  // why omitting this causes apparent noise?
+    }
 
     // fragColor = vec4(uv,0.5+0.5*sin(time),1.0);
-    fragColor = vec4(t,t,t,1.0);
+    fragColor = vec4(c, c, c, 1.0);
 }
