@@ -81,21 +81,37 @@ float min(vec2 v) {
     return v.x > v.y ? v.x : v.y;
 }
 
+vec2 screen_uv(vec2 fragCoord) {
+    float mindim = min(iResolution.xy) / 2.0;
+    vec2 uv = fragCoord.xy / mindim;
+    vec2 uv2 = vec2(uv.x, uv.y);
+    return uv2;
+}
+
 const mat3 camera_screen_mat = mat3(e1, e2, o0);
 const vec3 camera_screen_center = -e3;
 const vec3 camera_origin = camera_screen_center - 5.0*e3;
 
-void mainImage( out vec4 fragColor, in vec2 fragCoord )
-{
-    float time = iGlobalTime;
-    float mindim = min(iResolution.xy);
-    vec2 uv = fragCoord.xy / mindim;
-    vec3 uv3 = vec3(uv.x, uv.y, 0);
+Ray make_ray(vec2 uv2) {
+    vec3 uv3 = vec3(uv2, 0.0);
+
     vec3 s = camera_screen_mat * uv3 + camera_screen_center; //screen
 
     Ray r;
     r.org = camera_origin;
     r.dir = uv3 - camera_origin;
+
+    return r;
+}
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    float time = iGlobalTime;
+
+    //vec3 uv3 = vec3(screen_uv(fragCoord), 0.0);
+    // vec3 s = camera_screen_mat * uv3 + camera_screen_center; //screen
+
+    vec2 uv2 = screen_uv(fragCoord);
+    Ray r = make_ray(uv2);
 
     Obj obj = getobj();
 
