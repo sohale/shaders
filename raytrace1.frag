@@ -27,7 +27,7 @@ Obj getobj() {
     Obj obj;
     obj.type = SPHERE;
     obj.matrix = mat3(e1, e2*2.0, e3);
-    obj.center= e3*6.0;  // Ellipsoid
+    obj.center= e3*6.0 * 0.0;  // Ellipsoid
     // mat3 im = inverse(obj.matrix);
     obj.rgb = vec3(1.0,1.0,1.0);
     return obj;
@@ -39,7 +39,8 @@ bool solveQuadratic(in vec3 abc, out float x0, out float x1)
 {
     float discr = abc.y * abc.y - 4.0 * abc.x * abc.z;
     if (discr < 0.0) return false;
-    else if (discr == 0.0) x0 = x1 = - 0.5 * abc.y / abc.x;
+    else if (discr == 0.0)
+        x0 = x1 = - 0.5 * abc.y / abc.x;
     else {
         float q = (abc.y > 0.0) ?
             -0.5 * (abc.y + sqrt(discr)) :
@@ -52,7 +53,6 @@ bool solveQuadratic(in vec3 abc, out float x0, out float x1)
         x0 = x1;
         x1 = t;
     }
-
     return true;
 }
 
@@ -185,12 +185,13 @@ Camera init_camera(vec2 mouse) {
     Camera camera;
 
     //camera.screen_mat = mat3(e1, e2, o0);
-    mat3 rot = rotationMatrixYZ(mouse.y) * rotationMatrixXZ(mouse.x);
     // mat3 rot = rotationMatrixYZ(0.5*PI) * rotationMatrixXZ(0.0);
-    camera.screen_mat = rot * mat3(e1, e2, o0);
-    camera.screen_center = rot * (-e3) *5.0;
     // camera.screen_center = -e3 + mouse.x * e1 * 1.0 + mouse.y * e2 * 1.0;
-    camera.origin = rot * (camera.screen_center - 5.0*e3);
+
+    mat3 rot = rotationMatrixYZ(mouse.y) * rotationMatrixXZ(mouse.x);
+    camera.screen_mat = rot * mat3(e1, e2, e3);
+    camera.screen_center = rot * (-e3) *5.0;
+    camera.origin =  (camera.screen_center - rot * 5.0*e3);
 
 
     // mat3 m = rotationMatrixYZ()
@@ -205,8 +206,10 @@ Ray make_ray(Camera camera, vec2 uv2) {
     vec3 s = camera.screen_mat * uv3 + camera.screen_center; //screen
 
     Ray r;
-    r.org = camera.origin;
+    r.org = s;
     r.dir = s - camera.origin;
+    //r.dir = -s;
+    r.dir = normalize(r.dir);
 
     return r;
 }
@@ -225,7 +228,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
     vec2 mousexy = screen_uv(iMouse.xy);
 
-    Camera camera = init_camera(-mousexy * 0.1);
+    Camera camera = init_camera(-mousexy * 3.14*2.0);
 
     //vec3 uv3 = vec3(screen_uv(fragCoord), 0.0);
     // vec3 s = camera_screen_mat * uv3 + camera_screen_center; //screen
@@ -246,7 +249,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
     //int obj_id = -1;
 
-    float tmin = -100000000.0;
+    float tmin = 100000000.0;
 
     bool did = false;
     Obj chosen_obj;
@@ -256,7 +259,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     {
         Obj curr_obj;
 
-        for (int i =0 ; i < 2; ++i) {
+        for (int i = 0 ; i < 2; ++i) {
             if (i==0) {
                 curr_obj = obj[0];
             } else if (i==1) {
@@ -269,7 +272,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
             did1 = raycast(r, curr_obj, t, where);
             if (did1) {
-                if (tmin < t) {
+                if (tmin > t)
+                {
                     tmin = t;
                     chosen_obj_id = i;
                     chosen_obj = curr_obj;
@@ -302,6 +306,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         const int obj_id_c = 0;
         vec3 normal = sphere_normal(chosen_obj, chosen_where);
         cc = phong_material(light_dir, ray_dir_normalized, normal, chosen_obj.rgb);
+
+        // float tn = abs((tmin -2.5)*1.0);
+        // cc = vec4(tn, tn, tn, 0.0) + vec4(0.0,0.0,0.0,1.0);
     } else {
         //c = 0.0;  // why omitting this causes apparent noise?
         cc = vec4(0.0, 0.0, 0.0, 1.0);
