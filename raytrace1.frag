@@ -171,7 +171,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     float time = iGlobalTime;
 
-    vec2 mousexy = screen_uv(iMouse.zw);
+    vec2 mousexy = screen_uv(iMouse.xy);
 
     Camera camera = init_camera(mousexy);
 
