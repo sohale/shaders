@@ -162,10 +162,11 @@ Ray make_ray(Camera camera, vec2 uv2) {
 
     Ray r;
     r.org = camera.origin;
-    r.dir = uv3 - camera.origin;
+    r.dir = s - camera.origin;
 
     return r;
 }
+
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     float time = iGlobalTime;
@@ -176,7 +177,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     // vec3 s = camera_screen_mat * uv3 + camera_screen_center; //screen
 
     vec2 uv2 = screen_uv(fragCoord);
-    Ray r = make_ray(uv2);
+    Ray r = make_ray(camera, uv2);
 
     Obj obj = getobj();
 
