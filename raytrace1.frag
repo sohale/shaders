@@ -11,6 +11,7 @@ const vec3 o0=vec3(0.0, 0.0, 0.0);
 
 const vec4 e4=vec4(0.0, 0.0, 0.0, 1.0);
 
+
 const int SPHERE = 5;
 
 struct Obj
@@ -30,6 +31,7 @@ Obj getobj() {
 }
 
 
+// todo: cleanup and fix careless code.
 bool solveQuadratic(in vec3 abc, out float x0, out float x1)
 {
     float discr = abc.y * abc.y - 4.0 * abc.x * abc.z;
@@ -51,7 +53,7 @@ bool solveQuadratic(in vec3 abc, out float x0, out float x1)
     return true;
 }
 
-bool intersect(in Ray ray, vec3 center, out float t, out vec3 where)
+bool sphere_intersect(in Ray ray, vec3 center, out float t, out vec3 where)
 {
     const float radius2 = 1.0;
 
@@ -82,14 +84,28 @@ bool intersect(in Ray ray, vec3 center, out float t, out vec3 where)
     return true;
 }
 
+vec3 sphere_normal(in Obj obj, in vec3 where) {
+    vec3 d = vec3(where - obj.center);
+    normalize(d);
+    return d;
+}
+
 bool raycast(in Ray ray, in Obj obj, out float t, out vec3 where)
 {
     if (obj.type == SPHERE) {
-        bool did = intersect(ray, obj.center, t, where);
+        bool did = sphere_intersect(ray, obj.center, t, where);
         return did;
     }
     // error: unrecognised object type
     return false;
+}
+
+
+vec4 phong_material(in vec3 light_dir, in vec3 ray_dir, in vec3 normal) {
+    float diffuse = - (light_dir.x * normal.x + light_dir.y * normal.y + light_dir.z * normal.z);
+    diffuse = diffuse > 0.0 ? diffuse : 0.0;
+    float specular = 0.0;
+    return vec4(diffuse,diffuse,diffuse,1.0);
 }
 
 float min(vec2 v) {
@@ -145,14 +161,23 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
     vec3 radial = where - obj.center;
 
-    float c;
+    vec3 light_dir = vec3(-1.0, -1.0, +1.0);
+    normalize(light_dir);
+
+    vec4 cc;
     if (did) {
-        // c = t / 5.0;
-        c = -radial.z * 1.0;
+        // // c = t / 5.0;
+        //c = -radial.z * 1.0;
+
+            vec3 normal = sphere_normal(obj, where);
+
+        cc = phong_material(light_dir, r.dir, normal);
     } else {
-        c = 0.0;  // why omitting this causes apparent noise?
+        //c = 0.0;  // why omitting this causes apparent noise?
+        cc = vec4(0.0, 0.0, 0.0, 1.0);
     }
 
     // fragColor = vec4(uv,0.5+0.5*sin(time),1.0);
-    fragColor = vec4(c, c, c, 1.0);
+    // fragColor = vec4(c, c, c, 1.0);
+    fragColor = cc;
 }
