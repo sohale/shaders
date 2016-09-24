@@ -188,7 +188,7 @@ Camera init_camera(vec2 mouse) {
     // mat3 rot = rotationMatrixYZ(0.5*PI) * rotationMatrixXZ(0.0);
     // camera.screen_center = -e3 + mouse.x * e1 * 1.0 + mouse.y * e2 * 1.0;
 
-    mat3 rot = rotationMatrixYZ(mouse.y) * rotationMatrixXZ(mouse.x);
+    mat3 rot = rotationMatrixYZ(-mouse.y) * rotationMatrixXZ(-mouse.x);
     camera.screen_mat = rot * mat3(e1, e2, e3);
     camera.screen_center = rot * (-e3) *5.0;
     camera.origin =  (camera.screen_center - rot * 5.0*e3);
@@ -239,6 +239,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     Obj obj[2];
     obj[0] = getobj();
     obj[0].rgb = vec3(1.0, 1.0, 0.0);
+    obj[0].center.x -= 0.5;
 
     obj[1] = getobj();
     obj[1].center.x += 0.5;
