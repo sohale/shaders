@@ -11,13 +11,17 @@ const vec3 o0=vec3(0.0, 0.0, 0.0);
 
 const vec4 e4=vec4(0.0, 0.0, 0.0, 1.0);
 
+struct Obj
+{
+    vec3 center;
+    mat3 matrix;
+};
 
-mat3 getobj() {
+Obj getobj() {
     // vec4 loc=vec4(0.0, 0.0, 0.0, 0.0);
-
-    mat3 obj=mat3(e1, e2*2.0, e3);
-    vec3 center= e3*6.0;  // Ellipsoid
-
+    Obj obj;
+    obj.matrix = mat3(e1, e2*2.0, e3);
+    obj.center= e3*6.0;  // Ellipsoid
     return obj;
 }
 
@@ -93,17 +97,14 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     r.org = camera_origin;
     r.dir = uv3 - camera_origin;
 
-    vec3 center= e3*6.0;  // Ellipsoid
+    Obj obj = getobj();
 
-
-    mat3 obj = getobj();
     // mat4 invobj = inverse(obj);
 
     float t;
-    intersect(r, center, t);
-    t = t / 10.0;
+    intersect(r, obj.center, t);
+    t = t / 5.0;
 
     // fragColor = vec4(uv,0.5+0.5*sin(time),1.0);
     fragColor = vec4(t,t,t,1.0);
 }
-
