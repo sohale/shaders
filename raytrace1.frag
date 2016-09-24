@@ -86,7 +86,7 @@ bool sphere_intersect(in Ray ray, vec3 center, out float t, out vec3 where)
 
 vec3 sphere_normal(in Obj obj, in vec3 where) {
     vec3 d = vec3(where - obj.center);
-    normalize(d);
+    d = normalize(d);
     return d;
 }
 
@@ -101,11 +101,30 @@ bool raycast(in Ray ray, in Obj obj, out float t, out vec3 where)
 }
 
 
+vec3 my_reflect(in vec3 ray, in vec3 normal) {
+    float cos_ = dot(ray, normal);
+    vec3 p = cos_ * normal;
+    return 2.0 * p - ray;
+}
+
+float my_inner(in vec3 a, in vec3 b) {
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
 vec4 phong_material(in vec3 light_dir, in vec3 ray_dir, in vec3 normal) {
     float diffuse = - (light_dir.x * normal.x + light_dir.y * normal.y + light_dir.z * normal.z);
     diffuse = diffuse > 0.0 ? diffuse : 0.0;
-    float specular = 0.0;
-    return vec4(diffuse,diffuse,diffuse,1.0);
+
+    vec3 refl = my_reflect(-light_dir, normal);
+    refl = normalize(refl);
+    ray_dir = normalize(ray_dir);
+    float specular0 = my_inner(refl, -ray_dir);
+    specular0 = specular0 > 0.0 ? specular0 : 0.0;
+    // specular0 = specular0 > 1.0 ? 1.0:specular0;
+    // specular0 = specular0 > 10.0 ? specular0: 0.0;
+    float specular = pow(specular0, 5.0);
+    // float specular = specular0 * 1.0 - floor(specular0 * 1.0);  // nice debug tool
+    return vec4(diffuse,diffuse,specular,1.0);
 }
 
 float min(vec2 v) {
@@ -159,19 +178,20 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     vec3 where;
     bool did = raycast(r, obj, t, where);
 
+    vec3 ray_dir_normalized = normalize(r.dir);
+
     vec3 radial = where - obj.center;
 
     vec3 light_dir = vec3(-1.0, -1.0, +1.0);
-    normalize(light_dir);
+    light_dir = normalize(light_dir);
 
     vec4 cc;
     if (did) {
         // // c = t / 5.0;
         //c = -radial.z * 1.0;
 
-            vec3 normal = sphere_normal(obj, where);
-
-        cc = phong_material(light_dir, r.dir, normal);
+        vec3 normal = sphere_normal(obj, where);
+        cc = phong_material(light_dir, ray_dir_normalized, normal);
     } else {
         //c = 0.0;  // why omitting this causes apparent noise?
         cc = vec4(0.0, 0.0, 0.0, 1.0);
