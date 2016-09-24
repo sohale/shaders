@@ -145,24 +145,32 @@ struct Camera {
     vec3 origin;
 };
 
-const mat3 camera_screen_mat = mat3(e1, e2, o0);
-const vec3 camera_screen_center = -e3;
-const vec3 camera_origin = camera_screen_center - 5.0*e3;
 
-Ray make_ray(vec2 uv2) {
+Camera init_camera() {
+    Camera camera;
+    camera.screen_mat = mat3(e1, e2, o0);
+    camera.screen_center = -e3;
+    camera.origin = camera.screen_center - 5.0*e3;
+    return camera;
+}
+
+
+Ray make_ray(Camera camera, vec2 uv2) {
     vec3 uv3 = vec3(uv2, 0.0);
 
-    vec3 s = camera_screen_mat * uv3 + camera_screen_center; //screen
+    vec3 s = camera.screen_mat * uv3 + camera.screen_center; //screen
 
     Ray r;
-    r.org = camera_origin;
-    r.dir = uv3 - camera_origin;
+    r.org = camera.origin;
+    r.dir = uv3 - camera.origin;
 
     return r;
 }
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     float time = iGlobalTime;
+
+    Camera camera = init_camera();
 
     //vec3 uv3 = vec3(screen_uv(fragCoord), 0.0);
     // vec3 s = camera_screen_mat * uv3 + camera_screen_center; //screen
