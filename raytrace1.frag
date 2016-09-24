@@ -146,10 +146,10 @@ struct Camera {
 };
 
 
-Camera init_camera() {
+Camera init_camera(vec2 mouse) {
     Camera camera;
     camera.screen_mat = mat3(e1, e2, o0);
-    camera.screen_center = -e3;
+    camera.screen_center = -e3 + mouse.x * e1 + mouse.y * e2;
     camera.origin = camera.screen_center - 5.0*e3;
     return camera;
 }
@@ -171,7 +171,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     float time = iGlobalTime;
 
-    Camera camera = init_camera();
+    vec2 mousexy = screen_uv(iMouse.zw);
+
+    Camera camera = init_camera(mousexy);
 
     //vec3 uv3 = vec3(screen_uv(fragCoord), 0.0);
     // vec3 s = camera_screen_mat * uv3 + camera_screen_center; //screen
