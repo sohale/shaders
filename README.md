@@ -11,5 +11,8 @@ To run each *.glsl shader:
 * paste it in the box.
 * Enjoy
 
+Content:
+* `raytrace1.glsl` : A raytracing demo. Features: reflection, Phong shading, Ellipsoids. It's a mini version of my very old program Big3D.
 
-(C)2016 Sohail Siadatnejad
+(C) 2016 Sohail Siadatnejad
+
