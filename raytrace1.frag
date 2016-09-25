@@ -11,6 +11,25 @@ const vec3 o0=vec3(0.0, 0.0, 0.0);
 
 const vec4 e4=vec4(0.0, 0.0, 0.0, 1.0);
 
+/*
+mat3 inverse(mat3 m) {
+  // from https://github.com/stackgl/glsl-inverse/blob/master/index.glsl
+  float a00 = m[0][0], a01 = m[0][1], a02 = m[0][2];
+  float a10 = m[1][0], a11 = m[1][1], a12 = m[1][2];
+  float a20 = m[2][0], a21 = m[2][1], a22 = m[2][2];
+
+  float b01 = a22 * a11 - a12 * a21;
+  float b11 = -a22 * a10 + a12 * a20;
+  float b21 = a21 * a10 - a11 * a20;
+
+  float det = a00 * b01 + a01 * b11 + a02 * b21;
+
+  return mat3(b01, (-a22 * a01 + a02 * a21), (a12 * a01 - a02 * a11),
+              b11, (a22 * a00 - a02 * a20), (-a12 * a00 + a02 * a10),
+              b21, (-a21 * a00 + a01 * a20), (a11 * a00 - a01 * a10)) / det;
+}
+*/
+
 
 const int SPHERE = 5;
 
@@ -18,18 +37,27 @@ struct Obj
 {
     int type;
     vec3 center;
-    mat3 matrix;
+    mat3 forward_matrix;
+    mat3 inverse_matrix;
     vec3 rgb;
 };
 
-Obj getobj() {
+Obj make_ellipsoid(float rx, float ry, float rz) {
     // vec4 loc=vec4(0.0, 0.0, 0.0, 0.0);
     Obj obj;
     obj.type = SPHERE;
-    obj.matrix = mat3(e1, e2*2.0, e3);
+    // obj.matrix = mat3(e1, e2*2.0, e3);
     obj.center= e3*6.0 * 0.0;  // Ellipsoid
     // mat3 im = inverse(obj.matrix);
     obj.rgb = vec3(1.0,1.0,1.0);
+
+    rx = 1.0;
+    ry = 1.0;
+    rz = 1.0;
+
+    // obj.inverse_matrix = inverse(obj.matrix);
+    obj.inverse_matrix = mat3(e1 / rx, e2 / ry, e3 / rz);
+    obj.forward_matrix = mat3(e1*rx, e2*ry, e3*rz);
     return obj;
 }
 
@@ -56,12 +84,12 @@ bool solveQuadratic(in vec3 abc, out float x0, out float x1)
     return true;
 }
 
-bool sphere_intersect(in Ray ray, vec3 center, out float t, out vec3 where)
+bool sphere_intersect(in Ray ray, out float t, out vec3 where)
 {
     const float radius2 = 1.0;
 
     // analytic solution
-    vec3 L = ray.org - center;
+    vec3 L = ray.org; // - center;
     float a = ray.dir.x * ray.dir.x + ray.dir.y * ray.dir.y + ray.dir.z * ray.dir.z ;
     float b = 2.0 * (ray.dir.x*L.x + ray.dir.y*L.y + ray.dir.z*L.z);
     float c = (L.x*L.x + L.y*L.y + L.z*L.z) - radius2;
@@ -87,8 +115,19 @@ bool sphere_intersect(in Ray ray, vec3 center, out float t, out vec3 where)
     return true;
 }
 
+mat3 transpose(mat3 m) {
+  return mat3(m[0][0], m[1][0], m[2][0],
+              m[0][1], m[1][1], m[2][1],
+              m[0][2], m[1][2], m[2][2]);
+}
+
 vec3 sphere_normal(in Obj obj, in vec3 where) {
-    vec3 d = vec3(where - obj.center);
+    // vec3 d = vec3(where - obj.center);
+    //d = normalize(d);
+
+    vec3 d = obj.inverse_matrix * (where - obj.center);
+    d = transpose(obj.forward_matrix) * d;
+
     d = normalize(d);
     return d;
 }
@@ -96,7 +135,17 @@ vec3 sphere_normal(in Obj obj, in vec3 where) {
 bool raycast(in Ray ray, in Obj obj, out float t, out vec3 where)
 {
     if (obj.type == SPHERE) {
-        bool did = sphere_intersect(ray, obj.center, t, where);
+        Ray ray2 = ray;
+        ray2.dir = obj.inverse_matrix * ray.dir;
+        ray2.org = obj.inverse_matrix * (ray.org - obj.center);
+        float new_norm = length(ray2.dir);
+
+
+        bool did = sphere_intersect(ray2, t, where);
+
+        where = obj.forward_matrix * where + obj.center;
+        t = t * new_norm;
+        ////////////////
         return did;
     }
     // error: unrecognised object type
@@ -297,16 +346,16 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     Ray r = make_ray(camera, uv2);
 
     Obj obj[num_objects];
-    obj[0] = getobj();
+    obj[0] = make_ellipsoid(1.0, 0.0,1.0);
     obj[0].rgb = vec3(1.0, 1.0, 0.0);
     obj[0].center.x -= 1.5/1.0;
 
-    obj[1] = getobj();
+    obj[1] = make_ellipsoid(1.0, 0.5,0.5);
     obj[1].center.x += 1.5/1.0;
     obj[1].center.z -= 0.3;
     obj[1].rgb = vec3(1.0, 0.0, 0.0);
 
-    obj[2] = getobj();
+    obj[2] = make_ellipsoid(1.0, 0.5,0.5);
     obj[2].center.y += 0.5;
     obj[2].center.z += 0.9;
     obj[2].rgb = vec3(0.0, 1.0, 0.0);
