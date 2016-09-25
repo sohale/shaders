@@ -218,8 +218,11 @@ vec4 panic() {
     return vec4(1.0, 0.0, 0.0, 1.0);
 }
 
+const int num_objects = 3;
+
+
 bool world_raycast(Ray ray,
-    in Obj[2] obj,
+    in Obj[num_objects] obj,
     out Obj chosen_obj,
     out vec3 chosen_where,
     out int chosen_obj_id,
@@ -239,12 +242,16 @@ bool world_raycast(Ray ray,
     {
         Obj curr_obj;
 
-        for (int i = 0 ; i < 2; ++i) {
+
+        for (int i = 0 ; i < num_objects; ++i) {
             if (i==0) {
                 curr_obj = obj[0];
             } else if (i==1) {
                 curr_obj = obj[1];
+            } else if (i==2) {
+                curr_obj = obj[2];
             }
+            // Avoid self intersection
             if (exclude == i)
                 continue;
 
@@ -289,7 +296,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     vec2 uv2 = screen_uv(fragCoord);
     Ray r = make_ray(camera, uv2);
 
-    Obj obj[2];
+    Obj obj[num_objects];
     obj[0] = getobj();
     obj[0].rgb = vec3(1.0, 1.0, 0.0);
     obj[0].center.x -= 1.5/1.0;
@@ -298,6 +305,11 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     obj[1].center.x += 1.5/1.0;
     obj[1].center.z -= 0.3;
     obj[1].rgb = vec3(1.0, 0.0, 0.0);
+
+    obj[2] = getobj();
+    obj[2].center.y += 0.5;
+    obj[2].center.z += 0.9;
+    obj[2].rgb = vec3(0.0, 1.0, 0.0);
 
     // mat4 invobj = inverse(obj);
 
