@@ -223,7 +223,8 @@ bool world_raycast(Ray ray,
     out Obj chosen_obj,
     out vec3 chosen_where,
     out int chosen_obj_id,
-    out float tmin
+    out float tmin,
+    in int exclude
 ) {
     bool did = false;
 
@@ -244,6 +245,8 @@ bool world_raycast(Ray ray,
             } else if (i==1) {
                 curr_obj = obj[1];
             }
+            if (exclude == i)
+                continue;
 
             float t;
             vec3 where;
@@ -289,10 +292,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     Obj obj[2];
     obj[0] = getobj();
     obj[0].rgb = vec3(1.0, 1.0, 0.0);
-    obj[0].center.x -= 0.5;
+    obj[0].center.x -= 1.5/1.0;
 
     obj[1] = getobj();
-    obj[1].center.x += 0.5;
+    obj[1].center.x += 1.5/1.0;
     obj[1].center.z -= 0.3;
     obj[1].rgb = vec3(1.0, 0.0, 0.0);
 
@@ -306,7 +309,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     int chosen_obj_id;
     float tmin;
 
-    bool did = world_raycast(r, obj, chosen_obj,chosen_where,chosen_obj_id,tmin);
+    bool did = world_raycast(r, obj, chosen_obj,chosen_where,chosen_obj_id,tmin, -1);
 
     // not necessary anymore:
     //vec3 ray_dir_normalized = normalize(r.dir);
@@ -317,6 +320,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     light_dir = normalize(light_dir);
 
     vec4 cc;
+    vec4 cc2;
+
     if (did) {
         // // c = t / 5.0;
         //c = -radial.z * 1.0;
@@ -326,13 +331,29 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
             return;
         }
 
-        const int obj_id_c = 0;
         vec3 normal = sphere_normal(chosen_obj, chosen_where);
         cc = phong_material(light_dir, r.dir, normal, chosen_obj.rgb);
 
 
-        //Ray r2;
-         //bool did2 = world_raycast(r, obj, chosen_obj,chosen_where,chosen_obj_id,tmin);
+        Ray ray2;
+        ray2.org = chosen_where + r.dir * 0.001 * 0.0;
+        ray2.dir = my_reflect(-r.dir, normal);
+
+        Obj chosen_obj2;
+        vec3 chosen_where2;
+        int chosen_obj_id2;
+        float tmin2;
+
+        bool did2 = world_raycast(ray2, obj, chosen_obj2,chosen_where2,chosen_obj_id2, tmin2, chosen_obj_id);
+
+        if (did2) {
+            vec3 normal2 = sphere_normal(chosen_obj2, chosen_where2);
+            cc2 =   phong_material(light_dir, ray2.dir, normal2, chosen_obj2.rgb );
+            //cc2 = vec4(0.0, 0.0, 0.0, 0.0);
+
+        } else {
+            cc2 = vec4(0.0, 0.0, 0.0, 0.0);
+        }
 
 
         // float tn = abs((tmin -2.5)*1.0);
@@ -340,9 +361,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     } else {
         //c = 0.0;  // why omitting this causes apparent noise?
         cc = vec4(0.0, 0.0, 0.0, 1.0);
+        cc2 = vec4(0.0, 0.0, 0.0, 0.0);
     }
 
     // fragColor = vec4(uv,0.5+0.5*sin(time),1.0);
     // fragColor = vec4(c, c, c, 1.0);
-    fragColor = cc;
+    fragColor = cc * 1.00 + cc2 * 0.4;
 }
