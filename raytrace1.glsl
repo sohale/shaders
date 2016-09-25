@@ -342,7 +342,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
     vec2 mousexy = screen_uv(iMouse.xy);
 
-    Camera camera = init_camera(-mousexy * 3.14*2.0 + vec2(0.0, 0.6)* 3.14*2.0 + vec2(time*0.02, time*0.004));
+    Camera camera = init_camera(-mousexy * 3.14*2.0 + vec2(0.0, 0.6)* 3.14*2.0 + vec2(time*0.02 + (-0.1) + sin(time*0.33 *PI*2.0)*0.2, time*0.004));
 
     //vec3 uv3 = vec3(screen_uv(fragCoord), 0.0);
     // vec3 s = camera_screen_mat * uv3 + camera_screen_center; //screen
