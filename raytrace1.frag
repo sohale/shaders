@@ -308,7 +308,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
     bool did = world_raycast(r, obj, chosen_obj,chosen_where,chosen_obj_id,tmin);
 
-    vec3 ray_dir_normalized = normalize(r.dir);
+    // not necessary anymore:
+    //vec3 ray_dir_normalized = normalize(r.dir);
 
     // vec3 radial = where - obj[i].center;
 
@@ -327,7 +328,12 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
         const int obj_id_c = 0;
         vec3 normal = sphere_normal(chosen_obj, chosen_where);
-        cc = phong_material(light_dir, ray_dir_normalized, normal, chosen_obj.rgb);
+        cc = phong_material(light_dir, r.dir, normal, chosen_obj.rgb);
+
+
+        //Ray r2;
+         //bool did2 = world_raycast(r, obj, chosen_obj,chosen_where,chosen_obj_id,tmin);
+
 
         // float tn = abs((tmin -2.5)*1.0);
         // cc = vec4(tn, tn, tn, 0.0) + vec4(0.0,0.0,0.0,1.0);
