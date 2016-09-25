@@ -51,9 +51,9 @@ Obj make_ellipsoid(float rx, float ry, float rz) {
     // mat3 im = inverse(obj.matrix);
     obj.rgb = vec3(1.0,1.0,1.0);
 
-    rx = 1.0;
-    ry = 1.0;
-    rz = 1.0;
+    // rx = 1.0;
+    // ry = 1.0;
+    // rz = 1.0;
 
     // obj.inverse_matrix = inverse(obj.matrix);
     obj.inverse_matrix = mat3(e1 / rx, e2 / ry, e3 / rz);
@@ -141,10 +141,12 @@ bool raycast(in Ray ray, in Obj obj, out float t, out vec3 where)
         float new_norm = length(ray2.dir);
 
 
-        bool did = sphere_intersect(ray2, t, where);
+        vec3 where2;
+        float t2;
+        bool did = sphere_intersect(ray2, t2, where2);
 
-        where = obj.forward_matrix * where + obj.center;
-        t = t * new_norm;
+        where = obj.forward_matrix * where2 + obj.center;
+        t = t2 ; //* new_norm;
         ////////////////
         return did;
     }
@@ -346,16 +348,16 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     Ray r = make_ray(camera, uv2);
 
     Obj obj[num_objects];
-    obj[0] = make_ellipsoid(1.0, 0.0,1.0);
-    obj[0].rgb = vec3(1.0, 1.0, 0.0);
+    obj[0] = make_ellipsoid(1.0, 1.0,1.0);
     obj[0].center.x -= 1.5/1.0;
+    obj[0].rgb = vec3(1.0, 1.0, 0.0);
 
-    obj[1] = make_ellipsoid(1.0, 0.5,0.5);
-    obj[1].center.x += 1.5/1.0;
+    obj[1] = make_ellipsoid(1.0, 0.7,1.0);
+    obj[1].center.x += 1.5/2.0;
     obj[1].center.z -= 0.3;
     obj[1].rgb = vec3(1.0, 0.0, 0.0);
 
-    obj[2] = make_ellipsoid(1.0, 0.5,0.5);
+    obj[2] = make_ellipsoid(1.0, 1.0, 0.7);
     obj[2].center.y += 0.5;
     obj[2].center.z += 0.9;
     obj[2].rgb = vec3(0.0, 1.0, 0.0);
