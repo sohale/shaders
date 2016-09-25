@@ -269,7 +269,7 @@ vec4 panic() {
     return vec4(1.0, 0.0, 0.0, 1.0);
 }
 
-const int num_objects = 3;
+const int num_objects = 4;
 
 
 bool world_raycast(Ray ray,
@@ -365,6 +365,12 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     obj[2].center.z += 0.9;
     obj[2].rgb = vec3(0.0, 1.0, 0.0);
 
+    obj[3] = make_ellipsoid(0.3, 0.3, 0.3);
+    obj[3].center.y += 0.0;
+    obj[3].center.y += 0.2;
+    obj[3].center.z += 0.0;
+    obj[3].rgb = vec3(0.0, 0.0, 1.0);
+
     // mat4 invobj = inverse(obj);
 
     //int obj_id = -1;
@@ -415,6 +421,12 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         if (did2) {
             vec3 normal2 = sphere_normal(chosen_obj2, chosen_where2);
             cc2 =   phong_material(light_dir, ray2.dir, normal2, chosen_obj2.rgb );
+
+            // float w1 = 0.6, w2 = 0.4; //
+            float w1 = 1.0, w2 = 0.0; // Pure reflection
+            cc2.r = cc2.r * w1 + chosen_obj.rgb.r * w2;
+            cc2.g = cc2.g * w1 + chosen_obj.rgb.g * w2;
+            cc2.b = cc2.b * w1 + chosen_obj.rgb.b * w2;
             //cc2 = vec4(0.0, 0.0, 0.0, 0.0);
 
         } else {
