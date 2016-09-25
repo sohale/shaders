@@ -295,6 +295,7 @@ bool world_raycast(Ray ray,
 
 
         for (int i = 0 ; i < num_objects; ++i) {
+            /*
             if (i==0) {
                 curr_obj = obj[0];
             } else if (i==1) {
@@ -302,6 +303,8 @@ bool world_raycast(Ray ray,
             } else if (i==2) {
                 curr_obj = obj[2];
             }
+            */
+            curr_obj = obj[i];
             // Avoid self intersection
             if (exclude == i)
                 continue;
