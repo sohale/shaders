@@ -218,6 +218,56 @@ vec4 panic() {
     return vec4(1.0, 0.0, 0.0, 1.0);
 }
 
+bool world_raycast(Ray ray,
+    in Obj[2] obj,
+    out Obj chosen_obj,
+    out vec3 chosen_where,
+    out int chosen_obj_id,
+    out float tmin
+) {
+    bool did = false;
+
+    chosen_obj_id = -1;
+
+    tmin = 100000000.0;
+
+    //Obj chosen_obj;
+    //vec3 chosen_where;
+    chosen_obj_id = -1;
+
+    {
+        Obj curr_obj;
+
+        for (int i = 0 ; i < 2; ++i) {
+            if (i==0) {
+                curr_obj = obj[0];
+            } else if (i==1) {
+                curr_obj = obj[1];
+            }
+
+            float t;
+            vec3 where;
+            bool did1;
+
+            did1 = raycast(ray, curr_obj, t, where);
+            if (did1) {
+                if (tmin > t)
+                {
+                    tmin = t;
+                    chosen_obj_id = i;
+                    chosen_obj = curr_obj;
+                    chosen_where = where;
+                    did = true;
+                }
+                // assert did == true
+            }
+        };
+
+    }
+
+
+    return did;
+}
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
@@ -250,42 +300,13 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
     //int obj_id = -1;
 
-    float tmin = 100000000.0;
 
-    bool did = false;
     Obj chosen_obj;
     vec3 chosen_where;
-    int chosen_obj_id = -1;
+    int chosen_obj_id;
+    float tmin;
 
-    {
-        Obj curr_obj;
-
-        for (int i = 0 ; i < 2; ++i) {
-            if (i==0) {
-                curr_obj = obj[0];
-            } else if (i==1) {
-                curr_obj = obj[1];
-            }
-
-            float t;
-            vec3 where;
-            bool did1;
-
-            did1 = raycast(r, curr_obj, t, where);
-            if (did1) {
-                if (tmin > t)
-                {
-                    tmin = t;
-                    chosen_obj_id = i;
-                    chosen_obj = curr_obj;
-                    chosen_where = where;
-                    did = true;
-                }
-                // assert did == true
-            }
-        };
-
-    }
+    bool did = world_raycast(r, obj, chosen_obj,chosen_where,chosen_obj_id,tmin);
 
     vec3 ray_dir_normalized = normalize(r.dir);
 
