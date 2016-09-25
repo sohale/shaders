@@ -2,7 +2,7 @@
 
 My Shader (glsl) programming demos.
 
-Usage example:
+#### Usage example:
 
 To run each *.glsl shader:
 * go to http://shadertoy.com
@@ -11,7 +11,7 @@ To run each *.glsl shader:
 * paste it in the box.
 * Enjoy
 
-Content:
+#### Content:
 * `raytrace1.glsl` : A raytracing demo. Features: reflection, Phong shading, Ellipsoids. It's a mini version of my very old program Big3D.
 
 (C) 2016 Sohail Siadatnejad
