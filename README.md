@@ -2,6 +2,8 @@
 
 My Shader (glsl) programming demos.
 
+* See [1] in action: https://www.shadertoy.com/view/4lG3Dm
+
 #### Usage example:
 
 To run each *.glsl shader:
