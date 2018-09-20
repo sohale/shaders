@@ -117,7 +117,7 @@ bool sphere_intersect(in Ray ray, out float t, out vec3 where)
     return true;
 }
 
-mat3 transpose(mat3 m) {
+mat3 transpose_(mat3 m) {
   return mat3(m[0][0], m[1][0], m[2][0],
               m[0][1], m[1][1], m[2][1],
               m[0][2], m[1][2], m[2][2]);
@@ -128,7 +128,7 @@ vec3 sphere_normal(in Obj obj, in vec3 where) {
     //d = normalize(d);
 
     vec3 d = obj.inverse_matrix * (where - obj.center);
-    d = transpose(obj.forward_matrix) * d;
+    d = transpose_(obj.forward_matrix) * d;
 
     d = normalize(d);
     return d;
@@ -184,12 +184,12 @@ vec4 phong_material(in vec3 light_dir, in vec3 ray_dir, in vec3 normal, in vec3 
     return vec4(diffuse * obj_rgb + specular * vec3(1.0,1.0,1.0), 1.0);
 }
 
-float min(vec2 v) {
+float min_(vec2 v) {
     return v.x > v.y ? v.x : v.y;
 }
 
 vec2 screen_uv(vec2 fragCoord) {
-    float mindim = min(iResolution.xy) / 2.0;
+    float mindim = min_(iResolution.xy) / 2.0;
     vec2 center = iResolution.xy / 2.0;
     vec2 uv = (fragCoord.xy - center.xy) / mindim;
     vec2 uv2 = vec2(uv.x, uv.y);
@@ -277,7 +277,7 @@ TexturedScreen make_TexturedScreen_behind_camera(Camera camera) {
     /*
     screen.screen_mat = camera.screen_mat;
     screen.screen_center = camera.screen_center;
-    screen.e3t_Minv = transpose(inverse(screen.screen_mat))*vec3(1.0, 0.0, 0.0);
+    screen.e3t_Minv = transpose_(inverse(screen.screen_mat))*vec3(1.0, 0.0, 0.0);
     screen.e3t_Minv_C0 = my_inner(screen_center, e3t_Minv);
     */
 
