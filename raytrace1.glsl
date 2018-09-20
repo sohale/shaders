@@ -1,3 +1,5 @@
+#define USE_CAMERA 1
+
 struct Ray
 {
     vec3 org;
@@ -227,7 +229,7 @@ mat4 rotationMatrix(xy, yz, xz){
 struct Camera {
     mat3 screen_mat;
     vec3 screen_center;
-    vec3 origin;
+    vec3 origin;  // eye point
 };
 
 const float PI = 4.1415926536;
@@ -250,7 +252,6 @@ Camera init_camera(vec2 mouse) {
     return camera;
 }
 
-
 Ray make_ray(Camera camera, vec2 uv2) {
     vec3 uv3 = vec3(uv2, 0.0);
 
@@ -264,6 +265,55 @@ Ray make_ray(Camera camera, vec2 uv2) {
 
     return r;
 }
+
+struct TexturedScreen {
+    // mat3 screen_mat;
+    // vec3 screen_center;
+    vec3 e3t_Minv;
+    float e3t_Minv_C0;
+};
+
+TexturedScreen make_TexturedScreen_behind_camera(Camera camera) {
+    /*
+    screen.screen_mat = camera.screen_mat;
+    screen.screen_center = camera.screen_center;
+    screen.e3t_Minv = transpose(inverse(screen.screen_mat))*vec3(1.0, 0.0, 0.0);
+    screen.e3t_Minv_C0 = my_inner(screen_center, e3t_Minv);
+    */
+
+    //copied from camera
+    float mouse_y =0.0, mouse_x = 0.0;
+    mat3 rot = rotationMatrixYZ(-mouse_y) * rotationMatrixXZ(-mouse_x);
+    // camera__screen_mat = rot * mat3(e1, e2, e3);
+    vec3 screen_center = rot * (-e3) *5.0;
+    mat3 rot_inv = rotationMatrixYZ(+mouse_y) * rotationMatrixXZ(+mouse_x);
+
+    TexturedScreen screen;
+   
+    screen.e3t_Minv = rot_inv * vec3(0.0, 0.0, 1.0);
+    screen.e3t_Minv_C0 = my_inner(screen_center, screen.e3t_Minv);
+
+    return screen;
+}
+
+bool project_onto_screen_t(in TexturedScreen screen, in Ray ray, out float t) {
+    float denom = my_inner(ray.dir, screen.e3t_Minv);
+    if (abs(denom) < 0.000000001)
+        return false;
+    t = my_inner(ray.org, screen.e3t_Minv) - screen.e3t_Minv_C0;
+    return (t >= 0.0);
+}
+
+bool project_onto_screen_uv2(in TexturedScreen screen, in Ray ray, out vec2 uv2) {
+    float t;
+    if (project_onto_screen_t(screen, ray, t)) {
+        vec3 uv3 = t * ray.dir + ray.org;
+        uv2 = uv3.xy;
+        return true;
+    }
+    return false;
+}
+
 
 vec4 panic() {
     return vec4(1.0, 0.0, 0.0, 1.0);
@@ -338,7 +388,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
 
 
-    float time = iGlobalTime;
+    float time = iTime;
 
     vec2 mousexy = screen_uv(iMouse.xy);
 
@@ -373,8 +423,13 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
     // mat4 invobj = inverse(obj);
 
-    //int obj_id = -1;
+    if (false) {
+    #ifdef USE_CAMERA
+        TexturedScreen webcam_screen = make_TexturedScreen_behind_camera(camera);
+    #endif
+    }
 
+    //int obj_id = -1;
 
     Obj chosen_obj;
     vec3 chosen_where;
@@ -431,6 +486,21 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
         } else {
             cc2 = vec4(0.0, 0.0, 0.0, 0.0);
+
+            #ifdef USE_CAMERA
+                cc2.xyz = texture(iChannel0, ray2.dir.xy).xyz;
+                cc2.xyz = texture(iChannel0, 1.0-ray2.dir.xy).xyz - 0.5;
+            if (false) {
+
+                //vec3 screen_center = vec3();
+                //mat3 screen_matrix = mat3(e1, e2, e3);
+                //rayscreen = transform(ray2, screen_matrix, screen_center)
+                //vec2 uv;
+                //project_onto_screen_uv2(webcam_screen, ray2, uv);
+                //cc2.xyz = texture(iChannel0, uv).xyz;
+            }
+            #endif
+
         }
 
 
@@ -440,6 +510,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         //c = 0.0;  // why omitting this causes apparent noise?
         cc = vec4(0.0, 0.0, 0.0, 1.0);
         cc2 = vec4(0.0, 0.0, 0.0, 0.0);
+
+        // Background will be from the camera (which is not good)
+        // cc.xyz = texture(iChannel0, r.dir.xy).xyz;
+
     }
 
     // fragColor = vec4(uv,0.5+0.5*sin(time),1.0);
