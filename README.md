@@ -3,6 +3,7 @@
 My Shader (glsl) programming demos.
 
 * See [1] in action: https://www.shadertoy.com/view/4lG3Dm
+* Simple [whirl, llVGzW on shadertoy.com](https://www.shadertoy.com/view/llVGzW)
 
 #### Usage example:
 
