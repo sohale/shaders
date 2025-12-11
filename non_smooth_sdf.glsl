@@ -34,13 +34,51 @@ const float PI = 3.14159265359;
 
 
 //////// Math-y part
-//// Part 1: common
+//// Part 1: common, foundations, basic vectors, factorials.
 
-const int K = 2;
+/*
+Multi-dimensional Taylor series:
+K = number of Taylor-series terms
+power = m
+A_{k,m}, power: m
+Ak,m =α(m)!(Δxk)α(m)
+a=(A^T A)^{−1}A^Tf
+
+
+D = dimensions: D=2
+
+M = (number of coefficients)
+   M scalars in the vector of parameters
+   e.g., for D=2,
+   M = (K+1)(K+2)/2 = 6
+
+In this reperesentation of Taylor
+the terms are sorted in terms of `α`s:
+Each α is a vector (of dim D) of integer indices.
+The sum of those integers, are the order of the term (in classical sense)
+α is a "A multi–index".
+
+
+Hence,
+    ∣α∣ = Order:
+    ∣𝛼∣ = 𝛼1 + ⋯ + 𝛼𝐷
+    ∣α∣ = α1 + ⋯ + α D.
+    ∣α∣ =∑^D α_i
+
+The extended factorial of (α) is:
+   𝛼! = 𝛼_1! × ⋯ × 𝛼_𝐷!
+   (α)! = (α_1)! × ⋯ × (α_D)!
+   = ∏^D α_i
+
+*/
+
+// const int K = 2;
 const int M = 6;   // (K+1)(K+2)/2 = 6
 const int N = 9;
 
 // Multi-indices α = (α1, α2) in some enumeration.
+// We have M numebr of α's.
+// α are the 
 const ivec2 alphaList[M] = ivec2[M](
     ivec2(0,0),
     ivec2(1,0), ivec2(0,1),
@@ -115,8 +153,16 @@ float fast_power_n(float x, int p) {
     else if(p == 1) return x;
     else if(p == 2) return x*x;
     else if(p == 3) return x*x*x;
-    else if(p == 4) return x*x*x*x;
-    else if(p == 5) return x*x*x*x*x;
+    else if(p == 4) {
+        // return x*x*x*x;
+        float x2 = x*x;
+        return x2*x2;
+    }
+    else if(p == 5) {
+        //return x*x*x*x*x;
+        float x2 = x*x;
+        return x2*x2*x;
+    }
     else if(p == 6) return BadNaN;
 }
 // ===============================================================
@@ -274,6 +320,7 @@ void computeTaylorCoefficients(
 
 // ===============================================================
 // Evaluate Taylor polynomial T(x) of order K in 2D
+//    with M scalars in the vector of parameters
 // ===============================================================
 float evaluateTaylor(
     // in vec2 x,
