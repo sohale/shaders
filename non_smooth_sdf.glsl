@@ -592,22 +592,23 @@ vec3 annotate_and_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, flo
   vec2 rd = normalize(ref0-ro);
 
   #if MOUSE == 0
-  float mouse_other_button = (iMouse.z > 0.0 ? 1.0 : 0.0);
+  float mouse_button = (iMouse.z > 0.0 ? 1.0 : 0.0);
   #endif
 
   #if DISPLAY == 0
     col = vec3(draw_distance(d, uv.xy));
     #if MOUSE == 0
-    	col -= mouse_other_button * vec3(draw_trace(d, uv.xy, ro, rd, t1));
+    	col -= mouse_button * vec3(draw_trace(d, uv.xy, ro, rd, t1));
     #endif
   #endif
   #if DISPLAY == 1
     col = vec3(0) + 1.0 - vec3(draw_outline(d));
     #if MOUSE == 0
-    	col += mouse_other_button * vec3(1, 0.25, 0) * vec3(draw_trace(d, uv.xy, ro, rd, t1));
+    	col += mouse_button * vec3(1, 0.25, 0) * vec3(draw_trace(d, uv.xy, ro, rd, t1));
     #endif
     col = 1. - col;
   #endif
+ 
   #if DISPLAY == 2
     col = vec3(draw_solid(d));
   #endif
