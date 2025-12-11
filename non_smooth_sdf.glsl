@@ -517,7 +517,7 @@ void computeTaylorCoefficients(
 // Evaluate Taylor polynomial T(x) of order K in 2D
 //    with M scalars in the vector of parameters
 // ===============================================================
-float evaluateTaylor(
+float evaluateTaylor_(
     // in vec2 x,
     // in vec2 x0,
     in vec2 dx,
@@ -565,10 +565,10 @@ float err = evaluateTaylor(dx, coeffs);
 
 // model() points -> params // (fit)
 // demodel() params -> eval //(approx) // local-model
-
 // evaluate model
+// demodelle
 float demodel( in vec2 dx, in float model[M]) {
-   return evaluateTaylor(dx, model);
+   return evaluateTaylor_(dx, model);
 }
 // to model (verb)
 // stores into: coeffs
@@ -807,7 +807,8 @@ float evaluate_smoothness(float delta, vec2 x0, float anim_time) {
     // computeTaylorCoefficients( N, dx_buffer, SDF_buffer, coeffs );
     do_model(dx_buffer, SDF_buffer, coeffs );
     vec2 dx0 = vec2(0.); // taylor around 0 (in dx_buffer coords)
-    float sdf_approx = evaluateTaylor(dx0, coeffs);
+    // float sdf_approx = evaluateTaylor(dx0, coeffs);
+    float sdf_approx = demodel(dx0, coeffs);
     return sdf_approx;
 }
 
@@ -838,13 +839,13 @@ vec2 project_closest_point_basedon_taylor(vec2 x0, float anim_time) {
     vec2 delta = vec2(0.0);
 
     for(int it=0; it<3; it++){
-        float f0 = evaluateTaylor(delta, a);
+        float f0 = demodel(delta, a);
 
         float eps = 1e-4;
-        float fx = (evaluateTaylor(delta + vec2(eps,0), a)
-                  - evaluateTaylor(delta - vec2(eps,0), a)) / (2.*eps);
-        float fy = (evaluateTaylor(delta + vec2(0,eps), a)
-                  - evaluateTaylor(delta - vec2(0,eps), a)) / (2.*eps);
+        float fx = (demodel(delta + vec2(eps,0), a)
+                  - demodel(delta - vec2(eps,0), a)) / (2.*eps);
+        float fy = (demodel(delta + vec2(0,eps), a)
+                  - demodel(delta - vec2(0,eps), a)) / (2.*eps);
         vec2 g = vec2(fx,fy);
 
         float denom = dot(g,g) + 1e-8;
