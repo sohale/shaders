@@ -31,7 +31,7 @@
 #define TAYLOR_BASES_MODELFAMILY 0
 #define RBF_BASES_MODELFAMILY 1
 
-#define MODELFAMILY  TAYLOR_BASES_MODELFAMILY
+#define MODELFAMILY  RBF_BASES_MODELFAMILY
 
 
 
@@ -111,12 +111,26 @@ const int M = 6;   // (K+1)(K+2)/2 = 6
 const int N = 9;
 
 
-
-
 #endif  // TAYLOR_BASES_MODELFAMILY
 
-// ======== COMMON AREA ( Gauss & Jordan) =========
 
+
+#if MODELFAMILY == RBF_BASES_MODELFAMILY
+// RBF Territory:
+
+// Number of radial basis coefficients: c0, c1*r, c2*r*r
+const int D = 2;  // const-snobbery
+const int M = D + 1;     // = 3 when D=2
+// In taylor: was: M = 6;
+const int N = 9;
+
+
+#endif  // RBF_BASES_MODELFAMILY
+
+
+
+// ======== COMMON AREA ( Gauss & Jordan) =========
+// Taylor's version:
 
 // side inputs
 
@@ -188,15 +202,87 @@ void Gauss_Jordan_elimination(/*in float ATA[M*M], in float ATF[M],*/  out float
         a[i] = bwork[i];
 }
 
+// RBF's version:
+
+// this part to be merged into taylor's. Don't change:
+float Awork_AA[M*M];
+float bwork[M];
+float ATA_AA[M*M];
+float ATF[M];
+void setAA_ATA(int i, int j, float val) {
+    ATA_AA[i+j*M] = val;
+}
+float getAA_ATA(int i, int j) {
+    return ATA_AA[i+j*M];
+}
+void addAA_ATA(int i, int j, float val) {
+    ATA_AA[i+j*M] += val;
+}
+void setAA_Awork(int i, int j, float val) {
+    Awork_AA[i+j*M] = val;
+}
+float getAA_Awork(int i, int j) {
+    return Awork_AA[i+j*M];
+}
+void addAA_Awork(int i, int j, float val) {
+    Awork_AA[i+j*M] += val;
+}
+
+
+
+/*
+⭐️⭐️⭐️ Gauss–Jordan elimination ⭐️⭐️⭐️
+
+Solves:
+   ✨ a = (A^T A)^{−1} A^T f
+*/
+// food for refactoring
+void Gauss_Jordan_elimination(/*in float ATA[M*M], in float ATF[M],*/  out float c[M]) {
+    // out bwork[]
+     // --- Copy ATA → Awork, ATF → bwork ---
+    for (int i=0; i<M; i++) {
+        bwork[i] = ATF[i];
+    }
+    for (int i=0; i<M; i++) {
+        for (int j=0; j<M; j++) {
+            setAA_Awork(i, j, getAA_ATA(i,j));
+            // if (i==0 && j==0)  addAA_Awork(i, j, 0.001);
+        }
+    }
+ 
+    // --- Gauss–Jordan elimination ---
+    for (int i=0; i<M; i++) {
+        // Normalize pivot row
+        float diag = getAA_Awork(i,i);
+        for (int j=0; j<M; j++) {
+            setAA_Awork(i, j, getAA_Awork(i,j) / diag);
+        }
+        bwork[i] /= diag;
+
+        // Eliminate other rows
+        for (int k2=0; k2<M; k2++) {
+            if (k2 == i) continue;
+
+            float f = getAA_Awork(k2,i);
+            for (int j=0; j<M; j++) {
+                float vij = getAA_Awork(k2,j) - f * getAA_Awork(i,j);
+                setAA_Awork(k2, j, vij);
+            }
+            bwork[k2] -= f * bwork[i];
+        }
+    }
+
+    // --- Copy solution to c[M] = model[M] ---
+    for (int i=0; i<M; i++) {
+        c[i] = bwork[i];
+    }
+}
+
 // ===== end of COMMON AREA =====
 
 #if MODELFAMILY == TAYLOR_BASES_MODELFAMILY
 
 #endif  // TAYLOR_BASES_MODELFAMILY
-
-#if MODELFAMILY == RBF_BASES_MODELFAMILY
-
-#endif  // RBF_BASES_MODELFAMILY
 
 
 
@@ -622,87 +708,7 @@ void do_model(
 
 
 // Number of radial basis coefficients: c0, c1*r, c2*r*r
-const int D = 2;  // const-snobbery
-const int M = D + 1;     // = 3 when D=2
-// In taylor: was: M = 6;
-const int N = 9;
-
-
-
-
-// this part to be merged into taylor's. Don't change:
-float Awork_AA[M*M];
-float bwork[M];
-float ATA_AA[M*M];
-float ATF[M];
-void setAA_ATA(int i, int j, float val) {
-    ATA_AA[i+j*M] = val;
-}
-float getAA_ATA(int i, int j) {
-    return ATA_AA[i+j*M];
-}
-void addAA_ATA(int i, int j, float val) {
-    ATA_AA[i+j*M] += val;
-}
-void setAA_Awork(int i, int j, float val) {
-    Awork_AA[i+j*M] = val;
-}
-float getAA_Awork(int i, int j) {
-    return Awork_AA[i+j*M];
-}
-void addAA_Awork(int i, int j, float val) {
-    Awork_AA[i+j*M] += val;
-}
-
-
-
-/*
-⭐️⭐️⭐️ Gauss–Jordan elimination ⭐️⭐️⭐️
-
-Solves:
-   ✨ a = (A^T A)^{−1} A^T f
-*/
-// food for refactoring
-void Gauss_Jordan_elimination(/*in float ATA[M*M], in float ATF[M],*/  out float c[M]) {
-    // out bwork[]
-     // --- Copy ATA → Awork, ATF → bwork ---
-    for (int i=0; i<M; i++) {
-        bwork[i] = ATF[i];
-    }
-    for (int i=0; i<M; i++) {
-        for (int j=0; j<M; j++) {
-            setAA_Awork(i, j, getAA_ATA(i,j));
-            // if (i==0 && j==0)  addAA_Awork(i, j, 0.001);
-        }
-    }
- 
-    // --- Gauss–Jordan elimination ---
-    for (int i=0; i<M; i++) {
-        // Normalize pivot row
-        float diag = getAA_Awork(i,i);
-        for (int j=0; j<M; j++) {
-            setAA_Awork(i, j, getAA_Awork(i,j) / diag);
-        }
-        bwork[i] /= diag;
-
-        // Eliminate other rows
-        for (int k2=0; k2<M; k2++) {
-            if (k2 == i) continue;
-
-            float f = getAA_Awork(k2,i);
-            for (int j=0; j<M; j++) {
-                float vij = getAA_Awork(k2,j) - f * getAA_Awork(i,j);
-                setAA_Awork(k2, j, vij);
-            }
-            bwork[k2] -= f * bwork[i];
-        }
-    }
-
-    // --- Copy solution to c[M] = model[M] ---
-    for (int i=0; i<M; i++) {
-        c[i] = bwork[i];
-    }
-}
+// D = 2, M = D + 1;
 
 
 // Fit f ≈ c0 + c1*r + c2*r*r  (K=2)
