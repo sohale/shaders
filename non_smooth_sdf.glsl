@@ -110,6 +110,31 @@ combines extended multi-power and multi-factorial
 const int M = 6;   // (K+1)(K+2)/2 = 6
 const int N = 9;
 
+
+
+
+#endif  // TAYLOR_BASES_MODELFAMILY
+
+// ======== COMMON AREA =========
+
+
+// ===== end of COMMON AREA =====
+
+#if MODELFAMILY == TAYLOR_BASES_MODELFAMILY
+
+#endif  // TAYLOR_BASES_MODELFAMILY
+
+#if MODELFAMILY == RBF_BASES_MODELFAMILY
+
+#endif  // RBF_BASES_MODELFAMILY
+
+
+
+// ======== Taylor AREA: Brook Taylor © 1715 ! =========
+
+#if MODELFAMILY == TAYLOR_BASES_MODELFAMILY
+
+
 // Multi-indices α = (α1, α2) in some enumeration.
 // We have M numebr of α's.
 // α are the ...
