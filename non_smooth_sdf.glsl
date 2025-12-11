@@ -644,8 +644,8 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   float t3 = iTime; // used in polarity // SoC!. Now disentangled!
   // float t = iTime * 0.5; // turned out to be not used.
   vec2 uv = squareFrame(iResolution.xy, fragCoord);
-  float d;
-  vec3 col;
+  // float d;
+  
   vec2 ro = vec2(iMouse.xy / iResolution.xy) * 2.0 - 1.0;
   ro.x *= squareFrame(iResolution.xy, iResolution.xy).x;
   // ro = mouse in coords/frame of "squareFrame"
@@ -653,7 +653,9 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   vec2 ref0 = vec2(0.2,0.3);
 
 
-  d = SAMPLER(uv, anim_time);
+  float d = SAMPLER(uv, anim_time);
+  // color to be plotted at pixel
+  vec3 col = vec3(0.); // Detected a sin (uninitialise variable!). fixed.
   col = annotate_and_virualise( col, d, uv, ro , ref0, anim_time, t3);
   
   float err =  evaluate_smothness(0.01, uv.xy, anim_time) - SAMPLER(uv.xy, anim_time);
