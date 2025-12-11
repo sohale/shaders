@@ -100,12 +100,15 @@ const int N = 9;
 
 // Multi-indices α = (α1, α2) in some enumeration.
 // We have M numebr of α's.
-// α are the 
+// α are the ...
+// see alphaList_with_fac[M] instead!
+// deprecated!
 const ivec2 alphaList[M] = ivec2[M](
     ivec2(0,0),
     ivec2(1,0), ivec2(0,1),
     ivec2(2,0), ivec2(1,1), ivec2(0,2)
 );
+
 
 float BadNaN = -10000000.0;
 int BadNaNInt = 100000;
@@ -128,6 +131,7 @@ const int[13] FACTORIALS_TABLE = int[13](
     // 6227020800 // 13!
     // 87178291200, // 14!
 );
+const int[13] FAC = FACTORIALS_TABLE;
 
 // inline
 int fast_factorial(int i) {
@@ -224,12 +228,25 @@ int alphaFactorial_fast_d3(ivec3 a) {
 */
 
 // precomputing for: phi_alpha(dx, alphaList[m]);
-
-const ivec2 alphaList_with_factorial[M] = ivec2[M](
-    ivec2(0,0),
-    ivec2(1,0), ivec2(0,1),
-    ivec2(2,0), ivec2(1,1), ivec2(0,2)
+// shortcut
+int sct(int a0,int a1) {
+    return alphaFactorial_fast(ivec2(a0,a1));
+    // return FACTORIALS_TABLE[a0] * FACTORIALS_TABLE[a1];
+}
+// alphaList_with_factorial
+/*
+const int alphaList_with_fac[M] = int[M](
+    sct(0,0),
+    sct(1,0), sct(0,1),
+    sct(2,0), sct(1,1), sct(0,2)
 );
+*/
+const int alphaList_with_fac[M] = int[M](
+    FAC[0]*FAC[0],
+    FAC[1]*FAC[0], FAC[0]*FAC[1],
+    FAC[2]*FAC[0], FAC[1]*FAC[1], FAC[0]*FAC[2]
+);
+
 
 
 // Part 2: Inference: approximate Taylor coeffiecnts
@@ -261,10 +278,51 @@ float fast_power_n(float x, int p) {
     }
     else if(p == 6) return BadNaN;
 }
+
+/*
+float phi_alpha_denom_m(m) {
+
+   //int denom = alphaFactorial_fast(a);
+   int denom = alphaFactorial_fast(a);
+   
+   return denoom;
+
+}
+*/
+
+// skips alpha
+// directly the: phi_alpha(dx, alphaList[m]);
+int phi_alpha_denom_directly_from_m(int mi) {
+
+    // return term / float(alphaFactorial(a));
+    // return term / float(alphaFactorial_fast(a));
+    // int denom = alphaFactorial_fast(a);
+    // return term / float(denom);
+
+    //int denom = alphaFactorial_fast(a);
+    //int denom = alphaFactorial_fast(a);
+
+    // return denoom;
+    
+    // directly: phi_alpha(dx, alphaList[m]);
+    // int denom = alphaFactorial_fast(alphaList[m]);
+    // denom +=1;
+    // denom = -1;
+    // denom = 10; //why it is not sensitivr to this?!
+    
+    
+    // expanding alphaFactorial_fast():
+    // ivec2 a = alphaList[m];
+    // int denom = FACTORIALS_TABLE[a.x] * FACTORIALS_TABLE[a.y];
+    int denom = alphaList_with_fac[mi];
+    return denom;
+    
+}
+
 // ===============================================================
 // Compute φ_α(Δx) = Δx^α / α!
 // ===============================================================
-float phi_alpha(vec2 dx, ivec2 a) {
+float phi_alpha_numerat(vec2 dx, ivec2 a) {
     float term = 1.0;
     // dx^α = dx.x^a.x * dx.y^a.y
     /*
@@ -284,10 +342,35 @@ float phi_alpha(vec2 dx, ivec2 a) {
     */
     term *= fast_power_n(dx.y, a.y);
 
+    /*
+    moved into phi_alpha_denom_m
     // return term / float(alphaFactorial(a));
-    return term / float(alphaFactorial_fast(a));
+    // return term / float(alphaFactorial_fast(a));
+    int denom = alphaFactorial_fast(a);
+    return term / float(denom);
+    */
+    // int denom = phi_alpha_denom_directly_from_m(a, m);
+    // skip the alpha part:
+    // int denom = phi_alpha_denom_directly_from_m(a, m);
+    // return term / float(denom);
+    return term;
 }
 
+// give me (m,) too, and I make it faster for you.
+float phi_alpha(vec2 dx, ivec2 a, int m) {
+    // float phi_alpha_numerat(vec2 dx, ivec2 a) {
+    float numerat = phi_alpha_numerat(dx, a);
+    /*
+    int denom = alphaFactorial_fast(a);
+    return numerat / float(denom);
+    */
+    
+    // now: skip the alpha part:
+    // int denom = phi_alpha_denom_directly_from_m(a, m);
+    // skips ther a-dependence, but adds m, which is the source of `a`:
+    int denom = phi_alpha_denom_directly_from_m(m);
+    return numerat / float(denom);
+}
 
 // side inputs
 
@@ -356,7 +439,7 @@ void computeTaylorCoefficients(
         // Compute φ_m(dx)
         float phiRow[M];
         for(int m=0;m<M;m++){
-            phiRow[m] = phi_alpha(dx, alphaList[m]);
+            phiRow[m] = phi_alpha(dx, alphaList[m], m);
         }
 
         // Update ATA and ATF
@@ -431,7 +514,7 @@ float evaluateTaylor(
     // M = Taylor order?
 
     for(int m=0;m<M;m++){
-        sum += a[m] * phi_alpha(dx, alphaList[m]);
+        sum += a[m] * phi_alpha(dx, alphaList[m], m);
     }
 
     return sum;
