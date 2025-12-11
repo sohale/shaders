@@ -808,6 +808,8 @@ vec2 project_closest_point(vec2 x, float t1) {
 }
 
 vec3 visualise_discrepancy(vec3 col, float err) {
+  // err = abs(err);
+
   // col = vec3(0.) + abs(err * 100000.00);
   // col = vec3(0.) + abs(err * 5.00);
   // col = vec3(0.) + abs(err * 500.00);
@@ -816,13 +818,15 @@ vec3 visualise_discrepancy(vec3 col, float err) {
   // col = col * (vec3(1.) - non_smoothness);
   float non_smoothness = (err * 50000.00);
   // col = col * (vec3(1.) + non_smoothness*vec3(1.,0.,0.));
-  vec3 red_mark = vec3(1.,0.,0.) * non_smoothness;
+  // vec3 red_mark = vec3(1.,0.,0.) * non_smoothness;
+  vec3 red_mark_ = clamp(vec3(1.,0.,0.) * (+non_smoothness), 0.,1.);
+  vec3 blue_mark = clamp(vec3(.0,0.,1.) * (-non_smoothness), 0.,1.);
   // treat as alpha, using mix()
   float alpha_ = clamp(abs(non_smoothness), 0., 1.);
   // col = mix(col, red_mark, alpha_);
   // more pale: ice-cold
   // col = mix(1.0 - 0.4*col, red_mark, alpha_);
-  col = mix(0.7 + 0.3*col, clamp(red_mark,0.,1.), alpha_);
+  col = mix(0.7 + 0.3*col, red_mark_ + blue_mark, alpha_);
   return col;
 }
 
@@ -864,8 +868,18 @@ vec3 annotate_and_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, flo
   return col;
 }
 
+vec2 pre_zoom(vec2 uv, vec2 screen) {
+  // uv = (uv+vec2(120.0,120.0))*0.7;
+  // uv = 0.3*(uv/screen+vec2(0.3,0.3))*screen;
+  float Z = 7.0;
+  vec2 c = vec2(-0.8,-0.4);
+  uv = (uv/screen-c)*screen / Z;
+  return uv;
+}
+
 // see SAMPLER() as master_sdf
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+  fragCoord=pre_zoom(fragCoord, iResolution.xy);
   // anim_time (formerly, "t1") is anomation time ( SDF is tiem-dependent)
   // You can control animation speed here:
   float anim_time = iTime * 0.01;
