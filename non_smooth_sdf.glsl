@@ -12,19 +12,19 @@
 // 1 = Raymarched Edges
 // 2 = Resulting Solid
 // 3 = Distance Field Polarity
-#define STYLE_IS__SDF 0
-#define STYLE_IS__RAYMARCHED_EDGES 1
-#define STYLE_IS__SOLID 2
-#define STYLE_IS__POLARITY 3
+#define STYLE_SDF 0
+#define STYLE_SOLID_EDGES 1
+#define STYLE_SOLID 2
+#define STYLE_POLARITY 3
 
-#define DISPLAY_STYLE  STYLE_IS__SDF
+#define DISPLAY_STYLE  STYLE_SDF
 
 // 0 = Angle controlled By iTime
 // 1 = Angle controlled By iMouse
-#define _BY_TIME_ANIMATION_SOURCE 0
-#define _BY_MOUSE_ANIMATION_SOURCE 1
+#define _BY_TIME_ANIMATIONSOURCE 0
+#define _BY_MOUSE_ANIMATIONSOURCE 1
 
-#define ANIMATION_SOURCE _BY_TIME_ANIMATION_SOURCE
+#define ANIMATION_SOURCE _BY_TIME_ANIMATIONSOURCE
 const float PI = 3.14159265359;
 
 
@@ -391,11 +391,11 @@ float master_sdf(vec2 uv) {
 */
 
 float SAMPLER(vec2 p, float t2) {
-    #if ANIMATION_SOURCE == _BY_MOUSE_ANIMATION_SOURCE
+    #if ANIMATION_SOURCE == _BY_MOUSE_ANIMATIONSOURCE
     	float a1 = iMouse.x / iResolution.x * PI*2.;
     	float a2 = iMouse.x / iResolution.x * -PI*2. + PI*.5;
     #endif
-    #if ANIMATION_SOURCE == _BY_TIME_ANIMATION_SOURCE
+    #if ANIMATION_SOURCE == _BY_TIME_ANIMATIONSOURCE
         float T = 3.;  // period
         float a1 = smoothstep(0., T*.75, mod(t2, T)) * PI*2.;  // stop for T*.25s
         float a2 = smoothstep(0., T*.75, mod(t2, T)) * -PI*2. + PI*.5;  // stop for T*.25s, +PI/2 phase
@@ -599,28 +599,28 @@ vec3 annotate_and_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, flo
 
   vec2 rd = normalize(ref0-ro);
 
-  #if ANIMATION_SOURCE == _BY_TIME_ANIMATION_SOURCE
+  #if ANIMATION_SOURCE == _BY_TIME_ANIMATIONSOURCE
   float mouse_button = (iMouse.z > 0.0 ? 1.0 : 0.0);
   #endif
 
-  #if DISPLAY_STYLE == STYLE_IS__SDF
+  #if DISPLAY_STYLE == STYLE_SDF
     col = vec3(draw_distance(d, uv.xy));
-    #if ANIMATION_SOURCE == _BY_TIME_ANIMATION_SOURCE
+    #if ANIMATION_SOURCE == _BY_TIME_ANIMATIONSOURCE
     	col -= mouse_button * vec3(draw_trace(d, uv.xy, ro, rd, t1));
     #endif
   #endif
-  #if DISPLAY_STYLE == STYLE_IS__RAYMARCHED_EDGES
+  #if DISPLAY_STYLE == STYLE_SOLID_EDGES
     col = vec3(0) + 1.0 - vec3(draw_outline(d));
-    #if ANIMATION_SOURCE == _BY_TIME_ANIMATION_SOURCE
+    #if ANIMATION_SOURCE == _BY_TIME_ANIMATIONSOURCE
     	col += mouse_button * vec3(1, 0.25, 0) * vec3(draw_trace(d, uv.xy, ro, rd, t1));
     #endif
     col = 1. - col;
   #endif
  
-  #if DISPLAY_STYLE == STYLE_IS__SOLID
+  #if DISPLAY_STYLE == STYLE_SOLID
     col = vec3(draw_solid(d));
   #endif
-  #if DISPLAY_STYLE == STYLE_IS__POLARITY
+  #if DISPLAY_STYLE == STYLE_POLARITY
     col = vec3(draw_polarity(d, uv.xy, t1));
   #endif
   
