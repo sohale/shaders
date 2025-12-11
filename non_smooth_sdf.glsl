@@ -12,7 +12,12 @@
 // 1 = Raymarched Edges
 // 2 = Resulting Solid
 // 3 = Distance Field Polarity
-#define DISPLAY_STYLE 0
+#define STYLE_IS__SDF 0
+#define STYLE_IS__RAYMARCHED_EDGES 1
+#define STYLE_IS__SOLID 2
+#define STYLE_IS__POLARITY 3
+
+#define DISPLAY_STYLE  STYLE_IS__SDF
 
 // 0 = Angle controlled By iTime
 // 1 = Angle controlled By iMouse
@@ -598,13 +603,13 @@ vec3 annotate_and_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, flo
   float mouse_button = (iMouse.z > 0.0 ? 1.0 : 0.0);
   #endif
 
-  #if DISPLAY_STYLE == 0
+  #if DISPLAY_STYLE == STYLE_IS__SDF
     col = vec3(draw_distance(d, uv.xy));
     #if ANIMATION_SOURCE == _BY_TIME_ANIMATION_SOURCE
     	col -= mouse_button * vec3(draw_trace(d, uv.xy, ro, rd, t1));
     #endif
   #endif
-  #if DISPLAY_STYLE == 1
+  #if DISPLAY_STYLE == STYLE_IS__RAYMARCHED_EDGES
     col = vec3(0) + 1.0 - vec3(draw_outline(d));
     #if ANIMATION_SOURCE == _BY_TIME_ANIMATION_SOURCE
     	col += mouse_button * vec3(1, 0.25, 0) * vec3(draw_trace(d, uv.xy, ro, rd, t1));
@@ -612,10 +617,10 @@ vec3 annotate_and_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, flo
     col = 1. - col;
   #endif
  
-  #if DISPLAY_STYLE == 2
+  #if DISPLAY_STYLE == STYLE_IS__SOLID
     col = vec3(draw_solid(d));
   #endif
-  #if DISPLAY_STYLE == 3
+  #if DISPLAY_STYLE == STYLE_IS__POLARITY
     col = vec3(draw_polarity(d, uv.xy, t1));
   #endif
   
