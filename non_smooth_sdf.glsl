@@ -517,7 +517,77 @@ float evaluate_smothness(float delta, vec2 x0, float t1) {
     return sdf_approx;
 }
 
-// see master_sdf()
+
+
+vec2 project_closest_point_basedon_taylor(vec2 x0, float t1) {
+
+    // 1. Gather local patch for Taylor model
+    float F[N];
+    vec2 DX[N];
+    float r = 0.01;
+    int idx = 0;
+
+    for(int i=0;i<3;i++){
+        for(int j=0;j<3;j++){
+            vec2 d = vec2(float(i-1)*r, float(j-1)*r);
+            DX[idx] = d;
+            F[idx]  = SAMPLER(x0 + d, t1);
+            idx++;
+        }
+    }
+
+    // Fit Taylor series
+    float a[M];
+    computeTaylorCoefficients(N, DX, F, a);
+
+    // Newton solve T(delta)=0
+    vec2 delta = vec2(0.0);
+
+    for(int it=0; it<3; it++){
+        float f0 = evaluateTaylor(delta, a);
+
+        float eps = 1e-4;
+        float fx = (evaluateTaylor(delta + vec2(eps,0), a)
+                  - evaluateTaylor(delta - vec2(eps,0), a)) / (2.*eps);
+        float fy = (evaluateTaylor(delta + vec2(0,eps), a)
+                  - evaluateTaylor(delta - vec2(0,eps), a)) / (2.*eps);
+        vec2 g = vec2(fx,fy);
+
+        float denom = dot(g,g) + 1e-8;
+        delta -= (f0/denom) * g;
+    }
+
+    // 4. Final closest point
+    return x0 + delta;
+}
+
+
+// Based on SDF
+vec2 project_closest_point(vec2 x, float t1) {
+   // return x;
+   return project_closest_point_basedon_taylor(x, t1);
+}
+
+vec3 visualise_discrepancy(vec3 col, float err) {
+  // col = vec3(0.) + abs(err * 100000.00);
+  // col = vec3(0.) + abs(err * 5.00);
+  // col = vec3(0.) + abs(err * 500.00);
+  // col = vec3(1.) - abs(err * 500.00);
+  // float non_smoothness = abs(err * 500.00);
+  // col = col * (vec3(1.) - non_smoothness);
+  float non_smoothness = (err * 50000.00);
+  // col = col * (vec3(1.) + non_smoothness*vec3(1.,0.,0.));
+  vec3 red_mark = vec3(1.,0.,0.) * non_smoothness;
+  // treat as alpha, using mix()
+  float alpha_ = clamp(abs(non_smoothness), 0., 1.);
+  // col = mix(col, red_mark, alpha_);
+  // more pale: ice-cold
+  // col = mix(1.0 - 0.4*col, red_mark, alpha_);
+  col = mix(0.7 + 0.3*col, red_mark, alpha_);
+  return col;
+}
+
+// see SAMPLER() as master_sdf
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   float t1 = iTime * 0.0;
   float t = iTime * 0.5;
@@ -562,21 +632,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 
   float err =  evaluate_smothness(0.01, uv.xy, t1) - SAMPLER(uv.xy, t1);
   
-  // col = vec3(0.) + abs(err * 100000.00);
-  // col = vec3(0.) + abs(err * 5.00);
-  // col = vec3(0.) + abs(err * 500.00);
-  // col = vec3(1.) - abs(err * 500.00);
-  // float non_smoothness = abs(err * 500.00);
-  // col = col * (vec3(1.) - non_smoothness);
-  float non_smoothness = (err * 50000.00);
-  // col = col * (vec3(1.) + non_smoothness*vec3(1.,0.,0.));
-  vec3 red_mark = vec3(1.,0.,0.) * non_smoothness;
-  // treat as alpha, using mix()
-  float alpha_ = clamp(abs(non_smoothness), 0., 1.);
-  // col = mix(col, red_mark, alpha_);
-  // more pale: ice-cold
-  // col = mix(1.0 - 0.4*col, red_mark, alpha_);
-  col = mix(0.7 + 0.3*col, red_mark, alpha_);
+  col = visualise_discrepancy(col,err);
 
 
   fragColor.rgb = col;
