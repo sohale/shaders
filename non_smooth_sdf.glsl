@@ -173,10 +173,29 @@ void addAA_Awork(int i, int j, float val) {
 Solves:
    ✨ a = (A^T A)^{−1} A^T f
 */
-// food for refactoring
+// Got merged! (Was) good food for refactoring ( RBF's version was merged).
 void Gauss_Jordan_elimination(/*in float ATA[M*M], in float ATF[M],*/  out float a[M]) {
+    // out bwork[]
+
+    // Solve ATA * a = ATF via naive Gaussian elimination.
+    // (M is small, OK for GLSL; replace with a precomputed inverse if fixed.)
+    // float Awork[M][M];
+    // float bwork[M];
+    // --- Copy ATA → Awork, ATF → bwork ---
+    for(int i=0;i<M;i++){
+        bwork[i] = ATF[i];
+    }
+    for(int i=0;i<M;i++){
+        for(int j=0;j<M;j++)
+            // Awork[i][j] = ATA[i][j];
+            setAA_Awork(i,j, getAA_ATA(i,j));
+            // if (i==0 && j==0)  addAA_Awork(i, j, 0.001);
+    }
+
+    // --- Gauss–Jordan elimination ---
     // Gaussian elimination
     for(int i=0;i<M;i++){
+        // Normalize pivot row
         // pivot normalisation
         // float diag = Awork[i][i];
         float diag = getAA_Awork(i,i);
@@ -186,75 +205,28 @@ void Gauss_Jordan_elimination(/*in float ATA[M*M], in float ATF[M],*/  out float
         }
         bwork[i] /= diag;
 
+        // Eliminate other rows
         // eliminate below and above
+        // k2?
         for(int k=0;k<M;k++){
             if(k==i) continue;
             // float factor = Awork[k][i];
             float factor = getAA_Awork(k,i);
             for(int j=0;j<M;j++) {
                 // Awork[k][j] -= factor * Awork[i][j];
-                setAA_Awork(k,j, getAA_Awork(k,j) - factor * getAA_Awork(i,j));
+                float vij = getAA_Awork(k,j) - factor * getAA_Awork(i,j);
+                setAA_Awork(k,j, vij);
             }
             bwork[k] -= factor * bwork[i];
         }
     }
 
     // bwork now holds a[]
+    // --- Copy solution to c[M] = model[M] ---
     for(int i=0;i<M;i++)
         a[i] = bwork[i];
 }
 
-
-
-// RBF's version:
-
-/*
-⭐️⭐️⭐️ Gauss–Jordan elimination ⭐️⭐️⭐️
-
-Solves:
-   ✨ a = (A^T A)^{−1} A^T f
-*/
-// food for refactoring
-void Gauss_Jordan_elimination2(/*in float ATA[M*M], in float ATF[M],*/  out float c[M]) {
-    // out bwork[]
-     // --- Copy ATA → Awork, ATF → bwork ---
-    for (int i=0; i<M; i++) {
-        bwork[i] = ATF[i];
-    }
-    for (int i=0; i<M; i++) {
-        for (int j=0; j<M; j++) {
-            setAA_Awork(i, j, getAA_ATA(i,j));
-            // if (i==0 && j==0)  addAA_Awork(i, j, 0.001);
-        }
-    }
- 
-    // --- Gauss–Jordan elimination ---
-    for (int i=0; i<M; i++) {
-        // Normalize pivot row
-        float diag = getAA_Awork(i,i);
-        for (int j=0; j<M; j++) {
-            setAA_Awork(i, j, getAA_Awork(i,j) / diag);
-        }
-        bwork[i] /= diag;
-
-        // Eliminate other rows
-        for (int k2=0; k2<M; k2++) {
-            if (k2 == i) continue;
-
-            float f = getAA_Awork(k2,i);
-            for (int j=0; j<M; j++) {
-                float vij = getAA_Awork(k2,j) - f * getAA_Awork(i,j);
-                setAA_Awork(k2, j, vij);
-            }
-            bwork[k2] -= f * bwork[i];
-        }
-    }
-
-    // --- Copy solution to c[M] = model[M] ---
-    for (int i=0; i<M; i++) {
-        c[i] = bwork[i];
-    }
-}
 
 // ===== end of COMMON AREA =====
 
@@ -595,15 +567,6 @@ void computeTaylorCoefficients(
 
     // Solve ATA * a = ATF via naive Gaussian elimination.
     // (M is small, OK for GLSL; replace with a precomputed inverse if fixed.)
-    // float Awork[M][M];
-    // float bwork[M];
-
-    for(int i=0;i<M;i++){
-        bwork[i] = ATF[i];
-        for(int j=0;j<M;j++)
-            // Awork[i][j] = ATA[i][j];
-            setAA_Awork(i,j, getAA_ATA(i,j));
-    }
 
     // Gaussian elimination
     Gauss_Jordan_elimination(/*ATA_AA, ATF,*/ a); // temp: Awork,bwork
@@ -742,7 +705,7 @@ void fitRadialModel(
     */
 
     // --- Gauss–Jordan elimination ---
-    Gauss_Jordan_elimination2(/*ATA_AA, ATF,*/ c); // ; Awork) temp.s: bwork
+    Gauss_Jordan_elimination(/*ATA_AA, ATF,*/ c); // ; Awork) temp.s: bwork
 
     /*
     // --- Copy solution to c[M] = model[M] ---
