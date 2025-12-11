@@ -638,6 +638,24 @@ void fitRadialModel(
     for(int i=0;i<3;i++) c[i] = b[i];
 }
 
+float evalRadial(vec2 dx, float c[3]) {
+    float r = length(dx);
+    return c[0] + c[1]*r + c[2]*r*r;
+}
+
+
+float demodel( in vec2 dx, in float model[M]) {
+   return evalRadial(dx, model);
+}
+
+void do_model(
+    in vec2 dx_buffer[N], in float F[N],
+    out float model[M]
+) {
+    fitRadialModel(N,  dx_buffer, F, model);
+}
+
+
 #endif  // MODELFAMILY == RBF_BASES_MODELFAMILY
 
 //==========================================
