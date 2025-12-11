@@ -205,6 +205,10 @@ int alphaFactorial(ivec2 a) {
 // α! = α1! α2!
 // specicic for D=2
 // this is int-only too.
+// We could make it even faster: by look-up table of two elemnts (with row-size being a power-of-2, to shift.
+// or even: combine it with alphaList already!
+//    its only use it:   phi_alpha(dx, alphaList[m]);
+// see alphaList_with_factorial
 int alphaFactorial_fast(ivec2 a) {
     // return fast_factorial(a.x) * fast_factorial(a.y);
     return FACTORIALS_TABLE[a.x] * FACTORIALS_TABLE[a.y];
@@ -218,6 +222,15 @@ int alphaFactorial_fast_d3(ivec3 a) {
       FACTORIALS_TABLE(a.z);
 }
 */
+
+// precomputing for: phi_alpha(dx, alphaList[m]);
+
+const ivec2 alphaList_with_factorial[M] = ivec2[M](
+    ivec2(0,0),
+    ivec2(1,0), ivec2(0,1),
+    ivec2(2,0), ivec2(1,1), ivec2(0,2)
+);
+
 
 // Part 2: Inference: approximate Taylor coeffiecnts
 
@@ -271,7 +284,8 @@ float phi_alpha(vec2 dx, ivec2 a) {
     */
     term *= fast_power_n(dx.y, a.y);
 
-    return term / float(alphaFactorial(a));
+    // return term / float(alphaFactorial(a));
+    return term / float(alphaFactorial_fast(a));
 }
 
 
