@@ -587,60 +587,78 @@ void do_model(
 void fitRadialModel(
     vec2 dx[N],      // input offsets
     float F[N],      // SDF samples
-    out float c[3]   // c0,c1,c2
+    out float c[3]   // c0, c1, c2
 ){
-    float ATA[3][3];
-    float ATF[3];
-
     // zero
-    for(int i=0;i<3;i++){
+    // --- Clear ATA and ATF ---
+    for (int i=0; i<3; i++) {
         ATF[i] = 0.0;
-        for(int j=0;j<3;j++) ATA[i][j] = 0.0;
+        for (int j=0; j<3; j++) {
+            setAA_ATA(i, j, 0.0);
+        }
     }
 
     // accumulate
-    for(int k=0;k<N;k++){
+    // --- Accumulate ATA and ATF ---
+    for (int k=0; k<N; k++) {
         float r = length(dx[k]);
-        float row[3] = float[3](1.0, r, r*r);
+        float row0 = 1.0;
+        float row1 = r;
+        float row2 = r*r;
 
-        for(int i=0;i<3;i++){
+        float row[3] = float[3](row0, row1, row2);
+
+        for (int i=0; i<3; i++) {
             ATF[i] += row[i] * F[k];
-            for(int j=0;j<3;j++)
-                ATA[i][j] += row[i] * row[j];
+            for (int j=0; j<3; j++) {
+                addAA_ATA(i, j, row[i] * row[j]);
+            }
         }
     }
 
-    // solve ATA * c = ATF (Gaussian elimination)
-    // (same code you use for Taylor case)
-    float Mmat[3][3];
-    float b[3];
-
-    for(int i=0;i<3;i++){
-        b[i] = ATF[i];
-        for(int j=0;j<3;j++) Mmat[i][j] = ATA[i][j];
-    }
-
-    // Gauss-Jordan
-    for(int i=0;i<3;i++){
-        float diag = Mmat[i][i];
-        for(int j=0;j<3;j++) Mmat[i][j] /= diag;
-        b[i] /= diag;
-
-        for(int k2=0;k2<3;k2++){
-            if(k2==i) continue;
-            float f = Mmat[k2][i];
-            for(int j=0;j<3;j++)
-                Mmat[k2][j] -= f * Mmat[i][j];
-            b[k2] -= f * b[i];
+    // --- Copy ATA → Awork, ATF → bwork ---
+    for (int i=0; i<3; i++) {
+        bwork[i] = ATF[i];
+        for (int j=0; j<3; j++) {
+            setAA_Awork(i, j, getAA_ATA(i,j));
         }
     }
 
-    for(int i=0;i<3;i++) c[i] = b[i];
+    // --- Gauss–Jordan elimination ---
+    for (int i=0; i<3; i++) {
+        // Normalize pivot row
+        float diag = getAA_Awork(i,i);
+        for (int j=0; j<3; j++) {
+            setAA_Awork(i, j, getAA_Awork(i,j) / diag);
+        }
+        bwork[i] /= diag;
+
+        // Eliminate other rows
+        for (int k2=0; k2<3; k2++) {
+            if (k2 == i) continue;
+
+            float f = getAA_Awork(k2,i);
+            for (int j=0; j<3; j++) {
+                setAA_Awork(k2, j,
+                    getAA_Awork(k2,j) - f * getAA_Awork(i,j)
+                );
+            }
+            bwork[k2] -= f * bwork[i];
+        }
+    }
+
+    // --- Copy solution to c[3] ---
+    for (int i=0; i<3; i++) {
+        c[i] = bwork[i];
+    }
 }
+
 
 float evalRadial(vec2 dx, float c[3]) {
     float r = length(dx);
     return c[0] + c[1]*r + c[2]*r*r;
+}
+
 }
 
 
