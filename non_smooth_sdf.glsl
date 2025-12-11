@@ -478,7 +478,10 @@ float plus(vec2 uv, vec2 dotuv, float r) {
 // this attempt led to the math part. see above.
 
 
-float evaluate_smothness(vec2 x0, float t1) {
+float evaluate_smothness(float delta, vec2 x0, float t1) {
+    /*
+         delta: radius of neighbourhood samples. deafult: 0.01
+    */
 
     float coeffs[M];
     float SDF_buffer[N];
@@ -489,8 +492,8 @@ float evaluate_smothness(vec2 x0, float t1) {
     int ctr=0;
     for(int i=0;i<GM;i++) {
        for(int j=0;j<GM;j++) {
-          dx_buffer[ctr].x = float(i-1) * 0.01;
-          dx_buffer[ctr].y = float(j-1) * 0.01;
+          dx_buffer[ctr].x = float(i-1) * delta;
+          dx_buffer[ctr].y = float(j-1) * delta;
           ctr += 1;
        }
     }
@@ -554,15 +557,20 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 
   col *= indotness(uv, ref0, 0.015*3.0);
 
-  float err =  evaluate_smothness(uv.xy, t1) - SAMPLER(uv.xy, t1);
+  float err =  evaluate_smothness(0.01, uv.xy, t1) - SAMPLER(uv.xy, t1);
   
   // col = vec3(0.) + abs(err * 100000.00);
   // col = vec3(0.) + abs(err * 5.00);
   // col = vec3(0.) + abs(err * 500.00);
   // col = vec3(1.) - abs(err * 500.00);
-  float non_smoothness = abs(err * 500.00);
-  col = col * (vec3(1.) - non_smoothness);
-
+  // float non_smoothness = abs(err * 500.00);
+  // col = col * (vec3(1.) - non_smoothness);
+  float non_smoothness = (err * 50000.00);
+  // col = col * (vec3(1.) + non_smoothness*vec3(1.,0.,0.));
+  vec3 red_mark = vec3(1.,0.,0.) * non_smoothness;
+  // treat as alpha, using mix()
+  float alpha_ = clamp(abs(non_smoothness), 0., 1.);
+  col = mix(col, red_mark, alpha_);
 
 
   fragColor.rgb = col;
