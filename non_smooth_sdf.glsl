@@ -507,9 +507,8 @@ float evaluate_smothness(vec2 x0, float t1) {
     // stores into: coeffs
     computeTaylorCoefficients( N, dx_buffer, SDF_buffer, coeffs );
     vec2 dx0 = vec2(0.); // taylor around 0 (in dx_buffer coords)
-    float err = evaluateTaylor(dx0, coeffs);
-    
-    return err;
+    float sdf_approx = evaluateTaylor(dx0, coeffs);
+    return sdf_approx;
 }
 
 // see master_sdf()
@@ -555,9 +554,15 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 
   col *= indotness(uv, ref0, 0.015*3.0);
 
-  float err =  evaluate_smothness(uv.xy, t1);
+  float err =  evaluate_smothness(uv.xy, t1) - SAMPLER(uv.xy, t1);
+  
   // col = vec3(0.) + abs(err * 100000.00);
-  col = vec3(0.) + abs(err * 5.00);
+  // col = vec3(0.) + abs(err * 5.00);
+  // col = vec3(0.) + abs(err * 500.00);
+  // col = vec3(1.) - abs(err * 500.00);
+  float non_smoothness = abs(err * 500.00);
+  col = col * (vec3(1.) - non_smoothness);
+
 
 
   fragColor.rgb = col;
