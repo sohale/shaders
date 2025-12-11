@@ -31,7 +31,7 @@
 #define TAYLOR_BASES_MODELFAMILY 0
 #define RBF_BASES_MODELFAMILY 1
 
-#define MODELFAMILY  RBF_BASES_MODELFAMILY
+#define MODELFAMILY  TAYLOR_BASES_MODELFAMILY
 
 
 
@@ -427,7 +427,7 @@ Solves:
    ✨ a = (A^T A)^{−1} A^T f
 */
 // food for refactoring
-void Gauss_Jordan_elimination(in float ATA[M*M], in float ATF[M],  out float a[M]) {
+void Gauss_Jordan_elimination(/*in float ATA[M*M], in float ATF[M],*/  out float a[M]) {
     // Gaussian elimination
     for(int i=0;i<M;i++){
         // pivot normalisation
@@ -516,7 +516,7 @@ void computeTaylorCoefficients(
     }
 
     // Gaussian elimination
-    Gauss_Jordan_elimination(ATA_AA, ATF, a); // temp: Awork,bwork
+    Gauss_Jordan_elimination(/*ATA_AA, ATF,*/ a); // temp: Awork,bwork
 }
 
 
@@ -637,7 +637,7 @@ Solves:
    ✨ a = (A^T A)^{−1} A^T f
 */
 // food for refactoring
-void Gauss_Jordan_elimination(in float ATA[M*M], in float ATF[M],  out float c[M]) {
+void Gauss_Jordan_elimination(/*in float ATA[M*M], in float ATF[M],*/  out float c[M]) {
     // out bwork[]
      // --- Copy ATA → Awork, ATF → bwork ---
     for (int i=0; i<M; i++) {
@@ -732,7 +732,7 @@ void fitRadialModel(
     */
 
     // --- Gauss–Jordan elimination ---
-    Gauss_Jordan_elimination(ATA_AA, ATF, c); // ; Awork) temp.s: bwork
+    Gauss_Jordan_elimination(/*ATA_AA, ATF,*/ c); // ; Awork) temp.s: bwork
 
     /*
     // --- Copy solution to c[M] = model[M] ---
@@ -755,7 +755,6 @@ float evalRadial(vec2 dx, float c[M]) {
     float r = length(dx);
     return c[0] + c[1]*r + c[2]*r*r;
 }
-
 
 
 float demodel( in vec2 dx, in float model[M]) {
