@@ -241,11 +241,14 @@ const int alphaList_with_fac[M] = int[M](
     sct(2,0), sct(1,1), sct(0,2)
 );
 */
+// ugly and fast.
+// combining table of factorial with table of alphas.
 const int alphaList_with_fac[M] = int[M](
     FAC[0]*FAC[0],
     FAC[1]*FAC[0], FAC[0]*FAC[1],
     FAC[2]*FAC[0], FAC[1]*FAC[1], FAC[0]*FAC[2]
 );
+// todo: same for fast alpha powers
 
 
 
@@ -357,7 +360,7 @@ float phi_alpha_numerat(vec2 dx, ivec2 a) {
 }
 
 // give me (m,) too, and I make it faster for you.
-float phi_alpha(vec2 dx, ivec2 a, int m) {
+float phi_alpha_(vec2 dx, ivec2 a, int m) {
     // float phi_alpha_numerat(vec2 dx, ivec2 a) {
     float numerat = phi_alpha_numerat(dx, a);
     /*
@@ -439,7 +442,7 @@ void computeTaylorCoefficients(
         // Compute φ_m(dx)
         float phiRow[M];
         for(int m=0;m<M;m++){
-            phiRow[m] = phi_alpha(dx, alphaList[m], m);
+            phiRow[m] = phi_alpha_(dx, alphaList[m], m);
         }
 
         // Update ATA and ATF
@@ -514,7 +517,7 @@ float evaluateTaylor(
     // M = Taylor order?
 
     for(int m=0;m<M;m++){
-        sum += a[m] * phi_alpha(dx, alphaList[m], m);
+        sum += a[m] * phi_alpha_(dx, alphaList[m], m);
     }
 
     return sum;
@@ -819,7 +822,7 @@ vec3 visualise_discrepancy(vec3 col, float err) {
   // col = mix(col, red_mark, alpha_);
   // more pale: ice-cold
   // col = mix(1.0 - 0.4*col, red_mark, alpha_);
-  col = mix(0.7 + 0.3*col, red_mark, alpha_);
+  col = mix(0.7 + 0.3*col, clamp(red_mark,0.,1.), alpha_);
   return col;
 }
 
