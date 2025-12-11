@@ -108,10 +108,35 @@ const ivec2 alphaList[M] = ivec2[M](
 );
 
 float BadNaN = -10000000.0;
+int BadNaNInt = 100000;
 
+const int[13] FACTORIALS_TABLE = int[13](
+    1, // 0!,
+    1,
+    2,
+    6,
+    24,  // 4!
+    120,
+    720,
+    5040,
+    40320,
+    362880,
+    3628800, // 10!
+    39916800,
+    479001600 // 12!
+    // aready overflow!!
+    // 6227020800 // 13!
+    // 87178291200, // 14!
+);
 
+// inline
+int fast_factorial(int i) {
+    return FACTORIALS_TABLE[i];
+}
 
-float cond_c(int idx, float arg1) {
+// this is int-only!
+// thm: if idx == arg1, this is essentially, exactly, the factorial.
+int cond_c(int idx, int arg1) {
     // ?float if_val(i,i0,float val)
 
     // return (idx==0?1.0:(idx==1?1.0:arg1 * (arg1-1.)));
@@ -127,41 +152,72 @@ float cond_c(int idx, float arg1) {
     */
     return
        (idx==0) ? // 0
-            1.0
+            1
        :(idx==1?  // 1
-            1.0
+            1
        :(idx==2?  // 2
-            arg1 * (arg1-1.)
+            arg1 * (arg1-1)
        :(idx==3?  // 3
-            arg1 * (arg1-1.) * (arg1-2.)
+            arg1 * (arg1-1) * (arg1-2)
        :(idx==4?  // 4
-            arg1 * (arg1-1.) * (arg1-2.) * (arg1-3.)
+            arg1 * (arg1-1) * (arg1-2) * (arg1-3)
        :(idx==5?  // 5
-            arg1 * (arg1-1.) * (arg1-2.) * (arg1-3.) * (arg1-4.)
+            arg1 * (arg1-1) * (arg1-2) * (arg1-3) * (arg1-4)
        :          // 6+
             // 0.0f/0.0f // NaN!
             // sqrt(-0.0-1.0)
             // -10000000.0
-            BadNaN
+            BadNaNInt
        )))));
 }
 
+
 // α! = α1! α2!
-// for 2D
-float alphaFactorial(ivec2 a) {
-    float ax = float(a.x);
-    float ay = float(a.y);
+// deprecated
+// this is int-only too!!
+// specicic for D=2: for 2D
+int alphaFactorial(ivec2 a) {
+    // float ax = float(a.x);
+    // float ay = float(a.y);
     // float ax_1 = float(a.x-1);
     // float ay_1 = float(a.x-1);
     //
     //float f1 = (a.x==0?1.0:(a.x==1?1.0:ax * ax_1)); // handles 0,1,2 only
     //float f2 = (a.y==0?1.0:(a.y==1?1.0:ay * ay_1));
 
-    float f1 = cond_c(a.x, ax);
-    float f2 = cond_c(a.y, ay);
+    /*
+    // it is int !
+    float f1 = float(cond_c(a.x, a.x));
+    float f2 = float(cond_c(a.y, a.y));
+
+    return f1 * f2;
+    */
+    int f1 = cond_c(a.x, a.x);
+    int f2 = cond_c(a.y, a.y);
+    // cond_c(a,a) = a ! , and we only used is thi way: so:
+    // hance, use alphaFactorial_fast
 
     return f1 * f2;
 }
+
+
+// see above!
+// α! = α1! α2!
+// specicic for D=2
+// this is int-only too.
+int alphaFactorial_fast(ivec2 a) {
+    // return fast_factorial(a.x) * fast_factorial(a.y);
+    return FACTORIALS_TABLE[a.x] * FACTORIALS_TABLE[a.y];
+}
+
+/*
+// if it was D=3, etc
+int alphaFactorial_fast_d3(ivec3 a) {
+    return FACTORIALS_TABLE(a.x) *
+      FACTORIALS_TABLE(a.y) *
+      FACTORIALS_TABLE(a.z);
+}
+*/
 
 // Part 2: Inference: approximate Taylor coeffiecnts
 
@@ -215,7 +271,7 @@ float phi_alpha(vec2 dx, ivec2 a) {
     */
     term *= fast_power_n(dx.y, a.y);
 
-    return term / alphaFactorial(a);
+    return term / float(alphaFactorial(a));
 }
 
 
