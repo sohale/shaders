@@ -626,7 +626,9 @@ vec3 annotate_and_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, flo
 
 // see SAMPLER() as master_sdf
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
-  float t1 = iTime * 0.0;
+  // t1 is anomation time ( SDF is tiem-dependent)
+  // You can control animation speed here:
+  float t1 = iTime * 0.01;
   float t = iTime * 0.5;
   vec2 uv = squareFrame(iResolution.xy, fragCoord);
   float d;
