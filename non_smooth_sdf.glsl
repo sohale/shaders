@@ -31,7 +31,7 @@
 #define TAYLOR_BASES_MODELFAMILY 0
 #define RBF_BASES_MODELFAMILY 1
 
-#define MODELFAMILY  TAYLOR_BASES_MODELFAMILY
+#define MODELFAMILY  RBF_BASES_MODELFAMILY
 
 
 
@@ -583,6 +583,41 @@ void do_model(
 
 #if MODELFAMILY == RBF_BASES_MODELFAMILY
 
+
+// Number of radial basis coefficients: c0, c1*r, c2*r*r
+const int D = 2;  // const-snobbery
+const int M = D + 1;     // = 3 when D=2
+// In taylor: was: M = 6;
+const int N = 9;
+
+
+
+
+// this part to be merged into taylor's. Don't change:
+float Awork_AA[M*M];
+float bwork[M];
+float ATA_AA[M*M];
+float ATF[M];
+void setAA_ATA(int i, int j, float val) {
+    ATA_AA[i+j*M] = val;
+}
+float getAA_ATA(int i, int j) {
+    return ATA_AA[i+j*M];
+}
+void addAA_ATA(int i, int j, float val) {
+    ATA_AA[i+j*M] += val;
+}
+void setAA_Awork(int i, int j, float val) {
+    Awork_AA[i+j*M] = val;
+}
+float getAA_Awork(int i, int j) {
+    return Awork_AA[i+j*M];
+}
+void addAA_Awork(int i, int j, float val) {
+    Awork_AA[i+j*M] += val;
+}
+
+
 // Fit f ≈ c0 + c1*r + c2*r*r  (K=2)
 void fitRadialModel(
     vec2 dx[N],      // input offsets
@@ -621,6 +656,7 @@ void fitRadialModel(
         bwork[i] = ATF[i];
         for (int j=0; j<3; j++) {
             setAA_Awork(i, j, getAA_ATA(i,j));
+            // if (i==0 && j==0)  addAA_Awork(i, j, 0.001);
         }
     }
 
@@ -657,9 +693,9 @@ void fitRadialModel(
 float evalRadial(vec2 dx, float c[3]) {
     float r = length(dx);
     return c[0] + c[1]*r + c[2]*r*r;
-}
 
 }
+
 
 
 float demodel( in vec2 dx, in float model[M]) {
@@ -670,7 +706,7 @@ void do_model(
     in vec2 dx_buffer[N], in float F[N],
     out float model[M]
 ) {
-    fitRadialModel(N,  dx_buffer, F, model);
+    fitRadialModel(dx_buffer, F, model);
 }
 
 
@@ -926,7 +962,8 @@ vec2 project_closest_point_basedon_taylor(vec2 x0, float anim_time) {
 
     // Fit Taylor series
     float a[M];
-    computeTaylorCoefficients(N, DX, F, a);
+    // computeTaylorCoefficients(N, DX, F, a);
+    do_model(DX, F, a);
 
     // Newton solve T(delta)=0
     vec2 delta = vec2(0.0);
