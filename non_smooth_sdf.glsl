@@ -135,17 +135,15 @@ const int N = 9;
 // side inputs
 
 // buffers for temp work
-// float Awork[M][M];
+// Used for/in/by Gauss_Jordan_elimination() 
+// AA means array of array, ie, 2d-array
 float Awork_AA[M*M];
 float bwork[M];
 
-//    float ATA[M][M];
 float ATA_AA[M*M];
 float ATF[M];
 
 void setAA_ATA(int i, int j, float val) {
-    // void set_ATA_AA(int i, int j, float val) {
-    //void set_AA(ATA_AA, i,j, 0.0) {
     ATA_AA[i+j*M] = val;
 }
 float getAA_ATA(int i, int j) {
@@ -154,7 +152,6 @@ float getAA_ATA(int i, int j) {
 void addAA_ATA(int i, int j, float val) {
     ATA_AA[i+j*M] += val;
 }
-// Awork_AA:
 void setAA_Awork(int i, int j, float val) {
     Awork_AA[i+j*M] = val;
 }
@@ -171,33 +168,37 @@ void addAA_Awork(int i, int j, float val) {
 ⭐️⭐️⭐️ Gauss–Jordan elimination ⭐️⭐️⭐️
 
 Solves:
-   ✨ a = (A^T A)^{−1} A^T f
+   ✨ x = (A^T A)^{−1} A^T f
+Solve ATA * x = ATF via naive Gaussian elimination.
+x = params (a in tylor, c in RBF)
+x[M]
+
+GLSL notes:
+  (M is small, OK for GLSL; replace with a precomputed inverse if fixed.)
+
+Inputs are implicit ("side-band"): `ATA_AA`,`ATF`.
+Some temp space is used: `bwork`, `Awork`.
 */
 // Got merged! (Was) good food for refactoring ( RBF's version was merged).
-void Gauss_Jordan_elimination(/*in float ATA[M*M], in float ATF[M],*/  out float a[M]) {
-    // out bwork[]
+void Gauss_Jordan_elimination(/*in float ATA[M*M], in float ATF[M],*/  out float x[M]) {
 
-    // Solve ATA * a = ATF via naive Gaussian elimination.
-    // (M is small, OK for GLSL; replace with a precomputed inverse if fixed.)
-    // float Awork[M][M];
-    // float bwork[M];
-    // --- Copy ATA → Awork, ATF → bwork ---
-    for(int i=0;i<M;i++){
+    // float Awork[M][M]; float bwork[M];
+    // Make a copy: Awork ← ATA, bwork ← ATF
+    for(int i=0; i<M; i++){
         bwork[i] = ATF[i];
     }
     for(int i=0;i<M;i++){
         for(int j=0;j<M;j++)
-            // Awork[i][j] = ATA[i][j];
+            // Awork[i][j] ← ATA[i][j];
             setAA_Awork(i,j, getAA_ATA(i,j));
+            // perturbation:
             // if (i==0 && j==0)  addAA_Awork(i, j, 0.001);
     }
 
     // --- Gauss–Jordan elimination ---
-    // Gaussian elimination
     for(int i=0;i<M;i++){
         // Normalize pivot row
-        // pivot normalisation
-        // float diag = Awork[i][i];
+        // diag := Awork[i][i];
         float diag = getAA_Awork(i,i);
         for(int j=0;j<M;j++) { 
            // getAA_Awork(i,j) /= diag;
@@ -205,13 +206,11 @@ void Gauss_Jordan_elimination(/*in float ATA[M*M], in float ATF[M],*/  out float
         }
         bwork[i] /= diag;
 
-        // Eliminate other rows
-        // eliminate below and above
-        // k2?
+        // Eliminate other rows below and above
         for(int k=0;k<M;k++){
             if(k==i) continue;
-            // float factor = Awork[k][i];
-            float factor = getAA_Awork(k,i);
+            float factor = getAA_Awork(k,i); // / Awork[k][i]
+            // Awork[k][:] = row(k) -= f * row(i)
             for(int j=0;j<M;j++) {
                 // Awork[k][j] -= factor * Awork[i][j];
                 float vij = getAA_Awork(k,j) - factor * getAA_Awork(i,j);
@@ -221,19 +220,15 @@ void Gauss_Jordan_elimination(/*in float ATA[M*M], in float ATF[M],*/  out float
         }
     }
 
-    // bwork now holds a[]
-    // --- Copy solution to c[M] = model[M] ---
-    for(int i=0;i<M;i++)
-        a[i] = bwork[i];
+    // `bwork` now holds x[M] = model[M]
+    // x as params: (e.g.,  a[], c[])
+    // --- Copy solution  back to x ---
+    for(int i=0; i<M; i++)
+        x[i] = bwork[i];
 }
 
 
 // ===== end of COMMON AREA =====
-
-#if MODELFAMILY == TAYLOR_BASES_MODELFAMILY
-
-#endif  // TAYLOR_BASES_MODELFAMILY
-
 
 
 // ======== Taylor AREA: Brook Taylor © 1715 ! =========
