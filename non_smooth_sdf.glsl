@@ -164,6 +164,8 @@ float getAA_Awork(int i, int j) {
 void addAA_Awork(int i, int j, float val) {
     Awork_AA[i+j*M] += val;
 }
+//  RBF's version of ^ this part was repeated by RBF, and got merged ^.
+
 
 /*
 ⭐️⭐️⭐️ Gauss–Jordan elimination ⭐️⭐️⭐️
@@ -202,33 +204,9 @@ void Gauss_Jordan_elimination(/*in float ATA[M*M], in float ATF[M],*/  out float
         a[i] = bwork[i];
 }
 
+
+
 // RBF's version:
-
-// this part to be merged into taylor's. Don't change:
-float Awork_AA[M*M];
-float bwork[M];
-float ATA_AA[M*M];
-float ATF[M];
-void setAA_ATA(int i, int j, float val) {
-    ATA_AA[i+j*M] = val;
-}
-float getAA_ATA(int i, int j) {
-    return ATA_AA[i+j*M];
-}
-void addAA_ATA(int i, int j, float val) {
-    ATA_AA[i+j*M] += val;
-}
-void setAA_Awork(int i, int j, float val) {
-    Awork_AA[i+j*M] = val;
-}
-float getAA_Awork(int i, int j) {
-    return Awork_AA[i+j*M];
-}
-void addAA_Awork(int i, int j, float val) {
-    Awork_AA[i+j*M] += val;
-}
-
-
 
 /*
 ⭐️⭐️⭐️ Gauss–Jordan elimination ⭐️⭐️⭐️
@@ -237,7 +215,7 @@ Solves:
    ✨ a = (A^T A)^{−1} A^T f
 */
 // food for refactoring
-void Gauss_Jordan_elimination(/*in float ATA[M*M], in float ATF[M],*/  out float c[M]) {
+void Gauss_Jordan_elimination2(/*in float ATA[M*M], in float ATF[M],*/  out float c[M]) {
     // out bwork[]
      // --- Copy ATA → Awork, ATF → bwork ---
     for (int i=0; i<M; i++) {
@@ -764,7 +742,7 @@ void fitRadialModel(
     */
 
     // --- Gauss–Jordan elimination ---
-    Gauss_Jordan_elimination(/*ATA_AA, ATF,*/ c); // ; Awork) temp.s: bwork
+    Gauss_Jordan_elimination2(/*ATA_AA, ATF,*/ c); // ; Awork) temp.s: bwork
 
     /*
     // --- Copy solution to c[M] = model[M] ---
