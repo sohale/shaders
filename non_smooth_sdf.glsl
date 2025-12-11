@@ -1,6 +1,8 @@
-// forked from: https://www.shadertoy.com/view/3sKXDR - by koktszfung in 2019-11-15
+
 /**
- *	ray marching tools adapted from hughsk's 2D SDF Toy https://www.shadertoy.com/view/XsyGRW
+ * Uses C_inf to measure non-smoothness.
+ * The SDF and the Raymarching-visualiser, from:
+ * A fork of https://www.shadertoy.com/view/3sKXDR - by koktszfung in 2019-11-15, which in turn, had its ray marching tools adapted from hughsk's 2D SDF Toy https://www.shadertoy.com/view/XsyGRW
  */
 
 #define TRACE_STEPS 20
@@ -480,7 +482,8 @@ float plus(vec2 uv, vec2 dotuv, float r) {
 
 float evaluate_smothness(float delta, vec2 x0, float t1) {
     /*
-         delta: radius of neighbourhood samples. deafult: 0.01
+         delta: radius of neighbourhood samples. default: 0.01
+               (parameter for neighbourhood radius)
     */
 
     float coeffs[M];
@@ -570,7 +573,10 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   vec3 red_mark = vec3(1.,0.,0.) * non_smoothness;
   // treat as alpha, using mix()
   float alpha_ = clamp(abs(non_smoothness), 0., 1.);
-  col = mix(col, red_mark, alpha_);
+  // col = mix(col, red_mark, alpha_);
+  // more pale: ice-cold
+  // col = mix(1.0 - 0.4*col, red_mark, alpha_);
+  col = mix(0.7 + 0.3*col, red_mark, alpha_);
 
 
   fragColor.rgb = col;
