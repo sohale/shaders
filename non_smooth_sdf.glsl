@@ -115,8 +115,78 @@ const int N = 9;
 
 #endif  // TAYLOR_BASES_MODELFAMILY
 
-// ======== COMMON AREA =========
+// ======== COMMON AREA ( Gauss & Jordan) =========
 
+
+// side inputs
+
+// buffers for temp work
+// float Awork[M][M];
+float Awork_AA[M*M];
+float bwork[M];
+
+//    float ATA[M][M];
+float ATA_AA[M*M];
+float ATF[M];
+
+void setAA_ATA(int i, int j, float val) {
+    // void set_ATA_AA(int i, int j, float val) {
+    //void set_AA(ATA_AA, i,j, 0.0) {
+    ATA_AA[i+j*M] = val;
+}
+float getAA_ATA(int i, int j) {
+    return ATA_AA[i+j*M];
+}
+void addAA_ATA(int i, int j, float val) {
+    ATA_AA[i+j*M] += val;
+}
+// Awork_AA:
+void setAA_Awork(int i, int j, float val) {
+    Awork_AA[i+j*M] = val;
+}
+float getAA_Awork(int i, int j) {
+    return Awork_AA[i+j*M];
+}
+void addAA_Awork(int i, int j, float val) {
+    Awork_AA[i+j*M] += val;
+}
+
+/*
+⭐️⭐️⭐️ Gauss–Jordan elimination ⭐️⭐️⭐️
+
+Solves:
+   ✨ a = (A^T A)^{−1} A^T f
+*/
+// food for refactoring
+void Gauss_Jordan_elimination(/*in float ATA[M*M], in float ATF[M],*/  out float a[M]) {
+    // Gaussian elimination
+    for(int i=0;i<M;i++){
+        // pivot normalisation
+        // float diag = Awork[i][i];
+        float diag = getAA_Awork(i,i);
+        for(int j=0;j<M;j++) { 
+           // getAA_Awork(i,j) /= diag;
+           setAA_Awork(i,j , getAA_Awork(i,j) / diag );
+        }
+        bwork[i] /= diag;
+
+        // eliminate below and above
+        for(int k=0;k<M;k++){
+            if(k==i) continue;
+            // float factor = Awork[k][i];
+            float factor = getAA_Awork(k,i);
+            for(int j=0;j<M;j++) {
+                // Awork[k][j] -= factor * Awork[i][j];
+                setAA_Awork(k,j, getAA_Awork(k,j) - factor * getAA_Awork(i,j));
+            }
+            bwork[k] -= factor * bwork[i];
+        }
+    }
+
+    // bwork now holds a[]
+    for(int i=0;i<M;i++)
+        a[i] = bwork[i];
+}
 
 // ===== end of COMMON AREA =====
 
@@ -412,75 +482,6 @@ float phi_alpha_(vec2 dx, ivec2 a, int m) {
     return numerat / float(denom);
 }
 
-// side inputs
-
-// buffers for temp work
-// float Awork[M][M];
-float Awork_AA[M*M];
-float bwork[M];
-
-//    float ATA[M][M];
-float ATA_AA[M*M];
-float ATF[M];
-
-void setAA_ATA(int i, int j, float val) {
-    // void set_ATA_AA(int i, int j, float val) {
-    //void set_AA(ATA_AA, i,j, 0.0) {
-    ATA_AA[i+j*M] = val;
-}
-float getAA_ATA(int i, int j) {
-    return ATA_AA[i+j*M];
-}
-void addAA_ATA(int i, int j, float val) {
-    ATA_AA[i+j*M] += val;
-}
-// Awork_AA:
-void setAA_Awork(int i, int j, float val) {
-    Awork_AA[i+j*M] = val;
-}
-float getAA_Awork(int i, int j) {
-    return Awork_AA[i+j*M];
-}
-void addAA_Awork(int i, int j, float val) {
-    Awork_AA[i+j*M] += val;
-}
-
-/*
-⭐️⭐️⭐️ Gauss–Jordan elimination ⭐️⭐️⭐️
-
-Solves:
-   ✨ a = (A^T A)^{−1} A^T f
-*/
-// food for refactoring
-void Gauss_Jordan_elimination(/*in float ATA[M*M], in float ATF[M],*/  out float a[M]) {
-    // Gaussian elimination
-    for(int i=0;i<M;i++){
-        // pivot normalisation
-        // float diag = Awork[i][i];
-        float diag = getAA_Awork(i,i);
-        for(int j=0;j<M;j++) { 
-           // getAA_Awork(i,j) /= diag;
-           setAA_Awork(i,j , getAA_Awork(i,j) / diag );
-        }
-        bwork[i] /= diag;
-
-        // eliminate below and above
-        for(int k=0;k<M;k++){
-            if(k==i) continue;
-            // float factor = Awork[k][i];
-            float factor = getAA_Awork(k,i);
-            for(int j=0;j<M;j++) {
-                // Awork[k][j] -= factor * Awork[i][j];
-                setAA_Awork(k,j, getAA_Awork(k,j) - factor * getAA_Awork(i,j));
-            }
-            bwork[k] -= factor * bwork[i];
-        }
-    }
-
-    // bwork now holds a[]
-    for(int i=0;i<M;i++)
-        a[i] = bwork[i];
-}
 
 // ===============================================================
 // Compute Taylor parameters a[m] for m = 0..M-1
