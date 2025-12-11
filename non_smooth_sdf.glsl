@@ -31,7 +31,7 @@
 #define TAYLOR_BASES_MODELFAMILY 0
 #define RBF_BASES_MODELFAMILY 1
 
-#define MODELFAMILY  RBF_BASES_MODELFAMILY
+#define MODELFAMILY  TAYLOR_BASES_MODELFAMILY
 
 
 
@@ -527,8 +527,7 @@ void computeTaylorCoefficients(
     out float a[M]          // output coefficients
 ){
     // Build ATA = A^T A (M x M)
-    float ATA_AA[M*M];
-    float ATF[M];
+    // float ATA_AA[M*M]; float ATF[M];
 
     // init
     for(int i=0;i<M;i++) {
