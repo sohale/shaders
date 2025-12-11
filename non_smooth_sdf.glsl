@@ -738,7 +738,7 @@ void fill_dx_buffer(in float delta, inout vec2 dx_buffer[N], int NN) {
     // N == GM*GM;
 }
 
-float evaluate_smothness(float delta, vec2 x0, float anim_time) {
+float evaluate_smoothness(float delta, vec2 x0, float anim_time) {
     /*
          delta: radius of neighbourhood samples. default: 0.01
                (parameter for neighbourhood radius)
@@ -912,7 +912,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   vec3 col = vec3(0.); // Detected a sin (uninitialise variable!). fixed.
   col = annotate_and_virualise( col, d, uv, ro , ref0, anim_time, t3);
   
-  float err =  evaluate_smothness(0.01, uv.xy, anim_time) - SAMPLER(uv.xy, anim_time);
+  float err =  evaluate_smoothness(0.01, uv.xy, anim_time) - SAMPLER(uv.xy, anim_time);
   
   col = visualise_discrepancy(col, err);
 
