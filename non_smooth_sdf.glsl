@@ -25,15 +25,27 @@
 #define _BY_MOUSE_ANIMATIONSOURCE 1
 
 #define ANIMATION_SOURCE _BY_TIME_ANIMATIONSOURCE
-const float PI = 3.14159265359;
 
+
+
+#define TAYLOR_BASES_MODELFAMILY 0
+#define RBF_BASES_MODELFAMILY 1
+
+#define MODELFAMILY  TAYLOR_BASES_MODELFAMILY
+
+
+
+//////// Math-y part
+
+const float PI = 3.14159265359;
 
 
 //==========================================
 
 
+#if MODELFAMILY == TAYLOR_BASES_MODELFAMILY
 
-//////// Math-y part
+
 //// Part 1: common, foundations, basic vectors, factorials.
 
 /*
@@ -536,6 +548,9 @@ vec2 dx_buffer[N]; // = x_buffer[k] - x0;
 computeTaylorCoefficients( N, dx_buffer, SDF_buffer, coeffs );
 float err = evaluateTaylor(dx, coeffs);
 */
+
+
+#endif  // MODELFAMILY == TAYLOR_BASES_MODELFAMILY
 //==========================================
 
 
