@@ -719,6 +719,25 @@ float plus(vec2 uv, vec2 dotuv, float r) {
 // this attempt led to the math part. see above.
 
 
+void fill_dx_buffer(in float delta, inout vec2 dx_buffer[N], int NN) {
+    int GM = 3;
+    {
+    int ctr=0;
+    for(int i=0;i<GM;i++) {
+       for(int j=0;j<GM;j++) {
+       if (ctr<4)
+          dx_buffer[ctr].x = float(i-1) * delta;
+          dx_buffer[ctr].y = float(j-1) * delta;
+          ctr += 1;
+       }
+    }
+    }
+    // ask compiler to guarantee ctr<GM*GM
+    
+    //runtime assert:
+    // N == GM*GM;
+}
+
 float evaluate_smothness(float delta, vec2 x0, float anim_time) {
     /*
          delta: radius of neighbourhood samples. default: 0.01
@@ -729,17 +748,7 @@ float evaluate_smothness(float delta, vec2 x0, float anim_time) {
     float SDF_buffer[N];
     // vec2 dx === uv === x0;
     vec2 dx_buffer[N]; // = x_buffer[k] - x0;
-    int GM = 3;
-    {
-    int ctr=0;
-    for(int i=0;i<GM;i++) {
-       for(int j=0;j<GM;j++) {
-          dx_buffer[ctr].x = float(i-1) * delta;
-          dx_buffer[ctr].y = float(j-1) * delta;
-          ctr += 1;
-       }
-    }
-    }
+    fill_dx_buffer(delta, dx_buffer, N);
     // ask compiler to guarantee ctr<GM*GM
     
     //runtime assert:
@@ -869,6 +878,7 @@ vec3 annotate_and_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, flo
 }
 
 vec2 pre_zoom(vec2 uv, vec2 screen) {
+  return uv;
   // uv = (uv+vec2(120.0,120.0))*0.7;
   // uv = 0.3*(uv/screen+vec2(0.3,0.3))*screen;
   float Z = 7.0;
