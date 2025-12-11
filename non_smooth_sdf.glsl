@@ -38,8 +38,17 @@ const float PI = 3.14159265359;
 
 /*
 Multi-dimensional Taylor series:
-K = number of Taylor-series terms
-power = m
+Has two paremters: (D, M):
+  D : Number of dimenions, 
+  M: to what order we want to keep trck of the smooth/analytical approximation/local model
+      C^∞, but we use up to C^M.
+So,
+  x ∈ ℝ^D,
+  f ∈ C^M.
+
+K = number of Taylor-series terms (if matrix form).
+Hene, maximum power that iappears is M (m).
+power = m 
 A_{k,m}, power: m
 Ak,m =α(m)!(Δxk)α(m)
 a=(A^T A)^{−1}A^Tf
@@ -59,7 +68,7 @@ The sum of those integers, are the order of the term (in classical sense)
 α is a "A multi–index".
 
 
-Hence,
+Hence, it's "order", the "multi-order" or each term:
     ∣α∣ = Order:
     ∣𝛼∣ = 𝛼1 + ⋯ + 𝛼𝐷
     ∣α∣ = α1 + ⋯ + α D.
@@ -69,6 +78,19 @@ The extended factorial of (α) is:
    𝛼! = 𝛼_1! × ⋯ × 𝛼_𝐷!
    (α)! = (α_1)! × ⋯ × (α_D)!
    = ∏^D α_i
+
+
+"Monomial" power: x^α
+    x^α = ∏^D pow(x, α_i)
+
+So, we extended sum, factorial, and power to α.
+
+
+Taylor-like basis function:
+   𝜙_𝛼 (𝑥) = 𝑥^𝛼 / 𝛼!
+   ϕ_α (x) = x^α / α!
+combines extended multi-power and multi-factorial 
+(extended-power and extended factrorial).
 
 */
 
@@ -86,8 +108,12 @@ const ivec2 alphaList[M] = ivec2[M](
 );
 
 float BadNaN = -10000000.0;
-// float if_val(i,i0,float val)
+
+
+
 float cond_c(int idx, float arg1) {
+    // ?float if_val(i,i0,float val)
+
     // return (idx==0?1.0:(idx==1?1.0:arg1 * (arg1-1.)));
     /*
     return
@@ -121,6 +147,7 @@ float cond_c(int idx, float arg1) {
 }
 
 // α! = α1! α2!
+// for 2D
 float alphaFactorial(ivec2 a) {
     float ax = float(a.x);
     float ay = float(a.y);
