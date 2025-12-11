@@ -618,17 +618,23 @@ void addAA_Awork(int i, int j, float val) {
 }
 
 
+/*
+// food for refactoring
+void Gauss_Jordan_elimination() {
+}
+*/
+
 // Fit f ≈ c0 + c1*r + c2*r*r  (K=2)
 void fitRadialModel(
     vec2 dx[N],      // input offsets
     float F[N],      // SDF samples
-    out float c[3]   // c0, c1, c2
+    out float c[M]   // c0, c1, c2
 ){
     // zero
     // --- Clear ATA and ATF ---
-    for (int i=0; i<3; i++) {
+    for (int i=0; i<M; i++) {
         ATF[i] = 0.0;
-        for (int j=0; j<3; j++) {
+        for (int j=0; j<M; j++) {
             setAA_ATA(i, j, 0.0);
         }
     }
@@ -637,63 +643,77 @@ void fitRadialModel(
     // --- Accumulate ATA and ATF ---
     for (int k=0; k<N; k++) {
         float r = length(dx[k]);
+        // radial basis row: 1, r, r^2, ..., r^(R-1)
+        /*
         float row0 = 1.0;
         float row1 = r;
         float row2 = r*r;
+        float row[M] = float[M](row0, row1, row2);
+        */
 
-        float row[3] = float[3](row0, row1, row2);
-
-        for (int i=0; i<3; i++) {
+        float row[M] = float[M](1.0, r, r*r);
+        
+        for (int i=0; i<M; i++) {
             ATF[i] += row[i] * F[k];
-            for (int j=0; j<3; j++) {
+        }
+        for (int i=0; i<M; i++) {
+            for (int j=0; j<M; j++) {
                 addAA_ATA(i, j, row[i] * row[j]);
             }
         }
     }
 
     // --- Copy ATA → Awork, ATF → bwork ---
-    for (int i=0; i<3; i++) {
+    for (int i=0; i<M; i++) {
         bwork[i] = ATF[i];
-        for (int j=0; j<3; j++) {
+    }
+    for (int i=0; i<M; i++) {
+        for (int j=0; j<M; j++) {
             setAA_Awork(i, j, getAA_ATA(i,j));
             // if (i==0 && j==0)  addAA_Awork(i, j, 0.001);
         }
     }
 
     // --- Gauss–Jordan elimination ---
-    for (int i=0; i<3; i++) {
+    for (int i=0; i<M; i++) {
         // Normalize pivot row
         float diag = getAA_Awork(i,i);
-        for (int j=0; j<3; j++) {
+        for (int j=0; j<M; j++) {
             setAA_Awork(i, j, getAA_Awork(i,j) / diag);
         }
         bwork[i] /= diag;
 
         // Eliminate other rows
-        for (int k2=0; k2<3; k2++) {
+        for (int k2=0; k2<M; k2++) {
             if (k2 == i) continue;
 
             float f = getAA_Awork(k2,i);
-            for (int j=0; j<3; j++) {
-                setAA_Awork(k2, j,
-                    getAA_Awork(k2,j) - f * getAA_Awork(i,j)
-                );
+            for (int j=0; j<M; j++) {
+                float vij = getAA_Awork(k2,j) - f * getAA_Awork(i,j);
+                setAA_Awork(k2, j, vij);
             }
             bwork[k2] -= f * bwork[i];
         }
     }
 
-    // --- Copy solution to c[3] ---
-    for (int i=0; i<3; i++) {
+    // --- Copy solution to c[3] = model[M] ---
+    for (int i=0; i<M; i++) {
         c[i] = bwork[i];
     }
+    /*
+    // if M < M_max, (alt. (R,M) )
+    // First M entries contain c0..c(M-1), rest = BadNaN
+    for (int i=0; i<M_max; i++) {
+        if (i < M) model[i] = bwork[i];
+        else        model[i] = BadNaN;
+    }
+    */
 }
 
 
-float evalRadial(vec2 dx, float c[3]) {
+float evalRadial(vec2 dx, float c[M]) {
     float r = length(dx);
     return c[0] + c[1]*r + c[2]*r*r;
-
 }
 
 
