@@ -390,15 +390,16 @@ float master_sdf(vec2 uv) {
 }
 */
 
-float SAMPLER(vec2 p, float t2) {
+float SAMPLER(vec2 p, float anim_time) {
+    // anim_time was t2
     #if ANIMATION_SOURCE == _BY_MOUSE_ANIMATIONSOURCE
     	float a1 = iMouse.x / iResolution.x * PI*2.;
     	float a2 = iMouse.x / iResolution.x * -PI*2. + PI*.5;
     #endif
     #if ANIMATION_SOURCE == _BY_TIME_ANIMATIONSOURCE
         float T = 3.;  // period
-        float a1 = smoothstep(0., T*.75, mod(t2, T)) * PI*2.;  // stop for T*.25s
-        float a2 = smoothstep(0., T*.75, mod(t2, T)) * -PI*2. + PI*.5;  // stop for T*.25s, +PI/2 phase
+        float a1 = smoothstep(0., T*.75, mod(anim_time, T)) * PI*2.;  // stop for T*.25s
+        float a2 = smoothstep(0., T*.75, mod(anim_time, T)) * -PI*2. + PI*.5;  // stop for T*.25s, +PI/2 phase
     #endif
 
     
@@ -456,13 +457,13 @@ vec3 draw_distance(float d, vec2 p) {
   return grad;
 }
 
-vec3 draw_trace(float d, vec2 p, vec2 ro, vec2 rd, float t4) {
+vec3 draw_trace(float d, vec2 p, vec2 ro, vec2 rd, float anim_time4) {
   vec3 col = vec3(0);
   vec3 line = vec3(1, 1, 1);
   vec2 _ro = ro;
 
   for (int i = 0; i < TRACE_STEPS; i++) {
-    float t = SAMPLER(ro, t4);
+    float t = SAMPLER(ro, anim_time4);
     col += 0.8 * line * (1.0 - draw_outline(length(p.xy - ro) - abs(t), 0.));
     col += 0.2 * line * (1.0 - draw_solid(length(p.xy - ro) - abs(t) + 0.02));
     col += line * (1.0 - draw_solid(length(p.xy - ro) - 0.015));
@@ -488,7 +489,7 @@ float plus(vec2 uv, vec2 dotuv, float r) {
 // this attempt led to the math part. see above.
 
 
-float evaluate_smothness(float delta, vec2 x0, float t1) {
+float evaluate_smothness(float delta, vec2 x0, float anim_time) {
     /*
          delta: radius of neighbourhood samples. default: 0.01
                (parameter for neighbourhood radius)
@@ -515,7 +516,7 @@ float evaluate_smothness(float delta, vec2 x0, float t1) {
     // N == GM*GM;
 
     for(int i=0;i<N;i++) {
-       SDF_buffer[i] = SAMPLER(dx_buffer[i] + x0, t1);
+       SDF_buffer[i] = SAMPLER(dx_buffer[i] + x0, anim_time);
     }
     
     // stores into: coeffs
@@ -527,7 +528,7 @@ float evaluate_smothness(float delta, vec2 x0, float t1) {
 
 
 
-vec2 project_closest_point_basedon_taylor(vec2 x0, float t1) {
+vec2 project_closest_point_basedon_taylor(vec2 x0, float anim_time) {
 
     // 1. Gather local patch for Taylor model
     float F[N];
@@ -539,7 +540,7 @@ vec2 project_closest_point_basedon_taylor(vec2 x0, float t1) {
         for(int j=0;j<3;j++){
             vec2 d = vec2(float(i-1)*r, float(j-1)*r);
             DX[idx] = d;
-            F[idx]  = SAMPLER(x0 + d, t1);
+            F[idx]  = SAMPLER(x0 + d, anim_time);
             idx++;
         }
     }
@@ -595,7 +596,7 @@ vec3 visualise_discrepancy(vec3 col, float err) {
   return col;
 }
 
-vec3 annotate_and_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, float t1) {
+vec3 annotate_and_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, float anim_time, float t3) {
 
   vec2 rd = normalize(ref0-ro);
 
@@ -606,13 +607,13 @@ vec3 annotate_and_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, flo
   #if DISPLAY_STYLE == STYLE_SDF
     col = vec3(draw_distance(d, uv.xy));
     #if ANIMATION_SOURCE == _BY_TIME_ANIMATIONSOURCE
-    	col -= mouse_button * vec3(draw_trace(d, uv.xy, ro, rd, t1));
+    	col -= mouse_button * vec3(draw_trace(d, uv.xy, ro, rd, anim_time));
     #endif
   #endif
   #if DISPLAY_STYLE == STYLE_SOLID_EDGES
     col = vec3(0) + 1.0 - vec3(draw_outline(d));
     #if ANIMATION_SOURCE == _BY_TIME_ANIMATIONSOURCE
-    	col += mouse_button * vec3(1, 0.25, 0) * vec3(draw_trace(d, uv.xy, ro, rd, t1));
+    	col += mouse_button * vec3(1, 0.25, 0) * vec3(draw_trace(d, uv.xy, ro, rd, anim_time));
     #endif
     col = 1. - col;
   #endif
@@ -621,7 +622,7 @@ vec3 annotate_and_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, flo
     col = vec3(draw_solid(d));
   #endif
   #if DISPLAY_STYLE == STYLE_POLARITY
-    col = vec3(draw_polarity(d, uv.xy, t1));
+    col = vec3(draw_polarity(d, uv.xy, t3));
   #endif
   
   // Added a dot at mouse position (where the start point for annoations it)
@@ -635,9 +636,12 @@ vec3 annotate_and_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, flo
 
 // see SAMPLER() as master_sdf
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
-  // t1 is anomation time ( SDF is tiem-dependent)
+  // anim_time (formerly, "t1") is anomation time ( SDF is tiem-dependent)
   // You can control animation speed here:
-  float t1 = iTime * 0.01;
+  float anim_time = iTime * 0.01;
+  // float t3 = anim_time; // used in polarity // SoC!
+  // float t3 = anim_time * 100.0; // used in polarity // SoC!
+  float t3 = iTime; // used in polarity // SoC!. Now disentangled!
   float t = iTime * 0.5;
   vec2 uv = squareFrame(iResolution.xy, fragCoord);
   float d;
@@ -649,10 +653,10 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   vec2 ref0 = vec2(0.2,0.3);
 
 
-  d = SAMPLER(uv, t1);
-  col = annotate_and_virualise( col, d, uv, ro , ref0, t1);
+  d = SAMPLER(uv, anim_time);
+  col = annotate_and_virualise( col, d, uv, ro , ref0, anim_time, t3);
   
-  float err =  evaluate_smothness(0.01, uv.xy, t1) - SAMPLER(uv.xy, t1);
+  float err =  evaluate_smothness(0.01, uv.xy, anim_time) - SAMPLER(uv.xy, anim_time);
   
   col = visualise_discrepancy(col, err);
 
