@@ -550,17 +550,6 @@ float err = evaluateTaylor(dx, coeffs);
 */
 
 
-#endif  // MODELFAMILY == TAYLOR_BASES_MODELFAMILY
-
-
-//==========================================
-
-
-
-#if MODELFAMILY == TAYLOR_BASES_MODELFAMILY
-
-#endif  // MODELFAMILY == TAYLOR_BASES_MODELFAMILY
-
 //==========================================
 
 // model() points -> params // (fit)
@@ -582,8 +571,76 @@ void do_model(
    computeTaylorCoefficients(N,  dx_buffer, F, model);
 }
 
+#endif  // MODELFAMILY == TAYLOR_BASES_MODELFAMILY
+
+
 //==========================================
 
+
+
+//==========================================
+// RBF Territory:
+
+#if MODELFAMILY == RBF_BASES_MODELFAMILY
+
+// Fit f ≈ c0 + c1*r + c2*r*r  (K=2)
+void fitRadialModel(
+    vec2 dx[N],      // input offsets
+    float F[N],      // SDF samples
+    out float c[3]   // c0,c1,c2
+){
+    float ATA[3][3];
+    float ATF[3];
+
+    // zero
+    for(int i=0;i<3;i++){
+        ATF[i] = 0.0;
+        for(int j=0;j<3;j++) ATA[i][j] = 0.0;
+    }
+
+    // accumulate
+    for(int k=0;k<N;k++){
+        float r = length(dx[k]);
+        float row[3] = float[3](1.0, r, r*r);
+
+        for(int i=0;i<3;i++){
+            ATF[i] += row[i] * F[k];
+            for(int j=0;j<3;j++)
+                ATA[i][j] += row[i] * row[j];
+        }
+    }
+
+    // solve ATA * c = ATF (Gaussian elimination)
+    // (same code you use for Taylor case)
+    float Mmat[3][3];
+    float b[3];
+
+    for(int i=0;i<3;i++){
+        b[i] = ATF[i];
+        for(int j=0;j<3;j++) Mmat[i][j] = ATA[i][j];
+    }
+
+    // Gauss-Jordan
+    for(int i=0;i<3;i++){
+        float diag = Mmat[i][i];
+        for(int j=0;j<3;j++) Mmat[i][j] /= diag;
+        b[i] /= diag;
+
+        for(int k2=0;k2<3;k2++){
+            if(k2==i) continue;
+            float f = Mmat[k2][i];
+            for(int j=0;j<3;j++)
+                Mmat[k2][j] -= f * Mmat[i][j];
+            b[k2] -= f * b[i];
+        }
+    }
+
+    for(int i=0;i<3;i++) c[i] = b[i];
+}
+
+#endif  // MODELFAMILY == RBF_BASES_MODELFAMILY
+
+//==========================================
 
 
 float smin(float a, float b, float k) {
