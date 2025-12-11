@@ -587,20 +587,24 @@ vec3 visualise_discrepancy(vec3 col, float err) {
   return col;
 }
 
-vec3 their_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, float t1) {
+vec3 annotate_and_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, float t1) {
 
   vec2 rd = normalize(ref0-ro);
- 
+
+  #if MOUSE == 0
+  float mouse_other_button = (iMouse.z > 0.0 ? 1.0 : 0.0);
+  #endif
+
   #if DISPLAY == 0
     col = vec3(draw_distance(d, uv.xy));
     #if MOUSE == 0
-    	col -= (iMouse.z > 0.0 ? 1.0 : 0.0) * vec3(draw_trace(d, uv.xy, ro, rd, t1));
+    	col -= mouse_other_button * vec3(draw_trace(d, uv.xy, ro, rd, t1));
     #endif
   #endif
   #if DISPLAY == 1
     col = vec3(0) + 1.0 - vec3(draw_outline(d));
     #if MOUSE == 0
-    	col += (iMouse.z > 0.0 ? 1.0 : 0.0) * vec3(1, 0.25, 0) * vec3(draw_trace(d, uv.xy, ro, rd, t1));
+    	col += mouse_other_button * vec3(1, 0.25, 0) * vec3(draw_trace(d, uv.xy, ro, rd, t1));
     #endif
     col = 1. - col;
   #endif
@@ -610,6 +614,13 @@ vec3 their_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, float t1) 
   #if DISPLAY == 3
     col = vec3(draw_polarity(d, uv.xy, t1));
   #endif
+  
+  // Added a dot at mouse position (where the start point for annoations it)
+  float indot = indotness(uv, ro, 0.015*3.0);
+  col *= 1.0-(1.0 - indot);
+  col *= indotness(uv, ref0, 0.015*3.0);
+
+
   return col;
 }
 
@@ -624,19 +635,12 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   ro.x *= squareFrame(iResolution.xy, iResolution.xy).x;
   // ro = mouse in coords/frame of "squareFrame"
 
-
   vec2 ref0 = vec2(0.2,0.3);
 
 
   d = SAMPLER(uv, t1);
-  col = their_virualise( col, d, uv, ro , ref0, t1);
+  col = annotate_and_virualise( col, d, uv, ro , ref0, t1);
   
-  // I added this too:
-  float indot = indotness(uv, ro, 0.015*3.0);
-  col *= 1.0-(1.0 - indot);
-
-  col *= indotness(uv, ref0, 0.015*3.0);
-
   float err =  evaluate_smothness(0.01, uv.xy, t1) - SAMPLER(uv.xy, t1);
   
   col = visualise_discrepancy(col, err);
