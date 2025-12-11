@@ -551,8 +551,38 @@ float err = evaluateTaylor(dx, coeffs);
 
 
 #endif  // MODELFAMILY == TAYLOR_BASES_MODELFAMILY
+
+
 //==========================================
 
+
+
+#if MODELFAMILY == TAYLOR_BASES_MODELFAMILY
+
+#endif  // MODELFAMILY == TAYLOR_BASES_MODELFAMILY
+
+//==========================================
+
+// model() points -> params // (fit)
+// demodel() params -> eval //(approx) // local-model
+
+// evaluate model
+float demodel( in vec2 dx, in float model[M]) {
+   return evaluateTaylor(dx, model);
+}
+// to model (verb)
+// stores into: coeffs
+// model (n.) = output coefficients
+// is near zero (civinity surrounding, neighbourhood (0)
+// void model(
+void do_model(
+    in vec2 dx_buffer[N], in float F[N],
+    out float model[M]
+) {
+   computeTaylorCoefficients(N,  dx_buffer, F, model);
+}
+
+//==========================================
 
 
 
@@ -774,7 +804,8 @@ float evaluate_smoothness(float delta, vec2 x0, float anim_time) {
     }
     
     // stores into: coeffs
-    computeTaylorCoefficients( N, dx_buffer, SDF_buffer, coeffs );
+    // computeTaylorCoefficients( N, dx_buffer, SDF_buffer, coeffs );
+    do_model(dx_buffer, SDF_buffer, coeffs );
     vec2 dx0 = vec2(0.); // taylor around 0 (in dx_buffer coords)
     float sdf_approx = evaluateTaylor(dx0, coeffs);
     return sdf_approx;
