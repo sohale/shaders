@@ -12,11 +12,14 @@
 // 1 = Raymarched Edges
 // 2 = Resulting Solid
 // 3 = Distance Field Polarity
-#define DISPLAY 0
+#define DISPLAY_STYLE 0
 
 // 0 = Angle controlled By iTime
 // 1 = Angle controlled By iMouse
-#define MOUSE 0
+#define _BY_TIME_ANIMATION_SOURCE 0
+#define _BY_MOUSE_ANIMATION_SOURCE 1
+
+#define ANIMATION_SOURCE _BY_TIME_ANIMATION_SOURCE
 const float PI = 3.14159265359;
 
 
@@ -383,11 +386,11 @@ float master_sdf(vec2 uv) {
 */
 
 float SAMPLER(vec2 p, float t2) {
-    #if MOUSE
+    #if ANIMATION_SOURCE == _BY_MOUSE_ANIMATION_SOURCE
     	float a1 = iMouse.x / iResolution.x * PI*2.;
     	float a2 = iMouse.x / iResolution.x * -PI*2. + PI*.5;
     #endif
-    #if !MOUSE
+    #if ANIMATION_SOURCE == _BY_TIME_ANIMATION_SOURCE
         float T = 3.;  // period
         float a1 = smoothstep(0., T*.75, mod(t2, T)) * PI*2.;  // stop for T*.25s
         float a2 = smoothstep(0., T*.75, mod(t2, T)) * -PI*2. + PI*.5;  // stop for T*.25s, +PI/2 phase
@@ -591,28 +594,28 @@ vec3 annotate_and_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, flo
 
   vec2 rd = normalize(ref0-ro);
 
-  #if MOUSE == 0
+  #if ANIMATION_SOURCE == _BY_TIME_ANIMATION_SOURCE
   float mouse_button = (iMouse.z > 0.0 ? 1.0 : 0.0);
   #endif
 
-  #if DISPLAY == 0
+  #if DISPLAY_STYLE == 0
     col = vec3(draw_distance(d, uv.xy));
-    #if MOUSE == 0
+    #if ANIMATION_SOURCE == _BY_TIME_ANIMATION_SOURCE
     	col -= mouse_button * vec3(draw_trace(d, uv.xy, ro, rd, t1));
     #endif
   #endif
-  #if DISPLAY == 1
+  #if DISPLAY_STYLE == 1
     col = vec3(0) + 1.0 - vec3(draw_outline(d));
-    #if MOUSE == 0
+    #if ANIMATION_SOURCE == _BY_TIME_ANIMATION_SOURCE
     	col += mouse_button * vec3(1, 0.25, 0) * vec3(draw_trace(d, uv.xy, ro, rd, t1));
     #endif
     col = 1. - col;
   #endif
  
-  #if DISPLAY == 2
+  #if DISPLAY_STYLE == 2
     col = vec3(draw_solid(d));
   #endif
-  #if DISPLAY == 3
+  #if DISPLAY_STYLE == 3
     col = vec3(draw_polarity(d, uv.xy, t1));
   #endif
   
