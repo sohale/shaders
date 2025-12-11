@@ -618,11 +618,54 @@ void addAA_Awork(int i, int j, float val) {
 }
 
 
+
 /*
-// food for refactoring
-void Gauss_Jordan_elimination() {
-}
+--- Gauss–Jordan elimination ---
+solves:
+   a = (A^T A)^{−1} A^T f
 */
+// food for refactoring
+void Gauss_Jordan_elimination(in float ATA[M*M], in float ATF[M],  out float c[M]) {
+    // out bwork[]
+     // --- Copy ATA → Awork, ATF → bwork ---
+    for (int i=0; i<M; i++) {
+        bwork[i] = ATF[i];
+    }
+    for (int i=0; i<M; i++) {
+        for (int j=0; j<M; j++) {
+            setAA_Awork(i, j, getAA_ATA(i,j));
+            // if (i==0 && j==0)  addAA_Awork(i, j, 0.001);
+        }
+    }
+ 
+    // --- Gauss–Jordan elimination ---
+    for (int i=0; i<M; i++) {
+        // Normalize pivot row
+        float diag = getAA_Awork(i,i);
+        for (int j=0; j<M; j++) {
+            setAA_Awork(i, j, getAA_Awork(i,j) / diag);
+        }
+        bwork[i] /= diag;
+
+        // Eliminate other rows
+        for (int k2=0; k2<M; k2++) {
+            if (k2 == i) continue;
+
+            float f = getAA_Awork(k2,i);
+            for (int j=0; j<M; j++) {
+                float vij = getAA_Awork(k2,j) - f * getAA_Awork(i,j);
+                setAA_Awork(k2, j, vij);
+            }
+            bwork[k2] -= f * bwork[i];
+        }
+    }
+
+    // --- Copy solution to c[M] = model[M] ---
+    for (int i=0; i<M; i++) {
+        c[i] = bwork[i];
+    }
+}
+
 
 // Fit f ≈ c0 + c1*r + c2*r*r  (K=2)
 void fitRadialModel(
@@ -663,6 +706,7 @@ void fitRadialModel(
         }
     }
 
+    /*
     // --- Copy ATA → Awork, ATF → bwork ---
     for (int i=0; i<M; i++) {
         bwork[i] = ATF[i];
@@ -673,33 +717,17 @@ void fitRadialModel(
             // if (i==0 && j==0)  addAA_Awork(i, j, 0.001);
         }
     }
+    */
 
     // --- Gauss–Jordan elimination ---
-    for (int i=0; i<M; i++) {
-        // Normalize pivot row
-        float diag = getAA_Awork(i,i);
-        for (int j=0; j<M; j++) {
-            setAA_Awork(i, j, getAA_Awork(i,j) / diag);
-        }
-        bwork[i] /= diag;
+    Gauss_Jordan_elimination(ATA_AA, ATF, c); // ; Awork) temp.s: bwork
 
-        // Eliminate other rows
-        for (int k2=0; k2<M; k2++) {
-            if (k2 == i) continue;
-
-            float f = getAA_Awork(k2,i);
-            for (int j=0; j<M; j++) {
-                float vij = getAA_Awork(k2,j) - f * getAA_Awork(i,j);
-                setAA_Awork(k2, j, vij);
-            }
-            bwork[k2] -= f * bwork[i];
-        }
-    }
-
-    // --- Copy solution to c[3] = model[M] ---
+    /*
+    // --- Copy solution to c[M] = model[M] ---
     for (int i=0; i<M; i++) {
         c[i] = bwork[i];
     }
+    */
     /*
     // if M < M_max, (alt. (R,M) )
     // First M entries contain c0..c(M-1), rest = BadNaN
