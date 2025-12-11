@@ -587,24 +587,10 @@ vec3 visualise_discrepancy(vec3 col, float err) {
   return col;
 }
 
-// see SAMPLER() as master_sdf
-void mainImage(out vec4 fragColor, in vec2 fragCoord) {
-  float t1 = iTime * 0.0;
-  float t = iTime * 0.5;
-  vec2 uv = squareFrame(iResolution.xy, fragCoord);
-  float d;
-  vec3 col;
-  vec2 ro = vec2(iMouse.xy / iResolution.xy) * 2.0 - 1.0;
-  ro.x *= squareFrame(iResolution.xy, iResolution.xy).x;
-
-
-
-  vec2 ref0 = vec2(0.2,0.3);
+vec3 their_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, float t1) {
 
   vec2 rd = normalize(ref0-ro);
-
-  d = SAMPLER(uv, t1);
-
+ 
   #if DISPLAY == 0
     col = vec3(draw_distance(d, uv.xy));
     #if MOUSE == 0
@@ -624,7 +610,28 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   #if DISPLAY == 3
     col = vec3(draw_polarity(d, uv.xy, t1));
   #endif
+  return col;
+}
 
+// see SAMPLER() as master_sdf
+void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+  float t1 = iTime * 0.0;
+  float t = iTime * 0.5;
+  vec2 uv = squareFrame(iResolution.xy, fragCoord);
+  float d;
+  vec3 col;
+  vec2 ro = vec2(iMouse.xy / iResolution.xy) * 2.0 - 1.0;
+  ro.x *= squareFrame(iResolution.xy, iResolution.xy).x;
+  // ro = mouse in coords/frame of "squareFrame"
+
+
+  vec2 ref0 = vec2(0.2,0.3);
+
+
+  d = SAMPLER(uv, t1);
+  col = their_virualise( col, d, uv, ro , ref0, t1);
+  
+  // I added this too:
   float indot = indotness(uv, ro, 0.015*3.0);
   col *= 1.0-(1.0 - indot);
 
@@ -632,7 +639,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 
   float err =  evaluate_smothness(0.01, uv.xy, t1) - SAMPLER(uv.xy, t1);
   
-  col = visualise_discrepancy(col,err);
+  col = visualise_discrepancy(col, err);
 
 
   fragColor.rgb = col;
