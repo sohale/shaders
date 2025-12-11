@@ -642,7 +642,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   // float t3 = anim_time; // used in polarity // SoC!
   // float t3 = anim_time * 100.0; // used in polarity // SoC!
   float t3 = iTime; // used in polarity // SoC!. Now disentangled!
-  float t = iTime * 0.5;
+  // float t = iTime * 0.5; // turned out to be not used.
   vec2 uv = squareFrame(iResolution.xy, fragCoord);
   float d;
   vec3 col;
