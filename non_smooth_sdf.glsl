@@ -31,7 +31,7 @@
 #define TAYLOR_BASES_MODELFAMILY 0
 #define RBF_BASES_MODELFAMILY 1
 
-#define MODELFAMILY  RBF_BASES_MODELFAMILY
+#define MODELFAMILY  TAYLOR_BASES_MODELFAMILY
 
 
 
@@ -111,7 +111,8 @@ combines extended multi-power and multi-factorial
 
 // const int K = 2;
 const int M = 6;   // (K+1)(K+2)/2 = 6
-const int N = 9;
+// const int N = 9;
+const int N = 2;
 
 
 #endif  // TAYLOR_BASES_MODELFAMILY
@@ -125,7 +126,8 @@ const int N = 9;
 const int D = 2;  // const-snobbery
 const int M = D + 1;     // = 3 when D=2
 // In taylor: was: M = 6;
-const int N = 9;
+// const int N = 9;
+const int N = 3;
 
 
 #endif  // RBF_BASES_MODELFAMILY
@@ -939,8 +941,9 @@ void fill_dx_buffer_using_grid(in float delta, inout vec2 dx_buffer[N], int NN) 
        // if (ctr<0)
        // if (!(i-1 ==0 && j-1 == 0))
        {
-          dx_buffer[ctr].x = float(i-1) * delta;
-          dx_buffer[ctr].y = float(j-1) * delta;
+          vec2 uv = vec2(float(i-1), float(j-1));
+          dx_buffer[ctr].x = uv.x * delta;
+          dx_buffer[ctr].y = uv.y * delta;
 
        }
        ctr += 1;
@@ -969,11 +972,12 @@ void fill_dx_buffer_using_grid(in float delta, inout vec2 dx_buffer[N], int NN) 
         dx_buffer[1].xy = vec2(BadNaN, BadNaN);
     }
 }
-void fill_dx_buffer_using_circle(in float delta, inout vec2 dx_buffer[N], int NN) {
-    for(int i = 0; i < N; i++) {
-        float theta = float(i)/float(N) * 360.0 * PI / 180.0;
+
+void fill_dx_buffer_using_circle(in float delta, out vec2 dx_buffer[N], int NN) {
+    for(int i = 0; i < NN; i++) {
+        float theta = float(i)/float(NN) * 360.0 * PI / 180.0;
         // vec2 uv = vec2(float(i-1),float(j-1));
-        vec2 uv = vec2(cos(theta),sin(theta));
+        vec2 uv = vec2(cos(theta), sin(theta));
         dx_buffer[i].x = uv.x * delta;
         dx_buffer[i].y = uv.y * delta; 
     }
@@ -989,7 +993,7 @@ float evaluate_smoothness(float delta, vec2 x0, float anim_time) {
     float SDF_buffer[N];
     // vec2 dx === uv === x0;
     vec2 dx_buffer[N]; // = x_buffer[k] - x0;
-    fill_dx_buffer_using_grid(delta, dx_buffer, N);
+    // fill_dx_buffer_using_grid(delta, dx_buffer, N);
     // ask compiler to guarantee ctr<GM*GM
     fill_dx_buffer_using_circle(delta, dx_buffer, N);
     
@@ -1003,6 +1007,7 @@ float evaluate_smoothness(float delta, vec2 x0, float anim_time) {
        // if (i != 4)
        SDF_buffer[i] = SAMPLER(dx_buffer[i] + x0, anim_time);
        //if (i == 4)
+       if (false)
        {
        float rnd = RAND(x0*1.0, float(i)+2.0 * iTime * iResolution.y/1000.0);
        SDF_buffer[i] += rnd * 0.000013 * 10.0 * 0.0; 
@@ -1167,7 +1172,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   vec3 col = vec3(0.); // Detected a sin (uninitialise variable!). fixed.
   col = annotate_and_virualise( col, d, uv, ro , ref0, anim_time, t3);
   
-  float err =  evaluate_smoothness(0.03, uv.xy, anim_time) - SAMPLER(uv.xy, anim_time);
+  float err =  evaluate_smoothness(0.03*0.01/0.00004, uv.xy, anim_time) - SAMPLER(uv.xy, anim_time);
   
   col = visualise_discrepancy(col, err);
 
