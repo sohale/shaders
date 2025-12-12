@@ -31,7 +31,7 @@
 #define TAYLOR_BASES_MODELFAMILY 0
 #define RBF_BASES_MODELFAMILY 1
 
-#define MODELFAMILY  TAYLOR_BASES_MODELFAMILY
+#define MODELFAMILY  RBF_BASES_MODELFAMILY
 
 
 
@@ -39,6 +39,9 @@
 
 const float PI = 3.14159265359;
 
+
+float BadNaN = -10000000.0;
+int BadNaNInt = 100000;
 
 //==========================================
 
@@ -248,8 +251,6 @@ const ivec2 alphaList[M] = ivec2[M](
 );
 
 
-float BadNaN = -10000000.0;
-int BadNaNInt = 100000;
 
 const int[13] FACTORIALS_TABLE = int[13](
     1, // 0!,
@@ -915,20 +916,31 @@ float plus(vec2 uv, vec2 dotuv, float r) {
    return draw_solid(length(uv - dotuv) - r);
 }
 
+
+
 // gradient...
 // this attempt led to the math part. see above.
 
 
 void fill_dx_buffer(in float delta, inout vec2 dx_buffer[N], int NN) {
+
+    //resetting
+    for(int ctr=0; ctr<N; ctr++) {
+       // dx_buffer[ctr].xy = vec2(0.0);
+       dx_buffer[ctr].xy = vec2(0.1);
+    }
+
     int GM = 3;
     {
     int ctr=0;
     for(int i=0;i<GM;i++) {
        for(int j=0;j<GM;j++) {
-       if (ctr<4)
+       if (ctr<0) {
           dx_buffer[ctr].x = float(i-1) * delta;
           dx_buffer[ctr].y = float(j-1) * delta;
-          ctr += 1;
+
+       }
+       ctr += 1;
        }
     }
     }
@@ -936,6 +948,12 @@ void fill_dx_buffer(in float delta, inout vec2 dx_buffer[N], int NN) {
     
     //runtime assert:
     // N == GM*GM;
+    // if(!(N==GM*GM)) {
+    if(false) {
+        dx_buffer[0].xy = vec2(BadNaN,BadNaN);
+        dx_buffer[1].xy = vec2(BadNaN,BadNaN);
+        
+    }
 }
 
 float evaluate_smoothness(float delta, vec2 x0, float anim_time) {
@@ -1082,6 +1100,7 @@ vec3 annotate_and_virualise(vec3 col, float d, vec2 uv,  vec2 ro, vec2 ref0, flo
 
 vec2 pre_zoom(vec2 uv, vec2 screen) {
   return uv;
+  // return uv * ( 1.0 + 0.04*RAND(uv*0.000000001, 2.0 * iTime * iResolution.y/1000.0));
   // uv = (uv+vec2(120.0,120.0))*0.7;
   // uv = 0.3*(uv/screen+vec2(0.3,0.3))*screen;
   float Z = 7.0;
@@ -1115,7 +1134,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   vec3 col = vec3(0.); // Detected a sin (uninitialise variable!). fixed.
   col = annotate_and_virualise( col, d, uv, ro , ref0, anim_time, t3);
   
-  float err =  evaluate_smoothness(0.01, uv.xy, anim_time) - SAMPLER(uv.xy, anim_time);
+  float err =  evaluate_smoothness(1., uv.xy, anim_time) - SAMPLER(uv.xy, anim_time);
   
   col = visualise_discrepancy(col, err);
 
