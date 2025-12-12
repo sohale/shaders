@@ -924,6 +924,7 @@ float plus(vec2 uv, vec2 dotuv, float r) {
 
 void fill_dx_buffer(in float delta, inout vec2 dx_buffer[N], int NN) {
 
+    bool something_wrong = false;
     //resetting
     for(int ctr=0; ctr<N; ctr++) {
        // dx_buffer[ctr].xy = vec2(0.0);
@@ -935,7 +936,9 @@ void fill_dx_buffer(in float delta, inout vec2 dx_buffer[N], int NN) {
     int ctr=0;
     for(int i=0;i<GM;i++) {
        for(int j=0;j<GM;j++) {
-       if (ctr<0) {
+       // if (ctr<0)
+       if (!(i-1 ==0 && j-1 == 0))
+       {
           dx_buffer[ctr].x = float(i-1) * delta;
           dx_buffer[ctr].y = float(j-1) * delta;
 
@@ -943,15 +946,23 @@ void fill_dx_buffer(in float delta, inout vec2 dx_buffer[N], int NN) {
        ctr += 1;
        }
     }
+    if(!(N==ctr)) {
+        something_wrong = true;
+    }
     }
     // ask compiler to guarantee ctr<GM*GM
     
     //runtime assert:
     // N == GM*GM;
-    // if(!(N==GM*GM)) {
-    if(false) {
-        dx_buffer[0].xy = vec2(BadNaN,BadNaN);
-        dx_buffer[1].xy = vec2(BadNaN,BadNaN);
+    if(!(N==GM*GM) ) {
+        something_wrong = true;
+    }
+    // something_wrong = true;
+    // if(false) {
+    // if (true) {
+    if (something_wrong) {
+        dx_buffer[0].xy = vec2(BadNaN, BadNaN);
+        dx_buffer[1].xy = vec2(BadNaN, BadNaN);
         
     }
 }
