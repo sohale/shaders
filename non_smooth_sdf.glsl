@@ -31,7 +31,7 @@
 #define TAYLOR_BASES_MODELFAMILY 0
 #define RBF_BASES_MODELFAMILY 1
 
-#define MODELFAMILY  TAYLOR_BASES_MODELFAMILY
+#define MODELFAMILY  RBF_BASES_MODELFAMILY
 
 
 
@@ -922,7 +922,7 @@ float plus(vec2 uv, vec2 dotuv, float r) {
 // this attempt led to the math part. see above.
 
 
-void fill_dx_buffer(in float delta, inout vec2 dx_buffer[N], int NN) {
+void fill_dx_buffer_using_grid(in float delta, inout vec2 dx_buffer[N], int NN) {
 
     bool something_wrong = false;
     //resetting
@@ -969,6 +969,15 @@ void fill_dx_buffer(in float delta, inout vec2 dx_buffer[N], int NN) {
         dx_buffer[1].xy = vec2(BadNaN, BadNaN);
     }
 }
+void fill_dx_buffer_using_circle(in float delta, inout vec2 dx_buffer[N], int NN) {
+    for(int i = 0; i < N; i++) {
+        float theta = float(i)/float(N) * 360.0 * PI / 180.0;
+        // vec2 uv = vec2(float(i-1),float(j-1));
+        vec2 uv = vec2(cos(theta),sin(theta));
+        dx_buffer[i].x = uv.x * delta;
+        dx_buffer[i].y = uv.y * delta; 
+    }
+}
 
 float evaluate_smoothness(float delta, vec2 x0, float anim_time) {
     /*
@@ -980,8 +989,9 @@ float evaluate_smoothness(float delta, vec2 x0, float anim_time) {
     float SDF_buffer[N];
     // vec2 dx === uv === x0;
     vec2 dx_buffer[N]; // = x_buffer[k] - x0;
-    fill_dx_buffer(delta, dx_buffer, N);
+    fill_dx_buffer_using_grid(delta, dx_buffer, N);
     // ask compiler to guarantee ctr<GM*GM
+    fill_dx_buffer_using_circle(delta, dx_buffer, N);
     
     //runtime assert:
     // N == GM*GM;
@@ -990,7 +1000,7 @@ float evaluate_smoothness(float delta, vec2 x0, float anim_time) {
        SDF_buffer[i] = 0.0;
     }
     for(int i=0;i<N;i++) {
-       if (i != 4)
+       // if (i != 4)
        SDF_buffer[i] = SAMPLER(dx_buffer[i] + x0, anim_time);
        //if (i == 4)
        {
@@ -1157,7 +1167,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   vec3 col = vec3(0.); // Detected a sin (uninitialise variable!). fixed.
   col = annotate_and_virualise( col, d, uv, ro , ref0, anim_time, t3);
   
-  float err =  evaluate_smoothness(1., uv.xy, anim_time) - SAMPLER(uv.xy, anim_time);
+  float err =  evaluate_smoothness(0.03, uv.xy, anim_time) - SAMPLER(uv.xy, anim_time);
   
   col = visualise_discrepancy(col, err);
 
