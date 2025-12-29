@@ -54,8 +54,8 @@ PolySdfState init_state() {
 // ⇒ Avoids `N`.
 // Can be non-convex
 
-// Partly inspired by https://www.shadertoy.com/user/01000001
-void update_vertex(inout PolySdfState state, vec2 p, vec2 V0, vec2 V1) {
+// Some details are partially inspired by https://www.shadertoy.com/user/01000001
+void update_pervertex(inout PolySdfState state, vec2 p, vec2 V0, vec2 V1) {
 
     float distV0 = length(p-V0);
     state.minV = min(state.minV, distV0);
@@ -98,7 +98,8 @@ void update_vertex(inout PolySdfState state, vec2 p, vec2 V0, vec2 V1) {
 // Historical cadence:
 // void update_point(vec2 p, vec2 V0, vec2 V1, inout PolySdfState state) {
 // void update_point(inout PolySdfState state, vec2 p, vec2 V0, vec2 V1) {
-
+// void update_vertex(inout PolySdfState state, vec2 p, vec2 V0, vec2 V1) {
+// renaming update_vertex -> update_pervertex
 
 // The sign convention dependes on CW/CCW convention.
 // CW => negate it.
@@ -192,19 +193,19 @@ void update_first(
    // firstV = V0;
    // lastV = V1;
    firstV = V0;
-   update_vertex(state, p, firstV, V1);
+   update_pervertex(state, p, firstV, V1);
    prevV = V1;
 }
 void update_next(inout PolySdfState state, vec2 p, vec2 v) {
    // v = ph_apply_transform(v);
-   update_vertex(state, p, prevV, v);
+   update_pervertex(state, p, prevV, v);
    prevV = v;
 }
 void update_last(inout PolySdfState state, vec2 p, vec2 v) {
    // v = ph_apply_transform(v);
 
-   update_vertex(state, p, prevV, v);
-   update_vertex(state, p, v, firstV);
+   update_pervertex(state, p, prevV, v);
+   update_pervertex(state, p, v, firstV);
    // reset (for debugging)
    // firstV=vec2(-1,-1);
    firstV=vec2(INFTY, INFTY);
@@ -227,7 +228,7 @@ float polygon_sdf( in vec2 p, in vec2[N] v)
         vec2 V0 = v[i];
         vec2 V1 = v[ (i==N-1) ? 0 : i+1 ];
 
-        update_vertex(state, p, V0,V1);
+        update_pervertex(state, p, V0,V1);
 
     }
     return conclude_sdf(state);
@@ -548,7 +549,7 @@ void mainImage( out vec4 pixColor, in vec2 pixCoord )
     
     // The deriver (PH) is not good: it uses "update" of variables (hence, potentially some pure compiler-optimisaiotn cannot be done)
     // But that is not the main purpose of this program.
-    // My main purpose is `update_vertex()`
+    // My main purpose is `update_pervertex()`
     update_first(ss2, p,
                         apply_kadr(vec2(-2.62, 4.45)),
                         apply_kadr(vec2(-0.26, 2.93)));
