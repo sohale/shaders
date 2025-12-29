@@ -7,9 +7,8 @@
 // A few helpers to naturally emerge ...
 
 
-// vec2 box[] = vec2[2](vec2(40,70), vec2(180,270));
-vec2 box[] = vec2[2](vec2(40,70), vec2(180,470));
 
+// program state:
 vec2 permaMouse; // fakes persistence
 
 // used for highlighting debug
@@ -24,6 +23,9 @@ vec2 rotate90(vec2 dir) {
     // rotate dir by 90° to get normal = n
    return n;
 }
+
+
+// polygon-specific semantics
 
 // Beautifully breaks down into per-point updates ( in fact, per-segment ).
 // poly_sdf_state , PolySdfState
@@ -212,6 +214,7 @@ float polygon_sdf( in vec2 p, in vec2[N] v)
     return conclude_sdf(state);
 }
 
+////////// "box"-based semantics
 
 bool GT2d(vec2 p, vec2 a) {
    return p.x >= a.x && p.y >= a.y;
@@ -226,6 +229,11 @@ bool within01box(vec2 uv) {
     return GT2d(uv, ZERO) && GT2d( ONE-uv, ZERO);
     // or use min
 }
+
+
+// vec2 box[] = vec2[2](vec2(40,70), vec2(180,270));
+vec2 box[] = vec2[2](vec2(40,70), vec2(180,470));
+
 
 vec2 withinBoxUV(vec2 pixXY) {
    // float u = (PixXY.x - boxLU.x) /
@@ -256,7 +264,10 @@ float withinBoxSDF2(vec2 pixXY) {
       0.0);
 }
 
-// LURD
+// corner-based: defining a corner-based frame for such semantics
+// for right-angle SDF semantics! (LURD Corners!)
+
+// LURD corner-types
 const int _LD = 0;
 const int _RD = 1;
 const int _RU = 2;
@@ -304,6 +315,9 @@ void maxIt(inout float sdf, in float v) {
    sdf = max( sdf, v );
 }
 
+// cornerSDF2
+// cornerSDF1: deprecated
+
 // outside is negative ⇒ min = interesectio?
 // inside = (+) = is.
 // float cornerSDF2(vec2 p, float R) {
@@ -322,18 +336,7 @@ float cornerSDF1(vec2 p, float R) {
    float upnessY = (p.y-R);
    float positvX = (p.x);
    float positvY = (p.y);
-   /*
-   return max( // union
-        circleSDF,
-        // -1.0
-        // rightnessX
-        // min(rightnessX, upnessY)
-        max(
-            min(rightnessX, positvY),
-            -INFTY+0.0*min(upnessY, positvX)
-        )
-        );
-   */
+ 
    float sdf = -INFTY;
    // float sdf = circleSDF;
    maxIt(sdf, circleSDF);
@@ -398,6 +401,10 @@ float boxSDF2(vec2 p, float R) {
 }
 */
 
+
+// Mouse and driver semantics
+// To avoid semantics leaking
+
 void sortff(inout float x1, inout float x2 ) {
    if (x1 > x2) {
       float temp = x1;
@@ -431,6 +438,8 @@ vec3 zens(vec2 pixCoord) {
     return col3;
 
 }
+
+// Visulise SDF using contours
 
 vec4 visualise(float sdf, vec2 pixCoord, bool error) {
     float shade = (sin(sdf/ 20.0 * PI2) * 0.5 + 0.5);
