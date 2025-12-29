@@ -150,18 +150,18 @@ void kill_kadr() {
 
 
 
+// PH-semantics: Polygon-handler
+// a 3rd layer (third "statefulness layer")
 
-
-// stat eof the loop (polygon-wise)
+// PH is a driver-only.
+// state of the loop (polygon-wise)
+// , not the core SDF emerging-herlpers.
 vec2 firstV = vec2(INFTY,INFTY);
 vec2 prevV = vec2(INFTY,INFTY);
 // vec2 lastV;
 
 /*
-// a 3rd layer (third "statefulness layer")
-*/
-
-/*
+old design:
 void update_last(inout PolySdfState state, vec2 p, vec2 v, bool first=false) {
    if (first) {
       firstV = v;
