@@ -4,18 +4,18 @@
 // todo: cleanup after explorations
 // https://www.shadertoy.com/view/WfKfDh
 
+// A few helpers to naturally emerge ...
+
 
 // vec2 box[] = vec2[2](vec2(40,70), vec2(180,270));
 vec2 box[] = vec2[2](vec2(40,70), vec2(180,470));
 
-vec2 permaMouse; // persistence?
+vec2 permaMouse; // fakes persistence
 
+// used for highlighting debug
 bool error = false;
 
-
 const float PI2 = 2.0 * 3.1415926536;
-// const float INFTY = 10000000000.0;
-const int N = 7;
 const float INFTY = float(uint(-1));
 
 
@@ -25,18 +25,20 @@ vec2 rotate90(vec2 dir) {
    return n;
 }
 
+// Beautifully breaks down into per-point updates ( in fact, per-segment ).
 // poly_sdf_state , PolySdfState
-
 struct PolySdfState {
     float minV;
     float minE;
     int num_intersections;
 };
 
-void init_state(out PolySdfState st) {
+PolySdfState init_state() {
+    PolySdfState st;
     st.minV = INFTY;
     st.minE = INFTY;
     st.num_intersections = 0;
+    return st;
 }
 
 /*
@@ -47,50 +49,58 @@ void init_state(out float minV, out float minE, out int num_intersections) {
 }
 */
 
+// The Update per-vertex of polygon.
+// Updates for vertex. (or: segment)
+// Assumes a closed polygon (and: CCW)
+// Avoids holsing fixed large vector-array as "state'
+// ⇒ Avoids `N`.
+// Can be non-convex
+
 // void update_point(vec2 p, vec2 V0, vec2 V1, inout PolySdfState state) {
-void update_point(inout PolySdfState state, vec2 p, vec2 V0, vec2 V1) {
+// void update_point(inout PolySdfState state, vec2 p, vec2 V0, vec2 V1) {
+void update_vertex(inout PolySdfState state, vec2 p, vec2 V0, vec2 V1) {
 
     float distV0 = length(p-V0);
-
-
     state.minV = min(state.minV, distV0);
 
-
-    float len01 = length(V1-V0); // Line length
-    vec2 dir = (V1-V0) / len01; // Normalized line
-    vec2 n = rotate90(dir);
-
+    float len01 = length(V1-V0); // Line segment's length
+    vec2 dir = (V1-V0) / len01; // Normalized segment dir
     float s01_ = dot(p-V0, dir);
     bool segmCyl_between = s01_ > 0. && s01_ < len01; 
+
     if (segmCyl_between) {
+       vec2 n = rotate90(dir);
        float cylDist = abs(dot(p-V0, n));
        state.minE = min(state.minE, cylDist);
     }
 
-    float f = (p.y - V0.y) / (V1.y - V0.y);
-    bool f_within01 = f > 0. && f < 1.;
+    float fy = (p.y - V0.y) / (V1.y - V0.y);
+    bool fy_within01 = fy > 0. && fy < 1.;
 
-    if (f_within01 ){
-        // point is not above or below line
+    if (fy_within01 ) {
+        // fy is valid ⇒ point is not above or below line
 
         if ( p.x < min(V0.x, V1.x) ) { 
-            // point is left of bounding box
+            // point is left of BB
             state.num_intersections++;
 
         } else if ( p.x > max(V0.x, V1.x) ) { 
-           // do nothing!
+           // do nothing! ( right side of BB )
 
-        } else { // !( p.x > max(V0.x, V1.x) )
-            // point is in bounding box
-            // so we check intersection
+        } else { // x within [min, max]
+            // point is in BB
 
-            if ( mix(V0.x, V1.x, f) > p.x) {
+            // ⇒ check for intersection:
+
+            if ( mix(V0.x, V1.x, fy) > p.x) {
                 state.num_intersections++;
             }
         }
     }
 }
 
+// The sign convention dependes on CW/CCW convention
+// 
 float conclude_sdf(in PolySdfState state) {
     bool inside = (state.num_intersections % 2 == 1 );
     float _sign = ( inside?  -1. : +1. );
@@ -127,7 +137,7 @@ void update_last(inout PolySdfState state, vec2 p, vec2 v, bool first=false) {
    if (first) {
       firstV = v;
    }
-   update_point(state, p, vert, other);
+   update_vertex(state, p, vert, other);
 }
 */
 // old: void update_last(inout PolySdfState state, vec2 p, vec2 v, bool first=false) {
@@ -160,19 +170,19 @@ void update_first(
    // firstV = V0;
    // lastV = V1;
    firstV = V0;
-   update_point(state, p, firstV, V1);
+   update_vertex(state, p, firstV, V1);
    prevV = V1;
 }
 void update_next(inout PolySdfState state, vec2 p, vec2 v) {
    v = ph_apply_transform(v);
-   update_point(state, p, prevV, v);
+   update_vertex(state, p, prevV, v);
    prevV = v;
 }
 void update_last(inout PolySdfState state, vec2 p, vec2 v) {
    v = ph_apply_transform(v);
 
-   update_point(state, p, prevV, v);
-   update_point(state, p, v, firstV);
+   update_vertex(state, p, prevV, v);
+   update_vertex(state, p, v, firstV);
    // reset (for debugging)
    // firstV=vec2(-1,-1);
    firstV=vec2(INFTY, INFTY);
@@ -184,19 +194,19 @@ void update_last(inout PolySdfState state, vec2 p, vec2 v) {
 }
 
 
-
+const int N = 7;
 // from my interpreatin of sdPolygon() in https://www.shadertoy.com/view/wc3fzf
 float polygon_sdf( in vec2 p, in vec2[N] v)
 // float sdPolygon( in vec2 p, in vec2[N] v )
 {
     PolySdfState state;
-    init_state(state);
+    state = init_state();
     
     for( int i = 0; i < N; i++ ) {
         vec2 V0 = v[i];
         vec2 V1 = v[ (i==N-1) ? 0 : i+1 ];
 
-        update_point(state, p, V0,V1);
+        update_vertex(state, p, V0,V1);
 
     }
     return conclude_sdf(state);
@@ -294,7 +304,7 @@ void maxIt(inout float sdf, in float v) {
    sdf = max( sdf, v );
 }
 
-// outside is negative => min = interesectio?
+// outside is negative ⇒ min = interesectio?
 // inside = (+) = is.
 // float cornerSDF2(vec2 p, float R) {
 float cornerSDF1(vec2 p, float R) {
@@ -306,7 +316,7 @@ float cornerSDF1(vec2 p, float R) {
    // return max(rsdf, max(pc.x-R, pc.y-R)); // union
    // return sqrt(rsdf);
    float rsdf = pc.x*pc.x + pc.y*pc.y;
-   float circleSDF = -(sqrt(rsdf) - R); // (-) => outside
+   float circleSDF = -(sqrt(rsdf) - R); // (-) ⇒ outside
     // shifted
    float rightnessX = +(p.x-R); // (+) => right (right=inside it, left=outside)
    float upnessY = (p.y-R);
@@ -490,10 +500,9 @@ void mainImage( out vec4 pixColor, in vec2 pixCoord )
     // ph_set_frame(mat2(0,0,0,0));
 
     // vec2 lastV;
-    PolySdfState ss2;
-    init_state(ss2);
-    // update_point(p, V0,V1, ss2);
-    // update_point(ss2, p, vec2(-2.66, 3.49), lastV);
+    PolySdfState ss2 = init_state();
+    // update_vertex(p, V0,V1, ss2);
+    // update_vertex(ss2, p, vec2(-2.66, 3.49), lastV);
 
     // mat2 kadr = 30.0*mat2(1,0,0,-1);
     // vec2 kadr0 = vec2(400, 300); 
