@@ -111,47 +111,44 @@ float conclude_sdf(in PolySdfState state) {
 
 
 
+// Kadr: a 4th layer (third "statefulness layer") / separate spemtics
+/// naturally emerged as separate (laminated!)
+// together (wokds in viscosity(!) with) with ph_apply_transform()
+// no longer "ph" semantics. 
+// Kadr-semantics
 
-// 3rd state-layer
+// 4th state-layer
 struct Kadr {
     mat2 ph_tr;
     vec2 ph_orig;
 };
 
-/*
-mat2 ph_tr = mat2(INFTY,INFTY,INFTY,INFTY);
-vec2 ph_orig = vec2(INFTY,INFTY);
-*/
 // Kadr ph_tr;
 Kadr ph_kadr;
 
-/*
-// Kadr: a 4th layer (third "statefulness layer") / separate spemtics
-void ph_set_frame(mat2 m) {
-    ph_tr = m;
-}
-*/
-
-
-// `ph_apply_transform`() -> `apply_kadr`
-// no longer "ph" semantics. 
+// Core of Kadr-semantics
 vec2 apply_kadr(vec2 v) {
    // return ph_tr * (v - ph_orig);
    // return (ph_tr * v) + ph_orig;
    return (ph_kadr.ph_tr * v) + ph_kadr.ph_orig;
 }
-void kill_kadr() {
-   // ph_tr=mat2(0,0,0,0);
-   // ph_tr=mat2(INFTY,INFTY,INFTY,INFTY);
-   ph_kadr.ph_tr=mat2(INFTY,INFTY,INFTY,INFTY);
-   ph_kadr.ph_orig=vec2(INFTY,INFTY);
-}
+// `ph_apply_transform`() -> `apply_kadr`
 
-/// naturally emerged as separate (laminated!)
-// together (wokds in viscosity(!) with) with ph_apply_transform()
 void set_kadr(Kadr kadr) {
    ph_kadr = kadr;
 }
+// ph_set_frame() -> set_kadr
+
+void kill_kadr() {
+   // ph_tr=mat2(0,0,0,0);
+   // ph_tr=mat2(INFTY,INFTY,INFTY,INFTY);
+   // vec2 ph_orig = vec2(INFTY,INFTY);
+   ph_kadr.ph_tr=mat2(INFTY,INFTY,INFTY,INFTY);
+   ph_kadr.ph_orig=vec2(INFTY,INFTY);
+}
+// kill_kadr -> wipe, reset...
+
+
 
 
 
