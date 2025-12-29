@@ -109,7 +109,10 @@ float conclude_sdf(in PolySdfState state) {
     return min(state.minE, state.minV) * _sign;
 }
 
-// 3rd layer
+
+
+
+// 3rd state-layer
 struct Kadr {
     mat2 ph_tr;
     vec2 ph_orig;
@@ -210,8 +213,6 @@ void update_last(inout PolySdfState state, vec2 p, vec2 v) {
    // firstV=vec2(-1,-1);
    firstV=vec2(INFTY, INFTY);
    prevV=vec2(INFTY, INFTY);
-
-   kill_kadr();
 }
 
 
@@ -559,6 +560,8 @@ void mainImage( out vec4 pixColor, in vec2 pixCoord )
     update_next(ss2, p, apply_kadr(vec2(-5.62, 3.53)));
     update_last(ss2, p, apply_kadr(vec2(-2.66, 3.49)));
     // Last update, applies two points ^. Symmetric-join-closure with first line does one, and gets two points.
+    
+    kill_kadr();
 
     float s2 = -conclude_sdf(ss2);
     // ^ negated because it is CW ^.
