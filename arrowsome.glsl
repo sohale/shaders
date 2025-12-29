@@ -139,14 +139,14 @@ void set_kadr(Kadr kadr) {
 }
 // ph_set_frame() -> set_kadr
 
-void kill_kadr() {
+void reset_kadr() {
    // ph_tr=mat2(0,0,0,0);
    // ph_tr=mat2(INFTY,INFTY,INFTY,INFTY);
    // vec2 ph_orig = vec2(INFTY,INFTY);
    ph_kadr.ph_tr=mat2(INFTY,INFTY,INFTY,INFTY);
    ph_kadr.ph_orig=vec2(INFTY,INFTY);
 }
-// kill_kadr -> wipe, reset...
+// kill_kadr -> wipe, reset.. -> reset_kadr
 
 
 
@@ -524,15 +524,10 @@ void mainImage( out vec4 pixColor, in vec2 pixCoord )
     minIt(minS, -cornerity_);
 
 
-
-    // vec2 p = pixCoord / 40.0 - 4.0;
     vec2 p = pixCoord; // must keep it as it is in the main program.
+    // keep it `xy`: "keep it iso-geom"
 
-    // a third layer! (of statefulness!) of polygon-handler
-    // ph_set_frame(mat2(0,0,0,0));
 
-    // vec2 lastV;
-    PolySdfState ss2 = init_state();
 
     mat2 kadrm = -30.0*rotMat2(iTime * PI2 /5.0);
     vec2 arrow_centr = vec2(-5.66/2.0, (1.39+4.45)/2.0);
@@ -540,14 +535,21 @@ void mainImage( out vec4 pixColor, in vec2 pixCoord )
     vec2 kadr0 = -kadrm*arrow_centr + arrow_pos;
     Kadr kadr = Kadr(kadrm, kadr0);    
     set_kadr(kadr);
+    //  old: ph_set_frame(mat2(0,0,0,0));
+
 
     // A CW shape (hence, negation in the end)
     // Note that we avoided `vec2[N]` as global or state
     // Why "store" it, if we don't need to? => Pure SDF helper
-    
-    // The deriver (PH) is not good: it uses "update" of variables (hence, potentially some pure compiler-optimisaiotn cannot be done)
+    PolySdfState ss2 = init_state();
+
+
+    // The driver (PH) is not good: it uses "update" of variables (hence, potentially some pure compiler-optimisaiotn cannot be done)
     // But that is not the main purpose of this program.
+    // old:     // vec2 lastV;
     // My main purpose is `update_pervertex()`
+
+    // old ocmment: PH: A third layer! (of statefulness!) of polygon-handler
     update_first(ss2, p,
                         apply_kadr(vec2(-2.62, 4.45)),
                         apply_kadr(vec2(-0.26, 2.93)));
@@ -558,7 +560,7 @@ void mainImage( out vec4 pixColor, in vec2 pixCoord )
     update_last(ss2, p, apply_kadr(vec2(-2.66, 3.49)));
     // Last update, applies two points ^. Symmetric-join-closure with first line does one, and gets two points.
     
-    kill_kadr();
+    reset_kadr();
 
     float s2 = -conclude_sdf(ss2);
     // ^ negated because it is CW ^.
