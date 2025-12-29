@@ -311,6 +311,8 @@ vec2 cornerToDir(ivec2 corner) {
     return vec2(signX, signY);
 }
 
+// TransformIso: "conformal"? "xy"?
+// "conformal frame"!
 // withinBoxXY -> transformIsoCorner -> cornerTransformIso
 vec2 cornerTransformIso(vec2 pixXY, ivec2 corner) {
     // vec2 dxy = pixXY - box[corner];
