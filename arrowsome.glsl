@@ -143,8 +143,8 @@ void reset_kadr() {
    // ph_tr=mat2(0,0,0,0);
    // ph_tr=mat2(INFTY,INFTY,INFTY,INFTY);
    // vec2 ph_orig = vec2(INFTY,INFTY);
-   ph_kadr.ph_tr=mat2(INFTY,INFTY,INFTY,INFTY);
-   ph_kadr.ph_orig=vec2(INFTY,INFTY);
+   ph_kadr.ph_tr = mat2(INFTY,INFTY,INFTY,INFTY);
+   ph_kadr.ph_orig = vec2(INFTY,INFTY);
 }
 // kill_kadr -> wipe, reset.. -> reset_kadr
 
@@ -304,6 +304,7 @@ const ivec2 CORNERS[4] =  ivec2[4](
   );
 
 // diagonal matrix!
+// It's also a conformal map.
 vec2 cornerToDir(ivec2 corner) {
     float signX = corner[0] == 0 ? +1.0 : -1.0; // *2.0 - 1.0;
     float signY = corner[1] == 0 ? +1.0 : -1.0;
@@ -328,6 +329,8 @@ vec2 cornerTransformIso(vec2 pixXY, ivec2 corner) {
 
 bool inBox(vec2 pixXY) {
    vec2 uv = withinBoxUV(pixXY);
+   // but SDF does not like uv-semantics
+   // bring on xy semantics! In fact, "Conformal Map"
    return within01box(uv);
 }
 
