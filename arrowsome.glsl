@@ -27,6 +27,8 @@ vec2 rotate90(vec2 dir) {
 
 // polygon-specific semantics
 
+// Polygin-SDFizer
+
 // Beautifully breaks down into per-point updates ( in fact, per-segment ).
 // poly_sdf_state , PolySdfState
 struct PolySdfState {
@@ -43,13 +45,7 @@ PolySdfState init_state() {
     return st;
 }
 
-/*
-void init_state(out float minV, out float minE, out int num_intersections) {
-    minV = INFTY;
-    minE = INFTY;
-    num_intersections = 0;
-}
-*/
+// Core:
 
 // The Update per-vertex of polygon.
 // Updates for vertex. (or: segment)
@@ -58,8 +54,7 @@ void init_state(out float minV, out float minE, out int num_intersections) {
 // ⇒ Avoids `N`.
 // Can be non-convex
 
-// void update_point(vec2 p, vec2 V0, vec2 V1, inout PolySdfState state) {
-// void update_point(inout PolySdfState state, vec2 p, vec2 V0, vec2 V1) {
+// Partly inspired by https://www.shadertoy.com/user/01000001
 void update_vertex(inout PolySdfState state, vec2 p, vec2 V0, vec2 V1) {
 
     float distV0 = length(p-V0);
@@ -100,9 +95,13 @@ void update_vertex(inout PolySdfState state, vec2 p, vec2 V0, vec2 V1) {
         }
     }
 }
+// Historical cadence:
+// void update_point(vec2 p, vec2 V0, vec2 V1, inout PolySdfState state) {
+// void update_point(inout PolySdfState state, vec2 p, vec2 V0, vec2 V1) {
 
-// The sign convention dependes on CW/CCW convention
-// 
+
+// The sign convention dependes on CW/CCW convention.
+// CW => negate it.
 float conclude_sdf(in PolySdfState state) {
     bool inside = (state.num_intersections % 2 == 1 );
     float _sign = ( inside?  -1. : +1. );
@@ -129,7 +128,7 @@ vec2 prevV = vec2(INFTY,INFTY);
 // vec2 lastV;
 
 /*
-// a 3rd layer (staefulness layer
+// a 3rd layer (third "statefulness layer")
 void ph_set_frame(mat2 m) {
     ph_tr = m;
 }
@@ -153,11 +152,17 @@ vec2 ph_apply_transform(vec2 v) {
    return (ph_kadr.ph_tr * v) + ph_kadr.ph_orig;
 }
 
+/// naturally emerged as separate (laminated!)
+// together (wokds in viscosity(!) with) with ph_apply_transform()
+void set_kadr(Kadr kadr) {
+   ph_kadr = kadr;
+}
+
 void update_first(
       inout PolySdfState state,
       vec2 p,
       // mat2 transform, vec2 orig,
-      Kadr kadr,
+      // Kadr kadr,
       vec2 V0, vec2 V1
 ) {
    // ph_set_frame();
@@ -165,7 +170,7 @@ void update_first(
    ph_tr = transform;
    ph_orig = orig;
    */
-   ph_kadr = kadr;
+   // ph_kadr = kadr;
 
    V0 = ph_apply_transform(V0);
    V1 = ph_apply_transform(V1);
@@ -524,7 +529,11 @@ void mainImage( out vec4 pixColor, in vec2 pixCoord )
     vec2 kadr0 = -kadrm*arrow_centr + arrow_pos;
     Kadr kadr = Kadr(kadrm, kadr0);
     
-    update_first(ss2, p, kadr,
+    set_kadr(kadr);
+    // A CW shape.
+    // Note that we avoided `vec2[N]` as global or state
+    // Why "store" it, if we don't need to? => Pure SDF helper
+    update_first(ss2, p, // kadr,
                         vec2(-2.62, 4.45),
                         vec2(-0.26, 2.93));
     update_next(ss2, p, vec2(-2.68, 1.39));
