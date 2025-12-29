@@ -534,15 +534,8 @@ void mainImage( out vec4 pixColor, in vec2 pixCoord )
 
     // vec2 lastV;
     PolySdfState ss2 = init_state();
-    // update_vertex(p, V0,V1, ss2);
-    // update_vertex(ss2, p, vec2(-2.66, 3.49), lastV);
 
-    // mat2 kadr = 30.0*mat2(1,0,0,-1);
-    // vec2 kadr0 = vec2(400, 300); 
     mat2 kadrm = -30.0*rotMat2(iTime * PI2 /5.0);
-    // vec2 kadr0 = vec2(400, 300);
-    // vec2 kadr0 = kadrm*vec2(-5.66/2.0, (1.39+4.45)/2.0);
-    // from: return (ph_kadr.ph_tr * v) + ph_kadr.ph_orig;
     vec2 arrow_centr = vec2(-5.66/2.0, (1.39+4.45)/2.0);
     vec2 arrow_pos = vec2(400, 300);
     vec2 kadr0 = -kadrm*arrow_centr + arrow_pos;
@@ -552,7 +545,11 @@ void mainImage( out vec4 pixColor, in vec2 pixCoord )
     // A CW shape (hence, negation in the end)
     // Note that we avoided `vec2[N]` as global or state
     // Why "store" it, if we don't need to? => Pure SDF helper
-    update_first(ss2, p, // kadr,
+    
+    // The deriver (PH) is not good: it uses "update" of variables (hence, potentially some pure compiler-optimisaiotn cannot be done)
+    // But that is not the main purpose of this program.
+    // My main purpose is `update_vertex()`
+    update_first(ss2, p,
                         apply_kadr(vec2(-2.62, 4.45)),
                         apply_kadr(vec2(-0.26, 2.93)));
     update_next(ss2, p, apply_kadr(vec2(-2.68, 1.39)));
@@ -564,6 +561,7 @@ void mainImage( out vec4 pixColor, in vec2 pixCoord )
 
     float s2 = -conclude_sdf(ss2);
     // ^ negated because it is CW ^.
+
     maxIt(minS, s2);
  
 
