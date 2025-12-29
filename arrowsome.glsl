@@ -146,7 +146,9 @@ void update_last(inout PolySdfState state, vec2 p, vec2 v, bool first=false) {
 // update_next
 // update_last update_back_to_first
 
-vec2 ph_apply_transform(vec2 v) {
+// `ph_apply_transform`() -> `apply_kadr`
+// no longer "ph" semantics. 
+vec2 apply_kadr(vec2 v) {
    // return ph_tr * (v - ph_orig);
    // return (ph_tr * v) + ph_orig;
    return (ph_kadr.ph_tr * v) + ph_kadr.ph_orig;
@@ -172,8 +174,8 @@ void update_first(
    */
    // ph_kadr = kadr;
 
-   V0 = ph_apply_transform(V0);
-   V1 = ph_apply_transform(V1);
+   // V0 = ph_apply_transform(V0);
+   // V1 = ph_apply_transform(V1);
    // firstV = V0;
    // lastV = V1;
    firstV = V0;
@@ -181,12 +183,12 @@ void update_first(
    prevV = V1;
 }
 void update_next(inout PolySdfState state, vec2 p, vec2 v) {
-   v = ph_apply_transform(v);
+   // v = ph_apply_transform(v);
    update_vertex(state, p, prevV, v);
    prevV = v;
 }
 void update_last(inout PolySdfState state, vec2 p, vec2 v) {
-   v = ph_apply_transform(v);
+   // v = ph_apply_transform(v);
 
    update_vertex(state, p, prevV, v);
    update_vertex(state, p, v, firstV);
@@ -534,13 +536,14 @@ void mainImage( out vec4 pixColor, in vec2 pixCoord )
     // Note that we avoided `vec2[N]` as global or state
     // Why "store" it, if we don't need to? => Pure SDF helper
     update_first(ss2, p, // kadr,
-                        vec2(-2.62, 4.45),
-                        vec2(-0.26, 2.93));
-    update_next(ss2, p, vec2(-2.68, 1.39));
-    update_next(ss2, p, vec2(-2.64, 2.39));
-    update_next(ss2, p, vec2(-5.66, 2.41));
-    update_next(ss2, p, vec2(-5.62, 3.53));
-    update_last(ss2, p, vec2(-2.66, 3.49));
+                        apply_kadr(vec2(-2.62, 4.45)),
+                        apply_kadr(vec2(-0.26, 2.93)));
+    update_next(ss2, p, apply_kadr(vec2(-2.68, 1.39)));
+    update_next(ss2, p, apply_kadr(vec2(-2.64, 2.39)));
+    update_next(ss2, p, apply_kadr(vec2(-5.66, 2.41)));
+    update_next(ss2, p, apply_kadr(vec2(-5.62, 3.53)));
+    update_last(ss2, p, apply_kadr(vec2(-2.66, 3.49)));
+    // Last update, applies two points ^. Symmetric-join-closure with first line does one, and gets two points.
 
     float s2 = -conclude_sdf(ss2);
     maxIt(minS, s2);
