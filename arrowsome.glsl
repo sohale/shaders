@@ -121,6 +121,35 @@ vec2 ph_orig = vec2(INFTY,INFTY);
 // Kadr ph_tr;
 Kadr ph_kadr;
 
+/*
+// Kadr: a 4th layer (third "statefulness layer") / separate spemtics
+void ph_set_frame(mat2 m) {
+    ph_tr = m;
+}
+*/
+
+
+// `ph_apply_transform`() -> `apply_kadr`
+// no longer "ph" semantics. 
+vec2 apply_kadr(vec2 v) {
+   // return ph_tr * (v - ph_orig);
+   // return (ph_tr * v) + ph_orig;
+   return (ph_kadr.ph_tr * v) + ph_kadr.ph_orig;
+}
+void kill_kadr() {
+   // ph_tr=mat2(0,0,0,0);
+   // ph_tr=mat2(INFTY,INFTY,INFTY,INFTY);
+   ph_kadr.ph_tr=mat2(INFTY,INFTY,INFTY,INFTY);
+   ph_kadr.ph_orig=vec2(INFTY,INFTY);
+}
+
+/// naturally emerged as separate (laminated!)
+// together (wokds in viscosity(!) with) with ph_apply_transform()
+void set_kadr(Kadr kadr) {
+   ph_kadr = kadr;
+}
+
+
 
 // stat eof the loop (polygon-wise)
 vec2 firstV = vec2(INFTY,INFTY);
@@ -129,10 +158,8 @@ vec2 prevV = vec2(INFTY,INFTY);
 
 /*
 // a 3rd layer (third "statefulness layer")
-void ph_set_frame(mat2 m) {
-    ph_tr = m;
-}
 */
+
 /*
 void update_last(inout PolySdfState state, vec2 p, vec2 v, bool first=false) {
    if (first) {
@@ -145,20 +172,6 @@ void update_last(inout PolySdfState state, vec2 p, vec2 v, bool first=false) {
 // update_first
 // update_next
 // update_last update_back_to_first
-
-// `ph_apply_transform`() -> `apply_kadr`
-// no longer "ph" semantics. 
-vec2 apply_kadr(vec2 v) {
-   // return ph_tr * (v - ph_orig);
-   // return (ph_tr * v) + ph_orig;
-   return (ph_kadr.ph_tr * v) + ph_kadr.ph_orig;
-}
-
-/// naturally emerged as separate (laminated!)
-// together (wokds in viscosity(!) with) with ph_apply_transform()
-void set_kadr(Kadr kadr) {
-   ph_kadr = kadr;
-}
 
 void update_first(
       inout PolySdfState state,
@@ -196,13 +209,12 @@ void update_last(inout PolySdfState state, vec2 p, vec2 v) {
    // firstV=vec2(-1,-1);
    firstV=vec2(INFTY, INFTY);
    prevV=vec2(INFTY, INFTY);
-   // ph_tr=mat2(0,0,0,0);
-   // ph_tr=mat2(INFTY,INFTY,INFTY,INFTY);
-   ph_kadr.ph_tr=mat2(INFTY,INFTY,INFTY,INFTY);
-   ph_kadr.ph_orig=vec2(INFTY,INFTY);
+
+   kill_kadr();
 }
 
 
+// The `vec2[N]`-specific semantics!
 const int N = 7;
 // from my interpreatin of sdPolygon() in https://www.shadertoy.com/view/wc3fzf
 float polygon_sdf( in vec2 p, in vec2[N] v)
@@ -221,7 +233,12 @@ float polygon_sdf( in vec2 p, in vec2[N] v)
     return conclude_sdf(state);
 }
 
-////////// "box"-based semantics
+
+
+
+// "box"-based semantics
+// Requires a vec2[2]
+//   e.g., vec2 box[] = vec2[2]
 
 bool GT2d(vec2 p, vec2 a) {
    return p.x >= a.x && p.y >= a.y;
@@ -529,10 +546,10 @@ void mainImage( out vec4 pixColor, in vec2 pixCoord )
     vec2 arrow_centr = vec2(-5.66/2.0, (1.39+4.45)/2.0);
     vec2 arrow_pos = vec2(400, 300);
     vec2 kadr0 = -kadrm*arrow_centr + arrow_pos;
-    Kadr kadr = Kadr(kadrm, kadr0);
-    
+    Kadr kadr = Kadr(kadrm, kadr0);    
     set_kadr(kadr);
-    // A CW shape.
+
+    // A CW shape (hence, negation in the end)
     // Note that we avoided `vec2[N]` as global or state
     // Why "store" it, if we don't need to? => Pure SDF helper
     update_first(ss2, p, // kadr,
@@ -546,10 +563,9 @@ void mainImage( out vec4 pixColor, in vec2 pixCoord )
     // Last update, applies two points ^. Symmetric-join-closure with first line does one, and gets two points.
 
     float s2 = -conclude_sdf(ss2);
+    // ^ negated because it is CW ^.
     maxIt(minS, s2);
-    // minS = s2;
  
-
 
     // Output to screen
     pixColor = visualise(minS, pixCoord, error);
