@@ -197,10 +197,11 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01
     // alpha & grid_phase are about discretisation: floor.  It should have been: floor(x*alpha+phase)
     float alph = 1.0;
 
-    vec2 grid_phase_ = 1.0*vec2(.2, 0) * rotMat2(iTime * 2.0*pi / 2.1);
+    vec2 grid_phas_e_ = -1.0*vec2(.2, 0) * rotMat2(iTime * 2.0*pi / 2.1);
     // vec2 grid_phase2 = grid_phase - 0.5;
     // vec2 grid_phase3 = (grid_phase_ - 0.5)*alph;
-    vec2 grid_phase0_ = -grid_phase_ * alph;
+    // vec2 grid_phase0_ = -grid_phase_ * alph;
+    vec2 grid_phase0_ = grid_phas_e_ * alph;
     // vec2 grid_phase30 = (grid_phase0 - grid_phase3)/alph;
     // vec2 grid_phase30 = (grid_phase0 - (grid_phase_ - 0.5)*alph)/alph;
     // vec2 grid_phase30 = (grid_phase0 - grid_phase_*alph + 0.5*alph )/alph;
