@@ -408,8 +408,9 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // vec2 nodal_dxy2 = uv_to_pixeldxy((uv_ - true_node_centre_uv_offs0)*2.0);
     // linear =>
     // vec2 nodal_dxy2 = uv_to_pixeldxy((uv_ - true_node_centre_uv_offs0)*1.0)*2.0;
-    vec2 nodal_dxy1 = uv_to_pixeldxy((uv_ - true_node_centre_uv_offs0)*1.0);
+    // vec2 nodal_dxy1 = uv_to_pixeldxy((uv_ - true_node_centre_uv_offs0)*1.0);
     // vec2 nodal_dxy2 = nodal_dxy1*2.0;
+    vec2 nodal_dxy1 = uv_to_pixeldxy(uv_ - true_node_centre_uv_offs0);
 
 
     // rod_shape is in ChW. The idea is to change it to uv, and then, pix etc
@@ -426,7 +427,13 @@ void mainImage( out vec4 O, vec2 pix_xy )
     vec2 RADIUS01_xy2 = uv_to_pixeldxy(RADIUS01_uv);
     // float d2_shape = rod_shape_xy( cuv4_delta_xy_dev_, force_dxy, RADIUS01_xy2);
     // float d2_shape = rod_shape_xy( nodal_dxy2, force_dxy, RADIUS01_xy2);
-    float d2_shape = rod_shape_xy( nodal_dxy1*2.0, force_dxy, RADIUS01_xy2);
+    // float d2_shape = rod_shape_xy( nodal_dxy1*2.0, force_dxy, RADIUS01_xy2);
+    // ^ which there reveals a subtle but satisfying bug!
+    // or, may be a technique!
+    // let's call it a name:
+    float SHRINK_FACTOR = 4.0;
+    float d2_shape = rod_shape_xy( nodal_dxy1*SHRINK_FACTOR, force_dxy, RADIUS01_xy2);
+
 
 
     // d2_shape = max(d2_shape, smoothstep(0.2, 0.0, distance(uv_, charges[1].xy)));
