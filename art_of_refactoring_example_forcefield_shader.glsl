@@ -314,19 +314,20 @@ float rod_shape_xy(vec2 local_vec_xy, vec2 force_dxy, vec2 RADIUS01_xy) {
     float RADIUS1_chw = pixeldxy_to_chargesworld(RADIUS01_xy).y;
     vec2 force_ = pixeldxy_to_chargesworld(force_dxy);
 
-    const float THICKNESS = 0.3;
+    const float THICKNESS = 0.3/2.0;
     const mat2 rot90 = mat2(0,1,-1,0);
     return 1.0
          //  // Create bar -> Make it look nice : side thickness 0.3
         * smoothstep(THICKNESS, .0, 
-            abs(dot(normalize(force_), rot90 * dcw * 2.0)) 
+            abs(dot(normalize(force_), rot90 * dcw )) 
          )
 
         // limit length of bars to 1 cell width radius
         // that (cell width) is called "diameter" !
         // diameter = 1 = RADIUS1_*2.0, RADIUS1_ ~ 0.5
         // limit length of bars to 1 cell width radius
-        * smoothstep(RADIUS1_chw*2.0, RADIUS0_chw*2.0, length(dcw)*2.0)  
+        // * smoothstep(RADIUS1_chw*2.0, RADIUS0_chw*2.0, length(dcw)*2.0)
+        * smoothstep(RADIUS1_chw, RADIUS0_chw, length(dcw))
     ;
 }
 
