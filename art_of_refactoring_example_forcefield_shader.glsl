@@ -329,10 +329,13 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // move below
     // vec2 cuv4 = uv_to_chargesworld(cuv3_delta_uv);
 
-    const float RADIUS1 = 1.0;
-    const float RADIUS0 = 0.9;
+    const float RADIUS1_ = 1.0;
+    const float RADIUS0_ = 0.9;
     // cuv3_2 = cuv3_2 * scale_m_;
-    
+    // float RADIUS0_xy = chargesworld_to_pixeldxy(vec2(RADIUS0_, 0.0)).x;
+    // float RADIUS1_xy = chargesworld_to_pixeldxy(vec2(RADIUS1_, 0.0)).x;
+    vec2 RADIUS01_xy = chargesworld_to_pixeldxy(vec2(RADIUS0_, RADIUS1_));
+
 
     if (iMouse.z > 0.) {
        // charges[0].xy = (iMouse.xy-screen/2.0)/screen.y * scale_m_;
@@ -367,10 +370,9 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // float d2_shape = rod_shape( cuv4_delta, force, RADIUS0, RADIUS1);
     // float d2_shape = rod_shape( cuv4_delta_xy_dev, force, RADIUS0, RADIUS1);
     
-    float RADIUS0_xy = chargesworld_to_pixeldxy(vec2(RADIUS0, 0.0)).x;
-    float RADIUS1_xy = chargesworld_to_pixeldxy(vec2(RADIUS1, 0.0)).x;
+    // rod_shape_xy is now in pixel/xy coords:
     vec2 force_dxy = chargesworld_to_pixeldxy(force);
-    float d2_shape = rod_shape_xy( cuv4_delta_xy_dev, force_dxy, RADIUS0_xy, RADIUS1_xy);
+    float d2_shape = rod_shape_xy( cuv4_delta_xy_dev, force_dxy, RADIUS01_xy.x, RADIUS01_xy.y);
     
 
     // d2_shape = max(d2_shape, smoothstep(0.2, 0.0, distance(uv_, charges[1].xy)));
