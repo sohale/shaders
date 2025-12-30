@@ -197,16 +197,22 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01
     // alpha & grid_phase are about discretisation: floor.  It should have been: floor(x*alpha+phase)
     float alph = 1.0;
 
-    vec2 grid_phase = 1.0*vec2(.2, 0) * rotMat2(iTime * 2.0*pi / 2.1);
+    vec2 grid_phase_ = 1.0*vec2(.2, 0) * rotMat2(iTime * 2.0*pi / 2.1);
     // vec2 grid_phase2 = grid_phase - 0.5;
-    vec2 grid_phase3 = (grid_phase - 0.5)*alph;
-    // vec2 grid_phase0 = grid_phase * alph;
-    
+    // vec2 grid_phase3 = (grid_phase_ - 0.5)*alph;
+    vec2 grid_phase0_ = -grid_phase_ * alph;
+    // vec2 grid_phase30 = (grid_phase0 - grid_phase3)/alph;
+    // vec2 grid_phase30 = (grid_phase0 - (grid_phase_ - 0.5)*alph)/alph;
+    // vec2 grid_phase30 = (grid_phase0 - grid_phase_*alph + 0.5*alph )/alph;
+    // vec2 grid_phase30 = (grid_phase0 - grid_phase0 + 0.5*alph )/alph;
+    // vec2 grid_phase30 = vec2(0,0)+(0.5*alph )/alph;
+    // vec2 grid_phase30 = vec2(0,0) + 0.5;
+
     // vec2 griddable_xy = (_uv * scale_ + grid_phase) * alph;
-    vec2 griddable_xy = (_uv * scale_) * alph + grid_phase * alph;
+    vec2 griddable_ixy = (_uv * scale_) * alph - grid_phase0_;
 
     // keep this `ivec`: cellint_id = node identity  = nodal domain id
-    ivec2 cellint_id = ivec2(floor(griddable_xy));
+    ivec2 cellint_id = ivec2(floor(griddable_ixy));
     vec2 cellint_id_vec2 = vec2(cellint_id);
     // ^ anchor/corner point ^
     // aha, anchor is different to the center.
@@ -226,7 +232,15 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01
     // true_node_centre_uv = ( cellint_id_vec2/alph - grid_phase2 )  / scale_;
     // true_node_centre_uv = ( cellint_id_vec2/alph - grid_phase2*alph/alph )  / scale_;
     // true_node_centre_uv = ( (cellint_id_vec2 - grid_phase2*alph)/alph )  / scale_;
-    true_node_centre_uv = ( (cellint_id_vec2 - grid_phase3)/alph )  / scale_;
+    // true_node_centre_uv = ( (cellint_id_vec2 - grid_phase3)/alph )  / scale_;
+    // true_node_centre_uv = ( (cellint_id_vec2 - grid_phase0 + grid_phase0- grid_phase3)/alph )  / scale_;
+    // true_node_centre_uv = ( (cellint_id_vec2 - grid_phase0)/alph + (grid_phase0 - grid_phase3)/alph )  / scale_;
+    // true_node_centre_uv = ( (cellint_id_vec2 - grid_phase0)/alph + grid_phase30 )  / scale_;
+    // true_node_centre_uv =  (cellint_id_vec2 - grid_phase0)/alph  / scale_ + grid_phase30   / scale_;
+
+    vec2 ancho = (cellint_id_vec2 + grid_phase0_)/alph  / scale_;
+    // true_node_centre_uv =  ancho + grid_phase30 / scale_;
+    true_node_centre_uv =  ancho + 0.5 / scale_;
 
 
 
