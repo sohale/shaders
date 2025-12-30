@@ -184,9 +184,9 @@ float rod_shape(vec2 local_vec_xy, vec2 force, float RADIUS0, float RADIUS1) {
     
     // vec2 duv = cw_to_uv(local_vec_cw)
     // vec2 dcw = uv_to_cw(duv)
-    // vec2 dxy = pixelxy_to_chargesworld(local_vec_cw);
+    // vec2 dxy = chargesworld_to_pixelxy(local_vec_cw);
      vec2 dxy = local_vec_xy;
-    vec2 dcw = chargesworld_to_pixelxy(dxy);
+    vec2 dcw = pixelxy_to_chargesworld(dxy);
 
     const float THICKNESS = 0.3;
     const mat2 rot90 = mat2(0,1,-1,0);
@@ -323,7 +323,7 @@ void mainImage( out vec4 O, vec2 pix_xy )
 
     // rod_shape is in ChW. The idea is to change it to uv, and then, pix etc
     // float d2_shape = rod_shape( cuv4_delta, force, RADIUS0, RADIUS1);
-    float d2_shape = rod_shape( pixelxy_to_chargesworld(cuv4_delta), force, RADIUS0, RADIUS1);
+    float d2_shape = rod_shape( chargesworld_to_pixelxy(cuv4_delta), force, RADIUS0, RADIUS1);
     
     // d2_shape = max(d2_shape, smoothstep(0.2, 0.0, distance(uv_, charges[1].xy)));
     vec2 uv_cw = uv_to_chargesworld(uv_);
