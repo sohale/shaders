@@ -189,7 +189,8 @@ void locate_in_node1_deprecated(in vec2 _uv, out vec2 true_node_centre, out vec2
 
 // simplifying again
 // a snap-to-grid
-void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 nodal_uv0, out vec2 RADIUS01_uv) {
+// void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 nodal_uv0, out vec2 RADIUS01_uv) {
+void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01_uv) {
 
     const float scale_ = 12.*2.0;
     vec2 grid_phase = 1.0*vec2(.2, 0) * rotMat2(iTime * 2.0*pi / 2.1);
@@ -220,7 +221,8 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 nodal_uv
     // sht! :
     // nodal_uv0 = antigraiddable_uv + h2_uv;
     // sht!
-    nodal_uv0 = true_node_centre_uv;
+    // nodal_uv0 = true_node_centre_uv;
+    // ^ no needed anymore!
 
     const float RADIUS1_ = 1.0;
     const float RADIUS0_ = 0.9;
@@ -314,8 +316,10 @@ void mainImage( out vec4 O, vec2 pix_xy )
     vec2 true_node_centre_uv_offs0;
     vec2 nodal_uv0;
     vec2 RADIUS01_uv;
-    locate_in_node(uv_ , true_node_centre_uv_offs0, nodal_uv0, RADIUS01_uv);
-    
+    // locate_in_node(uv_ , true_node_centre_uv_offs0, nodal_uv0, RADIUS01_uv);
+    locate_in_node(uv_ , true_node_centre_uv_offs0, RADIUS01_uv);
+    nodal_uv0 = true_node_centre_uv_offs0;
+
         // in "charges-world" !
     // vec2 true_node_centre = true_node_centre_uv*scale_m_ + 0.5 + 2.00 * grid_phase;
     // vec2 true_node_centre = true_node_centre_uv*scale_m_ + 0.5; // + 2.00 * grid_phase;
