@@ -189,7 +189,7 @@ void locate_in_node1_deprecated(in vec2 _uv, out vec2 true_node_centre, out vec2
 
 // simplifying again
 // a snap-to-grid
-void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01_uv) {
+void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 nodal_uv0, out vec2 RADIUS01_uv) {
 
     const float scale_ = 12.*2.0;
     vec2 grid_phase = 1.0*vec2(.2, 0) * rotMat2(iTime * 2.0*pi / 2.1);
@@ -206,6 +206,11 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01
     vec2 antigraiddable_uv = (cellint_id_vec2/alph - grid_phase)/scale_;
     vec2 h2_uv = chargesworld_to_uv(vec2(0.5, 0.5));
     true_node_centre_uv = antigraiddable_uv + h2_uv;
+    //  = true_node_centre_uv_offs0
+
+    vec2 h3_uv = chargesworld_to_uv(vec2(0.5, 0.5))  - 0.5/24.0;
+    // nodal_uv0 = true_node_centre_uv_offs0 - h3_uv;
+    nodal_uv0 = true_node_centre_uv - h3_uv;
 
     const float RADIUS1_ = 1.0;
     const float RADIUS0_ = 0.9;
@@ -216,6 +221,7 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01
     // what? RADIUSi were in ChW?
     // ok, now convert to uv, and back to pixel/xy:
     RADIUS01_uv = pixeldxy_to_uv(RADIUS01_xy);
+    
 }
 
 
@@ -295,9 +301,11 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // vec2 true_node_centre_uv_;
     // vec2 cuv3_;
     // locate_in_node(uv_ , true_node_centre_uv_);
-    vec2 true_node_centre_uv_offs;
+    vec2 true_node_centre_uv_offs0;
+    vec2 nodal_uv0;
     vec2 RADIUS01_uv;
-    locate_in_node(uv_ , true_node_centre_uv_offs, RADIUS01_uv);
+    locate_in_node(uv_ , true_node_centre_uv_offs0, nodal_uv0, RADIUS01_uv);
+    
         // in "charges-world" !
     // vec2 true_node_centre = true_node_centre_uv*scale_m_ + 0.5 + 2.00 * grid_phase;
     // vec2 true_node_centre = true_node_centre_uv*scale_m_ + 0.5; // + 2.00 * grid_phase;
@@ -376,10 +384,10 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // vec2 cuv4_delta_xy = chargesworld_to_pixelxy(cuv4_delta_);
     // vec2 cuv4_delta_xy = chargesworld_to_pixelxy(uv_to_chargesworld(cuv3_delta_uv_deviant));
     // vec2 cuv4_delta_xy = uv_to_pixelxy(cuv3_delta_uv_deviant);
-    vec2 h3_uv = chargesworld_to_uv(vec2(0.5, 0.5))  - 0.5/24.0;
+    // vec2 h3_uv = chargesworld_to_uv(vec2(0.5, 0.5))  - 0.5/24.0;
     // vec2 cuv4_delta_xy_dev_ = uv_to_pixeldxy((uv_ - true_node_centre_uv_offs + h3_uv)*2.0);
     // vec2 nodal_dxy = uv_to_pixeldxy((uv_ - true_node_centre_uv_offs + h3_uv)*2.0);
-    vec2 nodal_uv0 = true_node_centre_uv_offs - h3_uv;
+    // vec2 nodal_uv0 = true_node_centre_uv_offs - h3_uv;
     vec2 nodal_dxy = uv_to_pixeldxy((uv_ - nodal_uv0)*2.0);
 
 
@@ -388,7 +396,7 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // float d2_shape = rod_shape( cuv4_delta_xy_dev, force, RADIUS0, RADIUS1);
     
 
-    vec2 true_node_centre_chw = uv_to_chargesworld(true_node_centre_uv_offs); // + 2.00 * grid_phase;
+    vec2 true_node_centre_chw = uv_to_chargesworld(true_node_centre_uv_offs0); // + 2.00 * grid_phase;
     vec2 force_chw = field(true_node_centre_chw);
     
     // rod_shape_xy is now in pixel/xy coords:
