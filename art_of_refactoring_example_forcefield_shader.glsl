@@ -48,7 +48,6 @@ vec2 chargesworld_to_uv(vec2 chw) {
     return chw / scale;
 }
 
-
 vec2 pixelxy_to_chargesworld(vec2 pix_xy) {
     // sht
     const float scale_m_ =  12.*2.0;
@@ -178,17 +177,27 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv) {
 
 
 
-float rod_shape(vec2 local_coords, vec2 force, float RADIUS0, float RADIUS1) {
+float rod_shape(vec2 local_vec_xy, vec2 force, float RADIUS0, float RADIUS1) {
+    // local_coords -> local_coords_cw -> local_vec_cw
+    // local, relative, etc.
+    // local_vec_cw -> local_vec_xy = dxy
+    
+    // vec2 duv = cw_to_uv(local_vec_cw)
+    // vec2 dcw = uv_to_cw(duv)
+    // vec2 dxy = pixelxy_to_chargesworld(local_vec_cw);
+     vec2 dxy = local_vec_xy;
+    vec2 dcw = chargesworld_to_pixelxy(dxy);
+
     const float THICKNESS = 0.3;
     const mat2 rot90 = mat2(0,1,-1,0);
     return 1.0
          //  // Create bar -> Make it look nice : side thickness 0.3
         * smoothstep(THICKNESS, .0, 
-            abs(dot(normalize(force), rot90 * local_coords )) 
+            abs(dot(normalize(force), rot90 * dcw )) 
          )
 
         // limit length of bars to 1 cell width radius
-        * smoothstep(RADIUS1, RADIUS0, length(local_coords))  
+        * smoothstep(RADIUS1, RADIUS0, length(dcw))  
     ;
 }
 
@@ -271,11 +280,12 @@ void mainImage( out vec4 O, vec2 pix_xy )
     //vec2 h2_uv = chargesworld_to_uv(vec2(0.5, 0.5));
     // vec2 cuv3_delta_uv = (uv_ - (true_node_centre_uv1 - h2_uv + 0.5/24.0))*2.0;
 
-    vec2 h3_uv = chargesworld_to_uv(vec2(0.5, 0.5))  - 0.5/24.0;
+    // vec2 h3_uv = chargesworld_to_uv(vec2(0.5, 0.5))  - 0.5/24.0;
     // vec2 cuv3_delta_uv = (uv_ - (true_node_centre_uv1_ - h3_uv))*2.0;
     // vec2 cuv3_delta_uv = (uv_ - (true_node_centre_uv_offs - h3_uv))*2.0;
     // vec2 cuv3_delta_uv = (uv_ - true_node_centre_uv_offs + h3_uv)*2.0;
-    vec2 cuv3_delta_uv_deviant = (uv_ - true_node_centre_uv_offs + h3_uv)*2.0;
+    // vec2 cuv3_delta_uv_deviant = (uv_ - true_node_centre_uv_offs + h3_uv)*2.0;
+
 
 
     // vec2 cuv4 = cuv3_ * scale_m_;
@@ -306,10 +316,14 @@ void mainImage( out vec4 O, vec2 pix_xy )
     vec2 force = field(true_node_centre);
  
 
+    vec2 h3_uv = chargesworld_to_uv(vec2(0.5, 0.5))  - 0.5/24.0;
+    vec2 cuv3_delta_uv_deviant = (uv_ - true_node_centre_uv_offs + h3_uv)*2.0;
     // vec2 cuv4_delta = uv_to_chargesworld(cuv3_delta_uv);
     vec2 cuv4_delta = uv_to_chargesworld(cuv3_delta_uv_deviant);
 
-    float d2_shape = rod_shape( cuv4_delta, force, RADIUS0, RADIUS1);
+    // rod_shape is in ChW. The idea is to change it to uv, and then, pix etc
+    // float d2_shape = rod_shape( cuv4_delta, force, RADIUS0, RADIUS1);
+    float d2_shape = rod_shape( pixelxy_to_chargesworld(cuv4_delta), force, RADIUS0, RADIUS1);
     
     // d2_shape = max(d2_shape, smoothstep(0.2, 0.0, distance(uv_, charges[1].xy)));
     vec2 uv_cw = uv_to_chargesworld(uv_);
