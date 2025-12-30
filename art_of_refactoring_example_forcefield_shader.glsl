@@ -220,20 +220,22 @@ float rod_shape(vec2 local_vec_xy, vec2 force, float RADIUS0, float RADIUS1) {
     // vec2 dcw =  local_vec_xy  / screen.y * scale_m;
     
     float R0xy = chargesworld_to_pixeldxy(vec2(RADIUS0, 0.0)).x;
-    float RADIUS0_ = pixeldxy_to_chargesworld(vec2(R0xy, 0.0)).x;
     float R1xy = chargesworld_to_pixeldxy(vec2(RADIUS1, 0.0)).x;
+    vec2 force_dxy = chargesworld_to_pixeldxy(force);
+    float RADIUS0_ = pixeldxy_to_chargesworld(vec2(R0xy, 0.0)).x;
     float RADIUS1_ = pixeldxy_to_chargesworld(vec2(R1xy, 0.0)).x;
+    vec2 force_ = pixeldxy_to_chargesworld(force_dxy);
 
     const float THICKNESS = 0.3;
     const mat2 rot90 = mat2(0,1,-1,0);
     return 1.0
          //  // Create bar -> Make it look nice : side thickness 0.3
         * smoothstep(THICKNESS, .0, 
-            abs(dot(normalize(force), rot90 * dcw )) 
+            abs(dot(normalize(force_), rot90 * dcw )) 
          )
 
         // limit length of bars to 1 cell width radius
-        * smoothstep(RADIUS1, RADIUS0_, length(dcw))  
+        * smoothstep(RADIUS1_, RADIUS0_, length(dcw))  
     ;
 }
 
