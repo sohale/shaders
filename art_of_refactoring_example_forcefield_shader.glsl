@@ -293,11 +293,12 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01
     
 }
 
-
+const vec2 ZERO = vec2(0,0);
+const vec2 OME = vec2(1,1);
 
 //float rod_shape(vec2 local_vec_xy, vec2 force_dxy, float RADIUS0_xy, float RADIUS1_xy) {
 // float rod_shape_xy(vec2 local_vec_xy, vec2 force_dxy, float RADIUS0_xy, float RADIUS1_xy) {
-float rod_shape_xy(vec2 local_vec_xy, vec2 force_dxy, vec2 RADIUS01_xy) {
+float rod_shape_xy(vec2 local_vec_xy, vec2 force_dxy, vec2 RADIUS01_xy, float thickness_xy) {
     // local_coords -> local_coords_cw -> local_vec_cw
     // local, relative, etc.
     // local_vec_cw -> local_vec_xy = dxy
@@ -313,16 +314,21 @@ float rod_shape_xy(vec2 local_vec_xy, vec2 force_dxy, vec2 RADIUS01_xy) {
     vec2 radius_errorbar = pixeldxy_to_chargesworld(RADIUS01_xy);
     float RADIUS0_chw = radius_errorbar.x;
     float RADIUS1_chw = radius_errorbar.y;
-    vec2 force_ = pixeldxy_to_chargesworld(force_dxy);
+    // vec2 force_ = pixeldxy_to_chargesworld(force_dxy);
+    vec2 force_ch = pixeldxy_to_chargesworld(force_dxy);
 
     // const float THICKNESS = 0.3;
     //corrected!
-    const float THICKNESS = 0.3/2.0;
+    // in ChW coord syste?!
+    // const float THICKNESS =  0.3/2.0;
+    // const float THICKNESS =  0.3/2.0;
+    // float THICKNESS0 = chargesworld_to_pixeldxy(ZERO+0.3/2.0).x;
+    float THICKNESS_ = pixeldxy_to_chargesworld(ZERO+thickness_xy).x;
     const mat2 rot90 = mat2(0,1,-1,0);
     return 1.0
          //  // Create bar -> Make it look nice : side thickness 0.3
-        * smoothstep(THICKNESS, .0, 
-            abs(dot(normalize(force_), rot90 * dcw )) 
+        * smoothstep(THICKNESS_, .0, 
+            abs(dot(normalize(force_ch), rot90 * dcw )) 
          )
 
         // limit length of bars to 1 cell width radius
@@ -497,7 +503,10 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // let's call it a name:
     //no, it was correct!!
     float SHRINK_FACTOR = 1.0;
-    float d2_shape = rod_shape_xy( nodal_dxy1*SHRINK_FACTOR, force_dxy, RADIUS01_xy2);
+    
+    float thinness_pixels = chargesworld_to_pixeldxy(ZERO+0.3/2.0).x;
+    // float thinness_pixels = 2.0; // pixels!
+    float d2_shape = rod_shape_xy( nodal_dxy1*SHRINK_FACTOR, force_dxy, RADIUS01_xy2, thinness_pixels);
 
 
     // d2_shape = max(d2_shape, smoothstep(0.2, 0.0, distance(uv_, charges[1].xy)));
