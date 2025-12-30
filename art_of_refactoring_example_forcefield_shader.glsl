@@ -109,7 +109,7 @@ mat2 rotMat2(float rad)
 // coords:
 // pixel-xy , also: mousexy
 // uv (scaled) -- current
-// floor-able (ccurrently the same as uv)
+// floor-able (currently the same as uv)
 // another for the ROD ( 1.0-ness in rod)
 
 //  in the input-uv
@@ -196,6 +196,7 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01
     // const float scale_ = 5.0;
     // alpha & grid_phase are about discretisation: floor.  It should have been: floor(x*alpha+phase)
     float alph = 1.0;
+    // try increasing ^
 
     vec2 grid_phas_e_ = -1.0*vec2(.2, 0) * rotMat2(iTime * 2.0*pi / 2.1);
     // vec2 grid_phase2 = grid_phase - 0.5;
@@ -244,7 +245,22 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01
     // true_node_centre_uv =  ancho + 0.5 / scale_;
 
     // true_node_centre_uv =  (cellint_id_vec2 + grid_phase0_ + 0.5 / scale_  * alph * scale_) /alph / scale_;
-    true_node_centre_uv =  (cellint_id_vec2 + grid_phase0_ + 0.5 * alph ) /alph / scale_;
+    // true_node_centre_uv =  (cellint_id_vec2 + grid_phase0_ + 0.5 * alph ) /alph / scale_;
+    // true_node_centre_uv =  (cellint_id_vec2 + 0.0*0.5 * alph + grid_phase0_ ) /alph / scale_;
+    // ^ bug detected (for alph):  this should not depend on alpha: It's in "floor"-space ( ivec )
+    // The center (of attention:
+    // Why it should not be at zero? because floor has a bias. cuts at [0,+1)
+    // the anchor-center
+    // in florr-able coord system:
+    // vec2 node_center_ = cellint_id_vec2 + 0.5 * alph;
+    // by shifting 0.5, now radius is available
+    // BUG FIX:
+    vec2 node_center_ = cellint_id_vec2 + 0.5;
+    // this is not arbitrary. it needs tobe at center of the region, which is cuts at [0,+1).
+
+
+
+    true_node_centre_uv =  (node_center_ + grid_phase0_ ) /alph / scale_;
 
 
 
