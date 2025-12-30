@@ -204,10 +204,15 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01
 
 
     // back to the input-uv
-    vec2 antigraiddable_uv = (cellint_id_vec2/alph - grid_phase)/scale_;
-    vec2 h2_uv = chargesworld_to_uv(vec2(0.5, 0.5));
-    true_node_centre_uv = antigraiddable_uv + h2_uv;
+    // vec2 antigraiddable_uv = (cellint_id_vec2/alph - grid_phase)/scale_;
+    // vec2 h2_uv = chargesworld_to_uv(vec2(0.5, 0.5)); //  =  0.5 / scale;
+
+    // true_node_centre_uv = antigraiddable_uv + h2_uv;
     //  = true_node_centre_uv_offs0
+    
+    // true_node_centre_uv = (cellint_id_vec2/alph - grid_phase)/scale_ + 0.5 / scale_;
+    true_node_centre_uv = ( cellint_id_vec2/alph - grid_phase + 0.5 )  / scale_;
+
 
     // vec2 h3_uv = h2_uv  - 0.5/24.0;
     // nodal_uv0 = true_node_centre_uv_offs0 - h3_uv;
