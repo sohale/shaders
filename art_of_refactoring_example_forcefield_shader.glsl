@@ -171,7 +171,8 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv) {
 
     // back to the input-uv
     vec2 antigraiddable_uv = (cellint_id_vec2/alph - grid_phase)/scale_;
-    true_node_centre_uv = antigraiddable_uv;
+    vec2 h2_uv = chargesworld_to_uv(vec2(0.5, 0.5));
+    true_node_centre_uv = antigraiddable_uv + h2_uv;
 }
 
 
@@ -230,9 +231,11 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // const float scale_m_ =  12.*2.0; // 1.0 ;
     // ^ aha, now I see this is to convert from uv-world to charges-world
 
-    vec2 true_node_centre_uv_;
+    // vec2 true_node_centre_uv_;
     // vec2 cuv3_;
-    locate_in_node(uv_ , true_node_centre_uv_);
+    // locate_in_node(uv_ , true_node_centre_uv_);
+    vec2 true_node_centre_uv_offs;
+    locate_in_node(uv_ , true_node_centre_uv_offs);
         // in "charges-world" !
     // vec2 true_node_centre = true_node_centre_uv*scale_m_ + 0.5 + 2.00 * grid_phase;
     // vec2 true_node_centre = true_node_centre_uv*scale_m_ + 0.5; // + 2.00 * grid_phase;
@@ -241,9 +244,10 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // vec2 true_node_centre = uv_to_chargesworld(true_node_centre_uv) + vec2(0.5,0.5); // + 2.00 * grid_phase;
     // vec2 true_node_centre = uv_to_chargesworld(true_node_centre_uv) + chargesworld_to_uv(vec2(0.5,0.5)); // + 2.00 * grid_phase;
     // vec2 true_node_centre = uv_to_chargesworld(true_node_centre_uv + chargesworld_to_uv(vec2(0.5,0.5))); // + 2.00 * grid_phase;
-    vec2 h2_uv = chargesworld_to_uv(vec2(0.5, 0.5));
+    // vec2 h2_uv = chargesworld_to_uv(vec2(0.5, 0.5));
     // vec2 true_node_centre = uv_to_chargesworld(true_node_centre_uv + h2_uv); // + 2.00 * grid_phase;
-    vec2 true_node_centre = uv_to_chargesworld(true_node_centre_uv_ + h2_uv); // + 2.00 * grid_phase;
+    // vec2 true_node_centre = uv_to_chargesworld(true_node_centre_uv_ + h2_uv); // + 2.00 * grid_phase;
+    vec2 true_node_centre = uv_to_chargesworld(true_node_centre_uv_offs); // + 2.00 * grid_phase;
     
     // in rod world!
     // vec2 cuv3_ = (uv_  - true_node_centre/scale_m_)*2.0;
@@ -263,6 +267,7 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // vec2 true_node_centre_uv1 = true_node_centre_uv + h2_uv;
     // another key step:
     vec2 true_node_centre_uv1 = chargesworld_to_uv(true_node_centre);
+    vec2 h2_uv = chargesworld_to_uv(vec2(0.5, 0.5));
     vec2 cuv3_delta_uv = (uv_ - (true_node_centre_uv1 - h2_uv + 0.5/24.0))*2.0;
 
     // vec2 cuv4 = cuv3_ * scale_m_;
