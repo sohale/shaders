@@ -206,7 +206,8 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv) {
 
 
 
-float rod_shape(vec2 local_vec_xy, vec2 force, float RADIUS0, float RADIUS1) {
+//float rod_shape(vec2 local_vec_xy, vec2 force_dxy, float RADIUS0_xy, float RADIUS1_xy) {
+float rod_shape_xy(vec2 local_vec_xy, vec2 force_dxy, float RADIUS0_xy, float RADIUS1_xy) {
     // local_coords -> local_coords_cw -> local_vec_cw
     // local, relative, etc.
     // local_vec_cw -> local_vec_xy = dxy
@@ -219,11 +220,8 @@ float rod_shape(vec2 local_vec_xy, vec2 force, float RADIUS0, float RADIUS1) {
     vec2 dcw = pixeldxy_to_chargesworld(dxy);
     // vec2 dcw =  local_vec_xy  / screen.y * scale_m;
     
-    float R0xy = chargesworld_to_pixeldxy(vec2(RADIUS0, 0.0)).x;
-    float R1xy = chargesworld_to_pixeldxy(vec2(RADIUS1, 0.0)).x;
-    vec2 force_dxy = chargesworld_to_pixeldxy(force);
-    float RADIUS0_ = pixeldxy_to_chargesworld(vec2(R0xy, 0.0)).x;
-    float RADIUS1_ = pixeldxy_to_chargesworld(vec2(R1xy, 0.0)).x;
+    float RADIUS0_ = pixeldxy_to_chargesworld(vec2(RADIUS0_xy, 0.0)).x;
+    float RADIUS1_ = pixeldxy_to_chargesworld(vec2(RADIUS1_xy, 0.0)).x;
     vec2 force_ = pixeldxy_to_chargesworld(force_dxy);
 
     const float THICKNESS = 0.3;
@@ -367,8 +365,14 @@ void mainImage( out vec4 O, vec2 pix_xy )
 
     // rod_shape is in ChW. The idea is to change it to uv, and then, pix etc
     // float d2_shape = rod_shape( cuv4_delta, force, RADIUS0, RADIUS1);
-    float d2_shape = rod_shape( cuv4_delta_xy_dev, force, RADIUS0, RADIUS1);
+    // float d2_shape = rod_shape( cuv4_delta_xy_dev, force, RADIUS0, RADIUS1);
     
+    float RADIUS0_xy = chargesworld_to_pixeldxy(vec2(RADIUS0, 0.0)).x;
+    float RADIUS1_xy = chargesworld_to_pixeldxy(vec2(RADIUS1, 0.0)).x;
+    vec2 force_dxy = chargesworld_to_pixeldxy(force);
+    float d2_shape = rod_shape_xy( cuv4_delta_xy_dev, force_dxy, RADIUS0_xy, RADIUS1_xy);
+    
+
     // d2_shape = max(d2_shape, smoothstep(0.2, 0.0, distance(uv_, charges[1].xy)));
     vec2 uv_cw = uv_to_chargesworld(uv_);
     
