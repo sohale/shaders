@@ -196,8 +196,8 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01
     float alph = 1.0;
 
     vec2 grid_phase = 1.0*vec2(.2, 0) * rotMat2(iTime * 2.0*pi / 2.1);
-    vec2 grid_phase2 = grid_phase - 0.5;
-    vec2 grid_phase3 = grid_phase2*alph;
+    // vec2 grid_phase2 = grid_phase - 0.5;
+    vec2 grid_phase3 = (grid_phase - 0.5)*alph;
     
     vec2 griddable_xy = (_uv * scale_ + grid_phase) * alph;
 
