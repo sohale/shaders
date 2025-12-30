@@ -435,7 +435,6 @@ void mainImage( out vec4 O, vec2 pix_xy )
     float d2_shape = rod_shape_xy( nodal_dxy1*SHRINK_FACTOR, force_dxy, RADIUS01_xy2);
 
 
-
     // d2_shape = max(d2_shape, smoothstep(0.2, 0.0, distance(uv_, charges[1].xy)));
     vec2 uv_cw = uv_to_chargesworld(uv_);
     
