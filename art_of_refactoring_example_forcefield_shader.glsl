@@ -115,7 +115,12 @@ mat2 rotMat2(float rad)
 //  in the input-uv
 // in "charges-world"
 // in rod world
-    
+
+// now that rod-world uses pixel-xy,
+// we need to collapse one?: uv, or, charges.
+// No: I just need to get the grid one in one consistent coord ( RADIUS0 ad RADIUS1 are so )
+
+
 // vec2 to_griddable() { }
 
 void locate_in_node1_deprecated(in vec2 _uv, out vec2 true_node_centre, out vec2 cuv3) {
@@ -335,6 +340,11 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // float RADIUS0_xy = chargesworld_to_pixeldxy(vec2(RADIUS0_, 0.0)).x;
     // float RADIUS1_xy = chargesworld_to_pixeldxy(vec2(RADIUS1_, 0.0)).x;
     vec2 RADIUS01_xy = chargesworld_to_pixeldxy(vec2(RADIUS0_, RADIUS1_));
+    // what? RADIUSi were in ChW?
+    // ok, now convert to uv, and back to pixel/xy:
+    vec2 RADIUS01_uv = pixeldxy_to_uv(RADIUS01_xy);
+    vec2 RADIUS01_xy2 = uv_to_pixeldxy(RADIUS01_uv);
+    
 
 
     if (iMouse.z > 0.) {
@@ -372,7 +382,8 @@ void mainImage( out vec4 O, vec2 pix_xy )
     
     // rod_shape_xy is now in pixel/xy coords:
     vec2 force_dxy = chargesworld_to_pixeldxy(force);
-    float d2_shape = rod_shape_xy( cuv4_delta_xy_dev, force_dxy, RADIUS01_xy.x, RADIUS01_xy.y);
+
+    float d2_shape = rod_shape_xy( cuv4_delta_xy_dev, force_dxy, RADIUS01_xy2.x, RADIUS01_xy2.y);
     
 
     // d2_shape = max(d2_shape, smoothstep(0.2, 0.0, distance(uv_, charges[1].xy)));
