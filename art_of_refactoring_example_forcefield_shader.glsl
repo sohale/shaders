@@ -1,6 +1,7 @@
 // Demonstrating my "method of semantic refactoring"
 // Starting with pre-existing shader by 01000001 https://www.shadertoy.com/view/4ffXzf
 
+
 #define saturation .1
 // .7 is nice
 
@@ -28,12 +29,38 @@ vec2 field(vec2 p){
     return sum;
 }
 
-// Source - https://stackoverflow.com/a/26070411
-// Posted by HuaTham, modified by community. See post 'Timeline' for change history
-// Retrieved 2025-12-30, License - CC BY-SA 3.0
+
+vec2 pixel_to_uv(vec2 pix_xy) {
+
+    vec2 screen = iResolution.xy;
+    vec2 uv = ( pix_xy - screen / 2.0 ) / screen.y;
+    return uv;
+}
+
+vec2 uv_to_chargesworld(vec2 uv) {
+    const float scale_m_ = 12.*2.0; 
+    return uv * scale_m_;
+}
+
+vec2 pixelxy_to_chargesworld(vec2 pix_xy) {
+    // sht
+    const float scale_m_ =  12.*2.0;
+    // return pixel_to_uv(pix_xy) * scale_m_;
+    return uv_to_chargesworld(pixel_to_uv(pix_xy));   
+}
+
+vec2 chargesworld_to_pixelxy(vec2 cw_coords) {
+    vec2 screen = iResolution.xy;
+    const float scale_m_ =  12.*2.0;
+    vec2 uv = cw_coords / scale_m_;
+    return uv * screen.y + screen * 0.5;
+}
+
 
 float atan2(in float y, in float x)
 {
+    // `atan2` by HuaTham - https://stackoverflow.com/a/26070411
+    // Retrieved 2025-12-30, License - CC BY-SA 3.0
     bool s = (abs(x) > abs(y));
     return mix(pi/2.0 - atan(x,y), atan(y,x), s);
 }
@@ -141,40 +168,6 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv) {
 }
 
 
-vec2 pixel_to_uv(vec2 pix_xy) {
-
-    vec2 screen = iResolution.xy;
-    vec2 uv_ = (  pix_xy - screen*0.5 ) / screen.y;
-    return uv_;
-}
-
-vec2 uv_to_chargesworld(vec2 uv) {
-    const float scale_m_ = 12.*2.0; 
-    return uv * scale_m_;
-}
-
-vec2 pixel_to_chargesworld(vec2 pix_xy) {
-    // shit!
-    const float scale_m_ =  12.*2.0;
-    /*
-    // for iMouse.xy
-    vec2 screen = iResolution.xy;
-    return (pix_xy-screen/2.0)/screen.y * scale_m_;
-    */
-    /*
-    return pixel_to_uv(pix_xy) * scale_m_;
-    */
-    return uv_to_chargesworld(pixel_to_uv(pix_xy));   
-}
-
-vec2 cw_to_pixel(vec2 cw_coords) {
-    vec2 screen = iResolution.xy;
-    const float scale_m_ =  12.*2.0;
-    // cw_to_xy
-    vec2 uv = cw_coords / scale_m_;
-    return uv * screen.y + screen * 0.5;
-}
-
 
 float rod_shape(vec2 local_coords, vec2 force, float RADIUS0, float RADIUS1) {
     const float THICKNESS = 0.3;
@@ -210,7 +203,7 @@ float pole_dots_color(vec2 pix_xy) {
     for(int i = 0; i < n; i++) {
         // d2_shape = max(d2_shape, smoothstep(0.2*10.0, 0.0, 1.0*distance(uv_cw, charges[1].xy)));
         // d2_shape = max(d2_shape, smoothstep(5.0, 0.0, distance(pix_xy, cw_to_pixel(charges[1].xy))));
-        float d_i = distance(pix_xy, cw_to_pixel(charges[i].xy));
+        float d_i = distance(pix_xy, chargesworld_to_pixelxy(charges[i].xy));
         // d2_shape = max(d2_shape, smoothstep(5.0, 0.0, d_i) );
         // debugging
         //
@@ -266,7 +259,7 @@ void mainImage( out vec4 O, vec2 pix_xy )
 
     if (iMouse.z > 0.) {
        // charges[0].xy = (iMouse.xy-screen/2.0)/screen.y * scale_m_;
-       charges[0].xy = pixel_to_chargesworld(iMouse.xy);
+       charges[0].xy = pixelxy_to_chargesworld(iMouse.xy);
     }
     // modulate the charge
     // charges[0].z = sin(iTime*pi*2.0* 2.07)*8. + 10.;
