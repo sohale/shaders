@@ -239,9 +239,12 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01
     // true_node_centre_uv = ( (cellint_id_vec2 - grid_phase0)/alph + grid_phase30 )  / scale_;
     // true_node_centre_uv =  (cellint_id_vec2 - grid_phase0)/alph  / scale_ + grid_phase30   / scale_;
 
-    vec2 ancho = (cellint_id_vec2 + grid_phase0_)/alph  / scale_;
+    // vec2 ancho = (cellint_id_vec2 + grid_phase0_)/alph  / scale_;
     // true_node_centre_uv =  ancho + grid_phase30 / scale_;
-    true_node_centre_uv =  ancho + 0.5 / scale_;
+    // true_node_centre_uv =  ancho + 0.5 / scale_;
+
+    // true_node_centre_uv =  (cellint_id_vec2 + grid_phase0_ + 0.5 / scale_  * alph * scale_) /alph / scale_;
+    true_node_centre_uv =  (cellint_id_vec2 + grid_phase0_ + 0.5 * alph ) /alph / scale_;
 
 
 
