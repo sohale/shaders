@@ -319,14 +319,14 @@ float rod_shape_xy(vec2 local_vec_xy, vec2 force_dxy, vec2 RADIUS01_xy) {
     return 1.0
          //  // Create bar -> Make it look nice : side thickness 0.3
         * smoothstep(THICKNESS, .0, 
-            abs(dot(normalize(force_), rot90 * dcw )) 
+            abs(dot(normalize(force_), rot90 * dcw * 2.0)) 
          )
 
         // limit length of bars to 1 cell width radius
         // that (cell width) is called "diameter" !
         // diameter = 1 = RADIUS1_*2.0, RADIUS1_ ~ 0.5
         // limit length of bars to 1 cell width radius
-        * smoothstep(RADIUS1_chw*2.0, RADIUS0_chw*2.0, length(dcw))  
+        * smoothstep(RADIUS1_chw*2.0, RADIUS0_chw*2.0, length(dcw)*2.0)  
     ;
 }
 
@@ -491,7 +491,8 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // ^ which there reveals a subtle but satisfying bug!
     // or, may be a technique!
     // let's call it a name:
-    float SHRINK_FACTOR = 4.0;
+    //no, it was correct!!
+    float SHRINK_FACTOR = 1.0;
     float d2_shape = rod_shape_xy( nodal_dxy1*SHRINK_FACTOR, force_dxy, RADIUS01_xy2);
 
 
