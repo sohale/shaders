@@ -106,6 +106,29 @@ mat2 rotMat2(float rad)
     return mat2( c, -s, s, c );
 }
 
+
+// The MIT License. Copyright © 2017 Inigo Quilez
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+const uint k = 1103515245U;  // GLIB C
+//const uint k = 134775813U;   // Delphi and Turbo Pascal
+//const uint k = 20170906U;    // Today's date (use three days ago's dateif you want a prime)
+//const uint k = 1664525U;     // Numerical Recipes
+
+vec3 hash33( uvec3 x )
+{
+    x = ((x>>8U)^x.yzx)*k;
+    x = ((x>>8U)^x.yzx)*k;
+    x = ((x>>8U)^x.yzx)*k;
+    
+    return vec3(x)*(1.0/float(0xffffffffU));
+}
+vec2 hash33_2d(ivec2 seed2d) {
+   uvec3 seed3d = uvec3(seed2d, 79.0);
+   return hash33(seed3d).xy;
+}
+
+
 // coords:
 // pixel-xy , also: mousexy
 // uv (scaled) -- current
@@ -198,6 +221,7 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01
     float alph = 1.0;
     // try increasing ^
 
+    
     vec2 grid_phas_e_ = -1.0*vec2(.2, 0) * rotMat2(iTime * 2.0*pi / 2.1);
     // vec2 grid_phase2 = grid_phase - 0.5;
     // vec2 grid_phase3 = (grid_phase_ - 0.5)*alph;
@@ -259,10 +283,12 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01
     // this is not arbitrary. it needs tobe at center of the region, which is cuts at [0,+1).
     // the region is: [node_center_, node_center_+1)
 
-
+ 
+    vec2 noise2 = hash33_2d(cellint_id); // (cellint_id_vec2);
+    // node_center_.xy += noise2 * 0.4;
+    node_center_.xy += (noise2  - 0.5) * 2.0 * 0.8;
 
     true_node_centre_uv =  (node_center_ + grid_phase0_ ) /alph / scale_;
-
 
 
     // vec2 h3_uv = h2_uv  - 0.5/24.0;
