@@ -38,6 +38,20 @@ vec2 pixel_to_uv(vec2 pix_xy) {
     vec2 uv = ( pix_xy - screen / 2.0 ) / screen.y;
     return uv;
 }
+vec2 uv_to_pixelxy(vec2 uv) {
+    vec2 screen = iResolution.xy;
+    return uv * screen.y + screen / 2.0;
+}
+vec2 pixeldxy_to_uv(vec2 pix_dxy) {
+
+    vec2 screen = iResolution.xy;
+    vec2 uv = ( pix_dxy ) / screen.y;
+    return uv;
+}
+vec2 uv_to_pixeldxy(vec2 uv) {
+    vec2 screen = iResolution.xy;
+    return uv * screen.y;
+}
 
 vec2 uv_to_chargesworld(vec2 uv) {
     const float scale_m_ = 12.*2.0; 
@@ -54,6 +68,21 @@ vec2 pixelxy_to_chargesworld(vec2 pix_xy) {
     // return pixel_to_uv(pix_xy) * scale_m_;
     return uv_to_chargesworld(pixel_to_uv(pix_xy));   
 }
+// pixeldxy_to_chw
+vec2 pixeldxy_to_chargesworld(vec2 pix_dxy) {
+    const float scale_m =  12.*2.0;
+    // return uv_to_chargesworld(pixeldxy_to_uv(pix_dxy));
+    // return pixeldxy_to_uv(pix_dxy) * scale_m;
+    vec2 screen = iResolution.xy;
+    return pix_dxy  / screen.y * scale_m;
+}
+vec2 chargesworld_to_pixeldxy(vec2 dcw) {
+    const float scale_m =  12.*2.0;
+    vec2 screen = iResolution.xy;
+    // return pix_dxy  / screen.y * scale_m;
+    return dcw / scale_m * screen.y ;
+}
+
 
 vec2 chargesworld_to_pixelxy(vec2 cw_coords) {
     vec2 screen = iResolution.xy;
@@ -186,7 +215,14 @@ float rod_shape(vec2 local_vec_xy, vec2 force, float RADIUS0, float RADIUS1) {
     // vec2 dcw = uv_to_cw(duv)
     // vec2 dxy = chargesworld_to_pixelxy(local_vec_cw);
      vec2 dxy = local_vec_xy;
-    vec2 dcw = pixelxy_to_chargesworld(dxy);
+    // vec2 dcw = pixeldxy_to_chargesworld(dxy);
+    vec2 dcw = pixeldxy_to_chargesworld(dxy);
+    // vec2 dcw =  local_vec_xy  / screen.y * scale_m;
+    
+    float R0xy = chargesworld_to_pixeldxy(vec2(RADIUS0, 0.0)).x;
+    float RADIUS0_ = pixeldxy_to_chargesworld(vec2(R0xy, 0.0)).x;
+    float R1xy = chargesworld_to_pixeldxy(vec2(RADIUS1, 0.0)).x;
+    float RADIUS1_ = pixeldxy_to_chargesworld(vec2(R1xy, 0.0)).x;
 
     const float THICKNESS = 0.3;
     const mat2 rot90 = mat2(0,1,-1,0);
@@ -197,7 +233,7 @@ float rod_shape(vec2 local_vec_xy, vec2 force, float RADIUS0, float RADIUS1) {
          )
 
         // limit length of bars to 1 cell width radius
-        * smoothstep(RADIUS1, RADIUS0, length(dcw))  
+        * smoothstep(RADIUS1, RADIUS0_, length(dcw))  
     ;
 }
 
@@ -316,16 +352,20 @@ void mainImage( out vec4 O, vec2 pix_xy )
     vec2 force = field(true_node_centre);
  
 
-    vec2 h3_uv = chargesworld_to_uv(vec2(0.5, 0.5))  - 0.5/24.0;
-    vec2 cuv3_delta_uv_deviant = (uv_ - true_node_centre_uv_offs + h3_uv)*2.0;
+    // vec2 h3_uv = chargesworld_to_uv(vec2(0.5, 0.5))  - 0.5/24.0;
+    // vec2 cuv3_delta_uv_deviant = (uv_ - true_node_centre_uv_offs + h3_uv)*2.0;
     // vec2 cuv4_delta = uv_to_chargesworld(cuv3_delta_uv);
     // vec2 cuv4_delta = uv_to_chargesworld(cuv3_delta_uv_deviant);
-    vec2 cuv4_delta_ = uv_to_chargesworld(cuv3_delta_uv_deviant);
-    vec2 cuv4_delta_xy = chargesworld_to_pixelxy(cuv4_delta_);
+    // vec2 cuv4_delta_ = uv_to_chargesworld(cuv3_delta_uv_deviant);
+    // vec2 cuv4_delta_xy = chargesworld_to_pixelxy(cuv4_delta_);
+    // vec2 cuv4_delta_xy = chargesworld_to_pixelxy(uv_to_chargesworld(cuv3_delta_uv_deviant));
+    // vec2 cuv4_delta_xy = uv_to_pixelxy(cuv3_delta_uv_deviant);
+    vec2 h3_uv = chargesworld_to_uv(vec2(0.5, 0.5))  - 0.5/24.0;
+    vec2 cuv4_delta_xy_dev = uv_to_pixeldxy((uv_ - true_node_centre_uv_offs + h3_uv)*2.0);
 
     // rod_shape is in ChW. The idea is to change it to uv, and then, pix etc
     // float d2_shape = rod_shape( cuv4_delta, force, RADIUS0, RADIUS1);
-    float d2_shape = rod_shape( cuv4_delta_xy, force, RADIUS0, RADIUS1);
+    float d2_shape = rod_shape( cuv4_delta_xy_dev, force, RADIUS0, RADIUS1);
     
     // d2_shape = max(d2_shape, smoothstep(0.2, 0.0, distance(uv_, charges[1].xy)));
     vec2 uv_cw = uv_to_chargesworld(uv_);
