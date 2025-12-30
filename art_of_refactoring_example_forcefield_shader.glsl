@@ -156,6 +156,7 @@ void locate_in_node1_deprecated(in vec2 _uv, out vec2 true_node_centre, out vec2
 
 
 // simplifying again
+// a snap-to-grid
 void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv) {
 
     const float scale_ = 12.*2.0;
@@ -266,9 +267,16 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // vec2 cuv3_delta_uv = (uv_ - (true_node_centre - h2_uv + 0.5/24.0))*2.0;
     // vec2 true_node_centre_uv1 = true_node_centre_uv + h2_uv;
     // another key step:
-    vec2 true_node_centre_uv1 = chargesworld_to_uv(true_node_centre);
-    vec2 h2_uv = chargesworld_to_uv(vec2(0.5, 0.5));
-    vec2 cuv3_delta_uv = (uv_ - (true_node_centre_uv1 - h2_uv + 0.5/24.0))*2.0;
+    // vec2 true_node_centre_uv1_ = chargesworld_to_uv(true_node_centre);
+    //vec2 h2_uv = chargesworld_to_uv(vec2(0.5, 0.5));
+    // vec2 cuv3_delta_uv = (uv_ - (true_node_centre_uv1 - h2_uv + 0.5/24.0))*2.0;
+
+    vec2 h3_uv = chargesworld_to_uv(vec2(0.5, 0.5))  - 0.5/24.0;
+    // vec2 cuv3_delta_uv = (uv_ - (true_node_centre_uv1_ - h3_uv))*2.0;
+    // vec2 cuv3_delta_uv = (uv_ - (true_node_centre_uv_offs - h3_uv))*2.0;
+    // vec2 cuv3_delta_uv = (uv_ - true_node_centre_uv_offs + h3_uv)*2.0;
+    vec2 cuv3_delta_uv_deviant = (uv_ - true_node_centre_uv_offs + h3_uv)*2.0;
+
 
     // vec2 cuv4 = cuv3_ * scale_m_;
     
@@ -298,7 +306,9 @@ void mainImage( out vec4 O, vec2 pix_xy )
     vec2 force = field(true_node_centre);
  
 
-    vec2 cuv4_delta = uv_to_chargesworld(cuv3_delta_uv);
+    // vec2 cuv4_delta = uv_to_chargesworld(cuv3_delta_uv);
+    vec2 cuv4_delta = uv_to_chargesworld(cuv3_delta_uv_deviant);
+
     float d2_shape = rod_shape( cuv4_delta, force, RADIUS0, RADIUS1);
     
     // d2_shape = max(d2_shape, smoothstep(0.2, 0.0, distance(uv_, charges[1].xy)));
