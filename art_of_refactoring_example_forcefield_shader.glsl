@@ -221,7 +221,8 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01
 
 
 //float rod_shape(vec2 local_vec_xy, vec2 force_dxy, float RADIUS0_xy, float RADIUS1_xy) {
-float rod_shape_xy(vec2 local_vec_xy, vec2 force_dxy, float RADIUS0_xy, float RADIUS1_xy) {
+// float rod_shape_xy(vec2 local_vec_xy, vec2 force_dxy, float RADIUS0_xy, float RADIUS1_xy) {
+float rod_shape_xy(vec2 local_vec_xy, vec2 force_dxy, vec2 RADIUS01_xy) {
     // local_coords -> local_coords_cw -> local_vec_cw
     // local, relative, etc.
     // local_vec_cw -> local_vec_xy = dxy
@@ -234,8 +235,8 @@ float rod_shape_xy(vec2 local_vec_xy, vec2 force_dxy, float RADIUS0_xy, float RA
     vec2 dcw = pixeldxy_to_chargesworld(dxy);
     // vec2 dcw =  local_vec_xy  / screen.y * scale_m;
     
-    float RADIUS0_ = pixeldxy_to_chargesworld(vec2(RADIUS0_xy, 0.0)).x;
-    float RADIUS1_ = pixeldxy_to_chargesworld(vec2(RADIUS1_xy, 0.0)).x;
+    float RADIUS0_ = pixeldxy_to_chargesworld(RADIUS01_xy).x;
+    float RADIUS1_ = pixeldxy_to_chargesworld(RADIUS01_xy).y;
     vec2 force_ = pixeldxy_to_chargesworld(force_dxy);
 
     const float THICKNESS = 0.3;
@@ -345,7 +346,7 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // vec2 cuv4 = uv_to_chargesworld(cuv3_delta_uv);
 
 
-    vec2 RADIUS01_xy2 = uv_to_pixeldxy(RADIUS01_uv);
+    // vec2 RADIUS01_xy2 = uv_to_pixeldxy(RADIUS01_uv);
     
 
 
@@ -385,7 +386,8 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // rod_shape_xy is now in pixel/xy coords:
     vec2 force_dxy = chargesworld_to_pixeldxy(force);
 
-    float d2_shape = rod_shape_xy( cuv4_delta_xy_dev, force_dxy, RADIUS01_xy2.x, RADIUS01_xy2.y);
+    vec2 RADIUS01_xy2 = uv_to_pixeldxy(RADIUS01_uv);
+    float d2_shape = rod_shape_xy( cuv4_delta_xy_dev, force_dxy, RADIUS01_xy2);
     
 
     // d2_shape = max(d2_shape, smoothstep(0.2, 0.0, distance(uv_, charges[1].xy)));
