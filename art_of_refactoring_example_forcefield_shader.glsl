@@ -192,16 +192,18 @@ void locate_in_node1_deprecated(in vec2 _uv, out vec2 true_node_centre, out vec2
 // void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 nodal_uv0, out vec2 RADIUS01_uv) {
 void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01_uv) {
 
-    const float scale_ = 5.0; // 12.*2.0;
+    const float scale_ = 12. * 2.0;
+    // const float scale_ = 5.0;
     // alpha & grid_phase are about discretisation: floor.  It should have been: floor(x*alpha+phase)
-    float alph = 2.0;
+    float alph = 1.0;
 
     vec2 grid_phase = 1.0*vec2(.2, 0) * rotMat2(iTime * 2.0*pi / 2.1);
     // vec2 grid_phase2 = grid_phase - 0.5;
     vec2 grid_phase3 = (grid_phase - 0.5)*alph;
-    vec2 grid_phase0 = grid_phase*alph;
+    // vec2 grid_phase0 = grid_phase * alph;
     
-    vec2 griddable_xy = (_uv * scale_ + grid_phase) * alph;
+    // vec2 griddable_xy = (_uv * scale_ + grid_phase) * alph;
+    vec2 griddable_xy = (_uv * scale_) * alph + grid_phase * alph;
 
     // keep this `ivec`: cellint_id = node identity  = nodal domain id
     ivec2 cellint_id = ivec2(floor(griddable_xy));
