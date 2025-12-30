@@ -193,14 +193,20 @@ void locate_in_node1_deprecated(in vec2 _uv, out vec2 true_node_centre, out vec2
 void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01_uv) {
 
     const float scale_ = 12.*2.0;
-    vec2 grid_phase = 1.0*vec2(.2, 0) * rotMat2(iTime * 2.0*pi / 2.1);
     float alph = 1.0;
+
+    vec2 grid_phase = 1.0*vec2(.2, 0) * rotMat2(iTime * 2.0*pi / 2.1);
+    vec2 grid_phase2 = grid_phase - 0.5;
+    vec2 grid_phase3 = grid_phase2*alph;
     
     vec2 griddable_xy = (_uv * scale_ + grid_phase) * alph;
 
     // keep this `ivec`: cellint_id = node identity  = nodal domain id
     ivec2 cellint_id = ivec2(floor(griddable_xy));
     vec2 cellint_id_vec2 = vec2(cellint_id);
+    // ^ anchor/corner point ^
+    // aha, anchor is different to the center.
+    // besides phase needds alpha too.
 
 
     // back to the input-uv
@@ -211,7 +217,13 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01
     //  = true_node_centre_uv_offs0
     
     // true_node_centre_uv = (cellint_id_vec2/alph - grid_phase)/scale_ + 0.5 / scale_;
-    true_node_centre_uv = ( cellint_id_vec2/alph - grid_phase + 0.5 )  / scale_;
+    // true_node_centre_uv = ( cellint_id_vec2/alph - grid_phase + 0.5 )  / scale_;
+    // true_node_centre_uv = ( cellint_id_vec2/alph - ( grid_phase - 0.5) )  / scale_;
+    // true_node_centre_uv = ( cellint_id_vec2/alph - grid_phase2 )  / scale_;
+    // true_node_centre_uv = ( cellint_id_vec2/alph - grid_phase2*alph/alph )  / scale_;
+    // true_node_centre_uv = ( (cellint_id_vec2 - grid_phase2*alph)/alph )  / scale_;
+    true_node_centre_uv = ( (cellint_id_vec2 - grid_phase3)/alph )  / scale_;
+
 
 
     // vec2 h3_uv = h2_uv  - 0.5/24.0;
