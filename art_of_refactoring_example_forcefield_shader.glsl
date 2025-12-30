@@ -257,6 +257,7 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01
     // BUG FIX:
     vec2 node_center_ = cellint_id_vec2 + 0.5;
     // this is not arbitrary. it needs tobe at center of the region, which is cuts at [0,+1).
+    // the region is: [node_center_, node_center_+1)
 
 
 
@@ -279,8 +280,9 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01
     // nodal_uv0 = true_node_centre_uv;
     // ^ no needed anymore!
 
-    const float RADIUS1_ = 1.0;
-    const float RADIUS0_ = 0.9;
+    // this turns out to be in the same coords!
+    const float RADIUS1_ = 1.0 / 2.0;
+    const float RADIUS0_ = 0.9 / 2.0;
     // cuv3_2 = cuv3_2 * scale_m_;
     // float RADIUS0_xy = chargesworld_to_pixeldxy(vec2(RADIUS0_, 0.0)).x;
     // float RADIUS1_xy = chargesworld_to_pixeldxy(vec2(RADIUS1_, 0.0)).x;
@@ -308,8 +310,8 @@ float rod_shape_xy(vec2 local_vec_xy, vec2 force_dxy, vec2 RADIUS01_xy) {
     vec2 dcw = pixeldxy_to_chargesworld(dxy);
     // vec2 dcw =  local_vec_xy  / screen.y * scale_m;
     
-    float RADIUS0_ = pixeldxy_to_chargesworld(RADIUS01_xy).x;
-    float RADIUS1_ = pixeldxy_to_chargesworld(RADIUS01_xy).y;
+    float RADIUS0_chw = pixeldxy_to_chargesworld(RADIUS01_xy).x;
+    float RADIUS1_chw = pixeldxy_to_chargesworld(RADIUS01_xy).y;
     vec2 force_ = pixeldxy_to_chargesworld(force_dxy);
 
     const float THICKNESS = 0.3;
@@ -321,7 +323,10 @@ float rod_shape_xy(vec2 local_vec_xy, vec2 force_dxy, vec2 RADIUS01_xy) {
          )
 
         // limit length of bars to 1 cell width radius
-        * smoothstep(RADIUS1_, RADIUS0_, length(dcw))  
+        // that (cell width) is called "diameter" !
+        // diameter = 1 = RADIUS1_*2.0, RADIUS1_ ~ 0.5
+        // limit length of bars to 1 cell width radius
+        * smoothstep(RADIUS1_chw*2.0, RADIUS0_chw*2.0, length(dcw))  
     ;
 }
 
