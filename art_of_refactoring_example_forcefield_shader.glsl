@@ -184,13 +184,12 @@ void locate_in_node1_deprecated(in vec2 _uv, out vec2 true_node_centre, out vec2
     
     true_node_centre = antigraiddable*scale_ + 0.5 + 2.00 * grid_phase;
     cuv3 = (_uv  - true_node_centre/scale_)*2.0;
-
 }
 
 
 // simplifying again
 // a snap-to-grid
-void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv) {
+void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 RADIUS01_uv) {
 
     const float scale_ = 12.*2.0;
     vec2 grid_phase = 1.0*vec2(.2, 0) * rotMat2(iTime * 2.0*pi / 2.1);
@@ -207,6 +206,16 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv) {
     vec2 antigraiddable_uv = (cellint_id_vec2/alph - grid_phase)/scale_;
     vec2 h2_uv = chargesworld_to_uv(vec2(0.5, 0.5));
     true_node_centre_uv = antigraiddable_uv + h2_uv;
+
+    const float RADIUS1_ = 1.0;
+    const float RADIUS0_ = 0.9;
+    // cuv3_2 = cuv3_2 * scale_m_;
+    // float RADIUS0_xy = chargesworld_to_pixeldxy(vec2(RADIUS0_, 0.0)).x;
+    // float RADIUS1_xy = chargesworld_to_pixeldxy(vec2(RADIUS1_, 0.0)).x;
+    vec2 RADIUS01_xy = chargesworld_to_pixeldxy(vec2(RADIUS0_, RADIUS1_));
+    // what? RADIUSi were in ChW?
+    // ok, now convert to uv, and back to pixel/xy:
+    RADIUS01_uv = pixeldxy_to_uv(RADIUS01_xy);
 }
 
 
@@ -286,7 +295,8 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // vec2 cuv3_;
     // locate_in_node(uv_ , true_node_centre_uv_);
     vec2 true_node_centre_uv_offs;
-    locate_in_node(uv_ , true_node_centre_uv_offs);
+    vec2 RADIUS01_uv;
+    locate_in_node(uv_ , true_node_centre_uv_offs, RADIUS01_uv);
         // in "charges-world" !
     // vec2 true_node_centre = true_node_centre_uv*scale_m_ + 0.5 + 2.00 * grid_phase;
     // vec2 true_node_centre = true_node_centre_uv*scale_m_ + 0.5; // + 2.00 * grid_phase;
@@ -334,15 +344,7 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // move below
     // vec2 cuv4 = uv_to_chargesworld(cuv3_delta_uv);
 
-    const float RADIUS1_ = 1.0;
-    const float RADIUS0_ = 0.9;
-    // cuv3_2 = cuv3_2 * scale_m_;
-    // float RADIUS0_xy = chargesworld_to_pixeldxy(vec2(RADIUS0_, 0.0)).x;
-    // float RADIUS1_xy = chargesworld_to_pixeldxy(vec2(RADIUS1_, 0.0)).x;
-    vec2 RADIUS01_xy = chargesworld_to_pixeldxy(vec2(RADIUS0_, RADIUS1_));
-    // what? RADIUSi were in ChW?
-    // ok, now convert to uv, and back to pixel/xy:
-    vec2 RADIUS01_uv = pixeldxy_to_uv(RADIUS01_xy);
+
     vec2 RADIUS01_xy2 = uv_to_pixeldxy(RADIUS01_uv);
     
 
