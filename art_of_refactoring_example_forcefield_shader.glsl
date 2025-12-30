@@ -314,11 +314,12 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // vec2 cuv3_;
     // locate_in_node(uv_ , true_node_centre_uv_);
     vec2 true_node_centre_uv_offs0;
-    vec2 nodal_uv0;
+    // vec2 nodal_uv0;
     vec2 RADIUS01_uv;
     // locate_in_node(uv_ , true_node_centre_uv_offs0, nodal_uv0, RADIUS01_uv);
     locate_in_node(uv_ , true_node_centre_uv_offs0, RADIUS01_uv);
-    nodal_uv0 = true_node_centre_uv_offs0;
+    // nodal_uv0 = true_node_centre_uv_offs0;
+    // ^ absorb-away / join.
 
         // in "charges-world" !
     // vec2 true_node_centre = true_node_centre_uv*scale_m_ + 0.5 + 2.00 * grid_phase;
@@ -402,7 +403,13 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // vec2 cuv4_delta_xy_dev_ = uv_to_pixeldxy((uv_ - true_node_centre_uv_offs + h3_uv)*2.0);
     // vec2 nodal_dxy = uv_to_pixeldxy((uv_ - true_node_centre_uv_offs + h3_uv)*2.0);
     // vec2 nodal_uv0 = true_node_centre_uv_offs - h3_uv;
-    vec2 nodal_dxy = uv_to_pixeldxy((uv_ - nodal_uv0)*2.0);
+    // vec2 nodal_dxy = uv_to_pixeldxy((uv_ - nodal_uv0)*2.0);
+    // vec2 nodal_dxy = uv_to_pixeldxy((uv_ - true_node_centre_uv_offs0)*2.0);
+    // vec2 nodal_dxy2 = uv_to_pixeldxy((uv_ - true_node_centre_uv_offs0)*2.0);
+    // linear =>
+    // vec2 nodal_dxy2 = uv_to_pixeldxy((uv_ - true_node_centre_uv_offs0)*1.0)*2.0;
+    vec2 nodal_dxy1 = uv_to_pixeldxy((uv_ - true_node_centre_uv_offs0)*1.0);
+    // vec2 nodal_dxy2 = nodal_dxy1*2.0;
 
 
     // rod_shape is in ChW. The idea is to change it to uv, and then, pix etc
@@ -418,8 +425,9 @@ void mainImage( out vec4 O, vec2 pix_xy )
 
     vec2 RADIUS01_xy2 = uv_to_pixeldxy(RADIUS01_uv);
     // float d2_shape = rod_shape_xy( cuv4_delta_xy_dev_, force_dxy, RADIUS01_xy2);
-    float d2_shape = rod_shape_xy( nodal_dxy, force_dxy, RADIUS01_xy2);
-    
+    // float d2_shape = rod_shape_xy( nodal_dxy2, force_dxy, RADIUS01_xy2);
+    float d2_shape = rod_shape_xy( nodal_dxy1*2.0, force_dxy, RADIUS01_xy2);
+
 
     // d2_shape = max(d2_shape, smoothstep(0.2, 0.0, distance(uv_, charges[1].xy)));
     vec2 uv_cw = uv_to_chargesworld(uv_);
