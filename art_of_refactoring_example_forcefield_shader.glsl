@@ -310,10 +310,13 @@ float rod_shape_xy(vec2 local_vec_xy, vec2 force_dxy, vec2 RADIUS01_xy) {
     vec2 dcw = pixeldxy_to_chargesworld(dxy);
     // vec2 dcw =  local_vec_xy  / screen.y * scale_m;
     
-    float RADIUS0_chw = pixeldxy_to_chargesworld(RADIUS01_xy).x;
-    float RADIUS1_chw = pixeldxy_to_chargesworld(RADIUS01_xy).y;
+    vec2 radius_errorbar = pixeldxy_to_chargesworld(RADIUS01_xy);
+    float RADIUS0_chw = radius_errorbar.x;
+    float RADIUS1_chw = radius_errorbar.y;
     vec2 force_ = pixeldxy_to_chargesworld(force_dxy);
 
+    // const float THICKNESS = 0.3;
+    //corrected!
     const float THICKNESS = 0.3/2.0;
     const mat2 rot90 = mat2(0,1,-1,0);
     return 1.0
