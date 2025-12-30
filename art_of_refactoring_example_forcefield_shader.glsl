@@ -309,7 +309,7 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // vec2 h2_uv = chargesworld_to_uv(vec2(0.5, 0.5));
     // vec2 true_node_centre = uv_to_chargesworld(true_node_centre_uv + h2_uv); // + 2.00 * grid_phase;
     // vec2 true_node_centre = uv_to_chargesworld(true_node_centre_uv_ + h2_uv); // + 2.00 * grid_phase;
-    vec2 true_node_centre = uv_to_chargesworld(true_node_centre_uv_offs); // + 2.00 * grid_phase;
+    // vec2 true_node_centre = uv_to_chargesworld(true_node_centre_uv_offs); // + 2.00 * grid_phase;
     
     // in rod world!
     // vec2 cuv3_ = (uv_  - true_node_centre/scale_m_)*2.0;
@@ -365,7 +365,7 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // vec2 force = field(cell_node_center);
     // fixed!
     // vec2 force = field(cell_node_center+0.5);
-    vec2 force = field(true_node_centre);
+    // vec2 force = field(true_node_centre_chw);
  
 
     // vec2 h3_uv = chargesworld_to_uv(vec2(0.5, 0.5))  - 0.5/24.0;
@@ -383,8 +383,12 @@ void mainImage( out vec4 O, vec2 pix_xy )
     // float d2_shape = rod_shape( cuv4_delta, force, RADIUS0, RADIUS1);
     // float d2_shape = rod_shape( cuv4_delta_xy_dev, force, RADIUS0, RADIUS1);
     
+
+    vec2 true_node_centre_chw = uv_to_chargesworld(true_node_centre_uv_offs); // + 2.00 * grid_phase;
+    vec2 force_chw = field(true_node_centre_chw);
+    
     // rod_shape_xy is now in pixel/xy coords:
-    vec2 force_dxy = chargesworld_to_pixeldxy(force);
+    vec2 force_dxy = chargesworld_to_pixeldxy(force_chw);
 
     vec2 RADIUS01_xy2 = uv_to_pixeldxy(RADIUS01_uv);
     float d2_shape = rod_shape_xy( cuv4_delta_xy_dev, force_dxy, RADIUS01_xy2);
@@ -398,10 +402,10 @@ void mainImage( out vec4 O, vec2 pix_xy )
 
 
     // Colour based on angle
-    vec3 colour = color_from_force(force);
+    vec3 colour = color_from_force(force_chw);
 
     // brighter at higher force
-    float brightness = sqrt(length(force));
+    float brightness = sqrt(length(force_chw));
 
     vec3 colour3 = sqrt(d2_shape) * brightness * colour.rgb;
     // colour3.r = max( poles_dots, colour3.r);
