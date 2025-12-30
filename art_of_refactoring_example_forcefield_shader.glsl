@@ -208,9 +208,13 @@ void locate_in_node(in vec2 _uv, out vec2 true_node_centre_uv, out vec2 nodal_uv
     true_node_centre_uv = antigraiddable_uv + h2_uv;
     //  = true_node_centre_uv_offs0
 
-    vec2 h3_uv = chargesworld_to_uv(vec2(0.5, 0.5))  - 0.5/24.0;
+    // vec2 h3_uv = h2_uv  - 0.5/24.0;
     // nodal_uv0 = true_node_centre_uv_offs0 - h3_uv;
-    nodal_uv0 = true_node_centre_uv - h3_uv;
+    // nodal_uv0 = true_node_centre_uv - h3_uv;
+    // nodal_uv0 = true_node_centre_uv - (h2_uv  - 0.5/24.0);
+    // nodal_uv0 = (antigraiddable_uv + h2_uv) - (h2_uv  - 0.5/24.0);
+    // nodal_uv0 = antigraiddable_uv + h2_uv - h2_uv  + 0.5/24.0;
+    nodal_uv0 = antigraiddable_uv + 0.5/24.0;
 
     const float RADIUS1_ = 1.0;
     const float RADIUS0_ = 0.9;
