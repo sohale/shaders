@@ -319,11 +319,13 @@ void mainImage( out vec4 O, vec2 pix_xy )
     vec2 h3_uv = chargesworld_to_uv(vec2(0.5, 0.5))  - 0.5/24.0;
     vec2 cuv3_delta_uv_deviant = (uv_ - true_node_centre_uv_offs + h3_uv)*2.0;
     // vec2 cuv4_delta = uv_to_chargesworld(cuv3_delta_uv);
-    vec2 cuv4_delta = uv_to_chargesworld(cuv3_delta_uv_deviant);
+    // vec2 cuv4_delta = uv_to_chargesworld(cuv3_delta_uv_deviant);
+    vec2 cuv4_delta_ = uv_to_chargesworld(cuv3_delta_uv_deviant);
+    vec2 cuv4_delta_xy = chargesworld_to_pixelxy(cuv4_delta_);
 
     // rod_shape is in ChW. The idea is to change it to uv, and then, pix etc
     // float d2_shape = rod_shape( cuv4_delta, force, RADIUS0, RADIUS1);
-    float d2_shape = rod_shape( chargesworld_to_pixelxy(cuv4_delta), force, RADIUS0, RADIUS1);
+    float d2_shape = rod_shape( cuv4_delta_xy, force, RADIUS0, RADIUS1);
     
     // d2_shape = max(d2_shape, smoothstep(0.2, 0.0, distance(uv_, charges[1].xy)));
     vec2 uv_cw = uv_to_chargesworld(uv_);
