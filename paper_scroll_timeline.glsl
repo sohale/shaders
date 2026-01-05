@@ -116,6 +116,15 @@ vec2 np_cloud(float t, int num) {
     }
 
   	vec2 np;
+    if (num==1)
+    if (num==2)
+    if (num==3)
+    if (num==4)
+    if (num==5)
+    if (num==6)
+    ;;
+
+    if (num==11)
     np = vec2(x0-fract(px) *vx , m); // x : -1 1
     if (num==12)
 	np = vec2(x0-fract(px) *vx , m); // x : -1 1
@@ -129,30 +138,36 @@ vec2 np_cloud(float t, int num) {
 vec3 clouds(vec3 c, float iTime, vec2 uv, float shadow_pos) {
 	vec2 np;
     // 1
+    np = np_cloud(iTime, 1);
     np = vec2(1.4-fract((iTime+50.0)*0.005) *1.5 , 0.8);
 
     c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.01, 0.03);
 	
     // 2
+    np = np_cloud(iTime, 2);
 	np = vec2(1.4-fract((iTime)*0.0055) *1.5 , 0.75+ sin(iTime*0.1)*0.01); // x : -1 1
 	c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.01, 0.03);
 
     // 3
+    np = np_cloud(iTime, 3);
     np = vec2(1.4-fract((iTime + 100.0)*0.0045) *1.5 , 0.8+ sin(0.5+iTime*0.01)*0.02); // x : -1 1
     c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.01, 0.03);
 
     // 4
+    np = np_cloud(iTime, 4);
      np = vec2(1.4-fract((iTime + 0.75)*0.0045) *1.5 , 0.88+ sin(0.75+iTime*0.01)*0.03); // x : -1 1
     c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.01, 0.03);
-
     
     // 5
+    np = np_cloud(iTime, 5);
 	np = vec2(1.41-fract((iTime+75.0)*0.007) *1.5 , 0.88+ sin(iTime*0.05)*0.01); // x : -1 1
 	c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.005, 0.04);
 
     // 6
+    np = np_cloud(iTime, 6);
    	np = vec2(1.41-fract((iTime+50.0)*0.0071) *1.5 , 0.85+ sin(0.5+iTime*0.042)*0.0095); // x : -1 1
 	c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.005, 0.04);
+
 
     np = np_cloud(iTime, 11); 
     c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.005, 0.04);
