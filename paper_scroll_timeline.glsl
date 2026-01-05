@@ -97,30 +97,31 @@ struct CloudConfig {
 };
 
 vec2 np_cloud(float t, int num) {
-    
+    /*
     float x0 = 1000.0;
     float px = 1000.0;
     float vx = 1000.0;
     float m = 1000.0;
+    */
     
     CloudConfig cc = CloudConfig(1000.0,1000.0,1000.0,1000.0);
     if (num==11) {
-        x0 = 1.41;
-        px = (t+35.0)*0.0067;
-        vx = 1.5;
-        m = 0.82+ sin(0.9+t*0.035)*0.012;
+        cc.x0 = 1.41;
+        cc.px = (t+35.0)*0.0067;
+        cc.vx = 1.5;
+        cc.m = 0.82+ sin(0.9+t*0.035)*0.012;
     }
     if (num==12) {
-        x0 = 1.50;
-        px = t*0.011;
-        vx = 1.75;
-        m = 0.85 + sin(t*0.2)*0.025;
+        cc.x0 = 1.50;
+        cc.px = t*0.011;
+        cc.vx = 1.75;
+        cc.m = 0.85 + sin(t*0.2)*0.025;
     }
     if (num==13) {
-        x0 = 1.50;
-        px = (t+50.0)*0.01;
-        vx = 1.75;
-        m = 0.85 + sin(1.5+t*0.08)*0.0125;
+        cc.x0 = 1.50;
+        cc.px = (t+50.0)*0.01;
+        cc.vx = 1.75;
+        cc.m = 0.85 + sin(1.5+t*0.08)*0.0125;
     }
     if (num==14) {
     }
@@ -146,16 +147,17 @@ vec2 np_cloud(float t, int num) {
 
 
     if (num==11)
-    np = vec2(x0-fract(px) *vx , m); // x : -1 1
+    np = vec2(cc.x0-fract(cc.px) * cc.vx , cc.m); // x : -1 1
     if (num==12)
-	np = vec2(x0-fract(px) *vx , m); // x : -1 1
+	np = vec2(cc.x0-fract(cc.px) * cc.vx , cc.m); // x : -1 1
     if (num==13)
-    np = vec2(x0-fract(px) *vx , m); // x : -1 1
+    np = vec2(cc.x0-fract(cc.px) * cc.vx , cc.m); // x : -1 1
     if (num==14)
    	np = vec2(1.50-fract((t+35.0)*0.009) *1.75 , 0.8 + sin(0.5+t*0.05)*0.025); // x : -1 1
 
     return np;
 }
+
 vec3 clouds(vec3 c, float iTime, vec2 uv, float shadow_pos) {
 	vec2 np;
     // 1
