@@ -201,12 +201,6 @@ vec2 np_cloud(float t, int num) {
       ym = cc.y0 + sin(cc.yphase+t*cc.yvf)*cc.yamp;
     }
 
-    np = vec2(cc.x0-fract(cc.px) * cc.vx , ym);
-	np = vec2(cc.x0-fract(cc.px) * cc.vx , ym); // x : -1 1
-    np = vec2(cc.x0-fract(cc.px) * cc.vx , ym); // x : -1 1
-    np = vec2(cc.x0-fract(cc.px) * cc.vx , ym); // x : -1 1
-	np = vec2(cc.x0-fract(cc.px) * cc.vx , ym); // x : -1 1
-   	np = vec2(cc.x0-fract(cc.px) * cc.vx , ym); // x : -1 1
     np = vec2(cc.x0-fract(cc.px) * cc.vx , ym); // x : -1 1
 
 
