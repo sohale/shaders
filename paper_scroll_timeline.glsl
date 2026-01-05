@@ -94,12 +94,11 @@ struct CloudConfig {
     float px;
     float vx;
     float y0, yamp, yphase, yvf;
-    float ym;
 };
 
 vec2 np_cloud(float t, int num) {
     
-    CloudConfig cc = CloudConfig(1000.0,1000.0,1000.0,1000.0,1000.0,1000.0,1000.0, 1000.0);
+    CloudConfig cc = CloudConfig(1000.0,1000.0,1000.0,1000.0,1000.0,1000.0, 1000.0);
     if (num==11) {
         cc.x0 = 1.41;
         cc.px = (t+35.0)*0.0067;
@@ -163,22 +162,11 @@ vec2 np_cloud(float t, int num) {
     }
 
 
-    if (num==11) {
-    cc.ym = cc.y0 + sin(cc.yphase+t*cc.yvf)*cc.yamp;
-    np = vec2(cc.x0-fract(cc.px) * cc.vx , cc.ym); // x : -1 1
+    if (num==11 || num==12 || num==13 || num==14) {
+      float ym = cc.y0 + sin(cc.yphase+t*cc.yvf)*cc.yamp;
+      np = vec2(cc.x0-fract(cc.px) * cc.vx , ym); // x : -1 1
     }
-    if (num==12) {
-    cc.ym = cc.y0 + sin(cc.yphase+t*cc.yvf)*cc.yamp;
-	np = vec2(cc.x0-fract(cc.px) * cc.vx , cc.ym); // x : -1 1
-    }
-    if (num==13) {
-    cc.ym = cc.y0 + sin(cc.yphase+t*cc.yvf)*cc.yamp;
-    np = vec2(cc.x0-fract(cc.px) * cc.vx , cc.ym); // x : -1 1
-    }
-    if (num==14) {
-    cc.ym = cc.y0 + sin(cc.yphase+t*cc.yvf)*cc.yamp;
-   	np = vec2(cc.x0-fract(cc.px) * cc.vx , cc.ym); // x : -1 1
-    }
+
 
     return np;
 }
