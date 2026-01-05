@@ -138,7 +138,10 @@ vec2 np_cloud(float t, int num) {
 
   	vec2 np;
     if (num==1) {
-    np = vec2(1.4-fract((iTime+50.0)*0.005) *1.5 , 0.8);
+    float ym = cc.y0 + sin(cc.yphase+t*cc.yvf)*cc.yamp;
+    cc.y0 = 0.8;
+    ym = cc.y0;
+    np = vec2(1.4-fract((iTime+50.0)*0.005) *1.5 , ym);
     }
 
     if (num==2) {
