@@ -89,22 +89,30 @@ vec3 cloud(in vec2 u, in vec2 p, in float iscale,in vec3 c, const in vec3 cloud_
 	return c;
 }
 
-void mainImage( out vec4 fragColor, in vec2 fragCoord )
-{
-    vec2 uv = fragCoord/iResolution.xy;
-    uv.x *= 4.0/3.0; // dev in 4/3 screen
-    
-    // beautiful sky
-	float d = length(uv-vec2(0.25,0.5)); // -0.5;
-   	vec3 c = mix(vec3(.4,0.4,.8), vec3(0.55,0.8,0.8), smoothstep(1.7, 0., d));
+vec2 np_cloud(float t, int num) {
+     // 1
+    float m = 0.82+ sin(0.9+t*0.035)*0.012;
+    float x0 = 1.41;
+    float px = (t+35.0)*0.0067;
+    float vx = 1.5;
+    // 2
+    if (num==2) {
+       m = 0.85 + sin(t*0.2)*0.025;
+       x0 = 1.50;
+       px = t*0.011;
+       vx = 1.75;
+    }
 
-    // gorgeous ground
-	float shadow_pos =  - smoothstep(1.0, 0.0, uv.x)*0.06 - 0.1 ;
-	c = ground(uv, c, shadow_pos);
-	
-    // wonderful clouds
+  	vec2 np;
+    np = vec2(x0-fract(px) *vx , m); // x : -1 1
+    if (num==2)
+	np = vec2(x0-fract(px) *vx , m); // x : -1 1
+    return np;
+}
+vec3 clouds(vec3 c, float iTime, vec2 uv, float shadow_pos) {
 	vec2 np = vec2(1.4-fract((iTime+50.0)*0.005) *1.5 , 0.8);
-	c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.01, 0.03);
+
+    c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.01, 0.03);
 	
 	np = vec2(1.4-fract((iTime)*0.0055) *1.5 , 0.75+ sin(iTime*0.1)*0.01); // x : -1 1
 	c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.01, 0.03);
@@ -122,11 +130,11 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
    	np = vec2(1.41-fract((iTime+50.0)*0.0071) *1.5 , 0.85+ sin(0.5+iTime*0.042)*0.0095); // x : -1 1
 	c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.005, 0.04);
 
-   	np = vec2(1.41-fract((iTime+35.0)*0.0067) *1.5 , 0.82+ sin(0.9+iTime*0.035)*0.012); // x : -1 1
-	c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.005, 0.04);
+    np = np_cloud(iTime, 1); 
+    c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.005, 0.04);
 
+    np = np_cloud(iTime, 2);
     
-	np = vec2(1.50-fract(iTime*0.011) *1.75 , 0.85 + sin(iTime*0.2)*0.025); // x : -1 1
 	c = cloud(uv , np, 1.0, c, c5, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.002, 0.04);
 
    	np = vec2(1.50-fract((iTime+50.0)*0.01) *1.75 , 0.85 + sin(1.5+iTime*0.08)*0.0125); // x : -1 1
@@ -135,9 +143,29 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
    	np = vec2(1.50-fract((iTime+35.0)*0.009) *1.75 , 0.8 + sin(0.5+iTime*0.05)*0.025); // x : -1 1
 	c = cloud(uv , np, 1.0, c, c5, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.002, 0.04);
 
+   return c;
+}
+vec3 mainImage1( out vec4 fragColor, in vec2 fragCoord )
+{
+    vec2 uv = fragCoord/iResolution.xy;
+    uv.x *= 4.0/3.0; // dev in 4/3 screen
     
-    // Output to screen
-    fragColor = vec4(c,1.0);
+    // beautiful sky
+	float d = length(uv-vec2(0.25,0.5)); // -0.5;
+   	vec3 c = mix(vec3(.4,0.4,.8), vec3(0.55,0.8,0.8), smoothstep(1.7, 0., d));
+
+    // gorgeous ground
+	float shadow_pos =  - smoothstep(1.0, 0.0, uv.x)*0.06 - 0.1 ;
+	c = ground(uv, c, shadow_pos);
+	
+    // wonderful clouds
+	c = clouds(c, iTime, uv, shadow_pos);
+    return c;
+}
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    vec3 c3 = mainImage1( fragColor, fragCoord );
+    fragColor = vec4(c3,1.0);
 }
 
 /*
