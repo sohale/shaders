@@ -156,8 +156,6 @@ CloudConfig np_cloud_cc(float t, int num) {
       );
     }
 
-  	vec2 np;
-    // float ym;
     if (num==1) {
     cc = CloudConfig(
     cc.x0 = 1.4,
@@ -236,7 +234,7 @@ vec2 np_cloud(float t, int num) {
     CloudConfig cc = np_cloud_cc(t, num);
 
     float y = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
-    float x = cc.x0-fract(cc.px) * cc.vx;
+    float x = cc.x0 - fract(cc.px) * cc.vx;
 
     vec2 np = vec2(x , y); // x : -1 1
 
