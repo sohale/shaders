@@ -89,11 +89,21 @@ vec3 cloud(in vec2 u, in vec2 p, in float iscale,in vec3 c, const in vec3 cloud_
 	return c;
 }
 
+struct CloudConfig {
+    float x0;
+    float px;
+    float vx;
+    float m;
+};
+
 vec2 np_cloud(float t, int num) {
+    
     float x0 = 1000.0;
     float px = 1000.0;
     float vx = 1000.0;
     float m = 1000.0;
+    
+    CloudConfig cc = CloudConfig(1000.0,1000.0,1000.0,1000.0);
     if (num==11) {
         x0 = 1.41;
         px = (t+35.0)*0.0067;
