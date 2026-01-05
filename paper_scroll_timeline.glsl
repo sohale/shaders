@@ -133,13 +133,14 @@ CloudConfig np_cloud_cc(float t, int num) {
     cc.x0 = 1.4,
     DONT_CARE,
     DONT_CARE,
-    cc.px = (t)*0.0055,
+    DONT_CARE,
     cc.vx = 1.5,
     cc.y0 = 0.75,
     cc.yamp =0.01,
     cc.yphase = 0.0,
     cc.yvf = 0.1
     );
+    cc.px = (t)*0.0055;
     }
 
     if (num==3) {
