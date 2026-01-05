@@ -151,12 +151,12 @@ vec2 np_cloud(float t, int num) {
     // float ym;
     if (num==1) {
     cc.x0 = 1.4;
-    cc.y0 = 0.8;
-    cc.vx = 1.5;
-    cc.yamp = 0.0;
-    cc.yvf = DONT_CARE;
-    cc.yphase = DONT_CARE;
     cc.px = (t+50.0)*0.005;
+    cc.vx = 1.5;
+    cc.y0 = 0.8;
+    cc.yamp = 0.0;
+    cc.yphase = DONT_CARE;
+    cc.yvf = DONT_CARE;
     }
 
     if (num==2) {
@@ -201,8 +201,8 @@ vec2 np_cloud(float t, int num) {
 
     if (num==6) {
     cc.x0 = 1.41;
-    cc.vx = 1.5;
     cc.px = (t+50.0)*0.0071;
+    cc.vx = 1.5;
     cc.y0 = 0.85;
     cc.yamp = 0.0095;
     cc.yphase = 0.5;
