@@ -90,17 +90,21 @@ vec3 cloud(in vec2 u, in vec2 p, in float iscale,in vec3 c, const in vec3 cloud_
 }
 
 vec2 np_cloud(float t, int num) {
-    // if (num==11) {
-    float x0 = 1.41;
-    float px = (t+35.0)*0.0067;
-    float vx = 1.5;
-    float m = 0.82+ sin(0.9+t*0.035)*0.012;
-    // }
+    float x0 = 1000.0;
+    float px = 1000.0;
+    float vx = 1000.0;
+    float m = 1000.0;
+    if (num==11) {
+        x0 = 1.41;
+        px = (t+35.0)*0.0067;
+        vx = 1.5;
+        m = 0.82+ sin(0.9+t*0.035)*0.012;
+    }
     if (num==12) {
-       x0 = 1.50;
-       px = t*0.011;
-       vx = 1.75;
-       m = 0.85 + sin(t*0.2)*0.025;
+        x0 = 1.50;
+        px = t*0.011;
+        vx = 1.75;
+        m = 0.85 + sin(t*0.2)*0.025;
     }
     if (num==13) {
         x0 = 1.50;
