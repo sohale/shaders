@@ -210,12 +210,6 @@ vec2 np_cloud(float t, int num) {
     }
     float ym;
     ym = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
-    ym = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
-    ym = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
-    ym = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
-    ym = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
-    ym = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
-    ym = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
     if (num==11 || num==12 || num==13 || num==14) {
     }
 
