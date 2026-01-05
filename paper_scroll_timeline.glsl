@@ -109,7 +109,7 @@ struct CloudConfig {
 
 CloudConfig np_cloud_cc(float t, int num) {
 
-    CloudConfig cc = CloudConfig(1000.0,1000.0,1000.0,1000.0,1000.0,1000.0, 1000.0);
+    CloudConfig cc = CloudConfig(DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE);
 
 
     if (num==1) {
@@ -183,7 +183,7 @@ CloudConfig np_cloud_cc(float t, int num) {
     cc.yvf = 0.042
     );
     }
-    if (num==11) {
+    if (num==7) {
         
     cc = CloudConfig(
          1.41,
@@ -195,7 +195,7 @@ CloudConfig np_cloud_cc(float t, int num) {
          0.035
       );
     }
-    if (num==12) {
+    if (num==8) {
     cc = CloudConfig(
         cc.x0 = 1.50,
         cc.px = t*0.011,
@@ -206,7 +206,7 @@ CloudConfig np_cloud_cc(float t, int num) {
         cc.yvf=0.2
         );
     }
-    if (num==13) {
+    if (num==9) {
       cc = CloudConfig(
         cc.x0 = 1.50,
         cc.px = (t+50.0)*0.01,
@@ -217,7 +217,7 @@ CloudConfig np_cloud_cc(float t, int num) {
         cc.yvf=0.08
         );
     }
-    if (num==14) {
+    if (num==10) {
       cc = CloudConfig(
         cc.x0 = 1.50,
         cc.px = (t+35.0)*0.009,
@@ -276,16 +276,16 @@ vec3 clouds(vec3 c, float iTime, vec2 uv, float shadow_pos) {
 	c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.005, 0.04);
 
 
-    np = np_cloud(iTime, 11); 
+    np = np_cloud(iTime, 7); 
     c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.005, 0.04);
 
-    np = np_cloud(iTime, 12);
+    np = np_cloud(iTime, 8);
 	c = cloud(uv , np, 1.0, c, c5, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.002, 0.04);
 
-    np = np_cloud(iTime, 13);
+    np = np_cloud(iTime, 9);
 	c = cloud(uv , np, 1.0, c, c5, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.002, 0.04);
 
-    np = np_cloud(iTime, 14);
+    np = np_cloud(iTime, 10);
 	c = cloud(uv , np, 1.0, c, c5, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.002, 0.04);
 
    return c;
