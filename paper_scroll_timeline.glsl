@@ -90,23 +90,36 @@ vec3 cloud(in vec2 u, in vec2 p, in float iscale,in vec3 c, const in vec3 cloud_
 }
 
 vec2 np_cloud(float t, int num) {
-     // 1
-    float m = 0.82+ sin(0.9+t*0.035)*0.012;
+    // if (num==11) {
     float x0 = 1.41;
     float px = (t+35.0)*0.0067;
     float vx = 1.5;
-    // 2
-    if (num==2) {
-       m = 0.85 + sin(t*0.2)*0.025;
+    float m = 0.82+ sin(0.9+t*0.035)*0.012;
+    // }
+    if (num==12) {
        x0 = 1.50;
        px = t*0.011;
        vx = 1.75;
+       m = 0.85 + sin(t*0.2)*0.025;
+    }
+    if (num==13) {
+        x0 = 1.50;
+        px = (t+50.0)*0.01;
+        vx = 1.75;
+        m = 0.85 + sin(1.5+t*0.08)*0.0125;
+    }
+    if (num==14) {
     }
 
   	vec2 np;
     np = vec2(x0-fract(px) *vx , m); // x : -1 1
-    if (num==2)
+    if (num==12)
 	np = vec2(x0-fract(px) *vx , m); // x : -1 1
+    if (num==13)
+    np = vec2(x0-fract(px) *vx , m); // x : -1 1
+    if (num==14)
+   	np = vec2(1.50-fract((t+35.0)*0.009) *1.75 , 0.8 + sin(0.5+t*0.05)*0.025); // x : -1 1
+
     return np;
 }
 vec3 clouds(vec3 c, float iTime, vec2 uv, float shadow_pos) {
@@ -130,17 +143,16 @@ vec3 clouds(vec3 c, float iTime, vec2 uv, float shadow_pos) {
    	np = vec2(1.41-fract((iTime+50.0)*0.0071) *1.5 , 0.85+ sin(0.5+iTime*0.042)*0.0095); // x : -1 1
 	c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.005, 0.04);
 
-    np = np_cloud(iTime, 1); 
+    np = np_cloud(iTime, 11); 
     c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.005, 0.04);
 
-    np = np_cloud(iTime, 2);
-    
+    np = np_cloud(iTime, 12);
 	c = cloud(uv , np, 1.0, c, c5, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.002, 0.04);
 
-   	np = vec2(1.50-fract((iTime+50.0)*0.01) *1.75 , 0.85 + sin(1.5+iTime*0.08)*0.0125); // x : -1 1
+    np = np_cloud(iTime, 13);
 	c = cloud(uv , np, 1.0, c, c5, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.002, 0.04);
 
-   	np = vec2(1.50-fract((iTime+35.0)*0.009) *1.75 , 0.8 + sin(0.5+iTime*0.05)*0.025); // x : -1 1
+    np = np_cloud(iTime, 14);
 	c = cloud(uv , np, 1.0, c, c5, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.002, 0.04);
 
    return c;
