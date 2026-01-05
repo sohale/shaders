@@ -93,29 +93,36 @@ struct CloudConfig {
     float x0;
     float px;
     float vx;
+    float y0, yamp;
     float ym;
 };
 
 vec2 np_cloud(float t, int num) {
     
-    CloudConfig cc = CloudConfig(1000.0,1000.0,1000.0,1000.0);
+    CloudConfig cc = CloudConfig(1000.0,1000.0,1000.0,1000.0,1000.0,1000.0);
     if (num==11) {
         cc.x0 = 1.41;
         cc.px = (t+35.0)*0.0067;
         cc.vx = 1.5;
-        cc.ym = 0.82+ sin(0.9+t*0.035)*0.012;
+        cc.y0 = 0.82;
+        cc.yamp = 0.012;
+        cc.ym = cc.y0+ sin(0.9+t*0.035)*cc.yamp;
     }
     if (num==12) {
         cc.x0 = 1.50;
         cc.px = t*0.011;
         cc.vx = 1.75;
-        cc.ym = 0.85 + sin(t*0.2)*0.025;
+        cc.y0 = 0.85;
+        cc.yamp = 0.025;
+        cc.ym = cc.y0 + sin(t*0.2)*cc.yamp;
     }
     if (num==13) {
         cc.x0 = 1.50;
         cc.px = (t+50.0)*0.01;
         cc.vx = 1.75;
-        cc.ym = 0.85 + sin(1.5+t*0.08)*0.0125;
+        cc.y0 = 0.85;
+        cc.yamp = 0.0125;
+        cc.ym = cc.y0 + sin(1.5+t*0.08)*cc.yamp;
     }
     if (num==14) {
     }
