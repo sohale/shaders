@@ -207,23 +207,27 @@ vec2 np_cloud(float t, int num) {
     }
 
     if (num==5) {
-    cc.x0 = 1.41;
-    cc.px = (t+75.0)*0.007;
-    cc.vx = 1.5;
-    cc.y0 = 0.88;
-    cc.yamp = 0.01;
-    cc.yphase = 0.0;
-    cc.yvf =0.05;
+    cc = CloudConfig(
+    cc.x0 = 1.41,
+    cc.px = (t+75.0)*0.007,
+    cc.vx = 1.5,
+    cc.y0 = 0.88,
+    cc.yamp = 0.01,
+    cc.yphase = 0.0,
+    cc.yvf =0.05
+    );
     }
 
     if (num==6) {
-    cc.x0 = 1.41;
-    cc.px = (t+50.0)*0.0071;
-    cc.vx = 1.5;
-    cc.y0 = 0.85;
-    cc.yamp = 0.0095;
-    cc.yphase = 0.5;
-    cc.yvf = 0.042;
+    cc = CloudConfig(
+    cc.x0 = 1.41,
+    cc.px = (t+50.0)*0.0071,
+    cc.vx = 1.5,
+    cc.y0 = 0.85,
+    cc.yamp = 0.0095,
+    cc.yphase = 0.5,
+    cc.yvf = 0.042
+    );
     }
     float y = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
     float x = cc.x0-fract(cc.px) * cc.vx;
