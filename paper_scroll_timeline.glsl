@@ -110,51 +110,7 @@ struct CloudConfig {
 CloudConfig np_cloud_cc(float t, int num) {
 
     CloudConfig cc = CloudConfig(1000.0,1000.0,1000.0,1000.0,1000.0,1000.0, 1000.0);
-    if (num==11) {
-        
-    cc = CloudConfig(
-         1.41,
-         (t+35.0)*0.0067,
-         1.5,
-         0.82,
-         0.012,
-         0.9,
-         0.035
-      );
-    }
-    if (num==12) {
-    cc = CloudConfig(
-        cc.x0 = 1.50,
-        cc.px = t*0.011,
-        cc.vx = 1.75,
-        cc.y0 = 0.85,
-        cc.yamp = 0.025,
-        cc.yphase = 0.0,
-        cc.yvf=0.2
-        );
-    }
-    if (num==13) {
-      cc = CloudConfig(
-        cc.x0 = 1.50,
-        cc.px = (t+50.0)*0.01,
-        cc.vx = 1.75,
-        cc.y0 = 0.85,
-        cc.yamp = 0.0125,
-        cc.yphase=1.5,
-        cc.yvf=0.08
-        );
-    }
-    if (num==14) {
-      cc = CloudConfig(
-        cc.x0 = 1.50,
-        cc.px = (t+35.0)*0.009,
-        cc.vx = 1.75,
-        cc.y0 = 0.8,
-        cc.yamp = 0.025,
-        cc.yphase= 0.5,
-        cc.yvf= 0.05
-      );
-    }
+
 
     if (num==1) {
     cc = CloudConfig(
@@ -226,6 +182,51 @@ CloudConfig np_cloud_cc(float t, int num) {
     cc.yphase = 0.5,
     cc.yvf = 0.042
     );
+    }
+    if (num==11) {
+        
+    cc = CloudConfig(
+         1.41,
+         (t+35.0)*0.0067,
+         1.5,
+         0.82,
+         0.012,
+         0.9,
+         0.035
+      );
+    }
+    if (num==12) {
+    cc = CloudConfig(
+        cc.x0 = 1.50,
+        cc.px = t*0.011,
+        cc.vx = 1.75,
+        cc.y0 = 0.85,
+        cc.yamp = 0.025,
+        cc.yphase = 0.0,
+        cc.yvf=0.2
+        );
+    }
+    if (num==13) {
+      cc = CloudConfig(
+        cc.x0 = 1.50,
+        cc.px = (t+50.0)*0.01,
+        cc.vx = 1.75,
+        cc.y0 = 0.85,
+        cc.yamp = 0.0125,
+        cc.yphase=1.5,
+        cc.yvf=0.08
+        );
+    }
+    if (num==14) {
+      cc = CloudConfig(
+        cc.x0 = 1.50,
+        cc.px = (t+35.0)*0.009,
+        cc.vx = 1.75,
+        cc.y0 = 0.8,
+        cc.yamp = 0.025,
+        cc.yphase= 0.5,
+        cc.yvf= 0.05
+      );
     }
   return cc;
 }
