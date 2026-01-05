@@ -104,7 +104,7 @@ struct CloudConfig {
     float x0;
     float xphase;
     float xvf;
-    float px;
+    float px; // todo: remove
     float vx;
     float y0, yamp, yphase, yvf;
 };
@@ -113,6 +113,7 @@ CloudConfig np_cloud_cc(int num) {
 
     CloudConfig cc = CloudConfig(DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE);
 
+    CloudConfig[10] cca;
 
     if (num==1) {
     cc = CloudConfig(
@@ -126,6 +127,7 @@ CloudConfig np_cloud_cc(int num) {
     cc.yphase = DONT_CARE,
     cc.yvf = DONT_CARE
     );
+    cca[num-1] = cc;
     }
 
     if (num==2) {
