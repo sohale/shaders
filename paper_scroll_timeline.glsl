@@ -133,7 +133,7 @@ CloudConfig np_cloud_cc(float t, int num) {
     cc = CloudConfig(
     cc.x0 = 1.4,
     cc.xphase=0.0,
-    DONT_CARE,
+    cc.xvf=DONT_CARE,
     DONT_CARE,
     cc.vx = 1.5,
     cc.y0 = 0.75,
@@ -141,14 +141,14 @@ CloudConfig np_cloud_cc(float t, int num) {
     cc.yphase = 0.0,
     cc.yvf = 0.1
     );
-    cc.px = (t + cc.xphase)*0.0055;
+    cc.px = (t + cc.xphase)*(cc.xvf=0.0055);
     }
 
     if (num==3) {
     cc = CloudConfig(
     cc.x0 = 1.4,
     cc.xphase = 100.0,
-    DONT_CARE,
+    cc.xvf=0.0045,
     DONT_CARE,
     cc.vx = 1.5,
     cc.y0 = 0.8,
@@ -156,14 +156,14 @@ CloudConfig np_cloud_cc(float t, int num) {
     cc.yphase = 0.5,
     cc.yvf = 0.01
     );
-    cc.px = (t + cc.xphase)*0.0045;
+    cc.px = (t + cc.xphase)*cc.xvf;
     }
 
     if (num==4) {
     cc = CloudConfig(
     cc.x0 = 1.4,
     cc.xphase = 0.75,
-    DONT_CARE,
+    cc.xvf=0.0045,
     DONT_CARE,
     cc.vx = 1.5,
     cc.y0 = 0.88,
@@ -171,14 +171,14 @@ CloudConfig np_cloud_cc(float t, int num) {
     cc.yphase = 0.75,
     cc.yvf = 0.01
     );
-    cc.px = (t + cc.xphase)*0.0045;
+    cc.px = (t + cc.xphase)*cc.xvf;
     }
 
     if (num==5) {
     cc = CloudConfig(
     cc.x0 = 1.41,
     cc.xphase =75.0,
-    DONT_CARE,
+    cc.xvf=0.007,
     DONT_CARE,
     cc.vx = 1.5,
     cc.y0 = 0.88,
@@ -186,14 +186,14 @@ CloudConfig np_cloud_cc(float t, int num) {
     cc.yphase = 0.0,
     cc.yvf =0.05
     );
-    cc.px = (t+cc.xphase)*0.007;
+    cc.px = (t+cc.xphase)*cc.xvf;
     }
 
     if (num==6) {
     cc = CloudConfig(
     cc.x0 = 1.41,
     cc.xphase=50.0,
-    DONT_CARE,
+    cc.xvf=0.0071,
     DONT_CARE,
     cc.vx = 1.5,
     cc.y0 = 0.85,
@@ -201,14 +201,14 @@ CloudConfig np_cloud_cc(float t, int num) {
     cc.yphase = 0.5,
     cc.yvf = 0.042
     );
-    cc.px = (t+cc.xphase)*0.0071;
+    cc.px = (t+cc.xphase)*cc.xvf;
     }
     if (num==7) {
         
     cc = CloudConfig(
          1.41,
          cc.xphase=35.0,
-         DONT_CARE,
+         cc.xvf=0.0067,
          DONT_CARE,
          1.5,
          0.82,
@@ -216,13 +216,13 @@ CloudConfig np_cloud_cc(float t, int num) {
          0.9,
          0.035
       );
-      cc.px = (t+cc.xphase)*0.0067;
+      cc.px = (t+cc.xphase)*cc.xvf;
     }
     if (num==8) {
     cc = CloudConfig(
         cc.x0 = 1.50,
         cc.xphase=0.0,
-        DONT_CARE,
+        cc.xvf=0.011,
         DONT_CARE,
         cc.vx = 1.75,
         cc.y0 = 0.85,
@@ -230,13 +230,13 @@ CloudConfig np_cloud_cc(float t, int num) {
         cc.yphase = 0.0,
         cc.yvf=0.2
         );
-        cc.px = (t + cc.xphase)*0.011;
+        cc.px = (t + cc.xphase)*cc.xvf;
     }
     if (num==9) {
       cc = CloudConfig(
         cc.x0 = 1.50,
-        DONT_CARE,
-        DONT_CARE,
+        cc.xphase=DONT_CARE,
+        cc.xvf=DONT_CARE,
         cc.px = (t+50.0)*0.01,
         cc.vx = 1.75,
         cc.y0 = 0.85,
@@ -244,12 +244,13 @@ CloudConfig np_cloud_cc(float t, int num) {
         cc.yphase=1.5,
         cc.yvf=0.08
         );
+        cc.px=(t+50.0)*0.01;
     }
     if (num==10) {
       cc = CloudConfig(
         cc.x0 = 1.50,
         cc.xphase= 35.0,
-        DONT_CARE,
+        cc.xvf=0.009,
         DONT_CARE,
         cc.vx = 1.75,
         cc.y0 = 0.8,
@@ -257,7 +258,7 @@ CloudConfig np_cloud_cc(float t, int num) {
         cc.yphase= 0.5,
         cc.yvf= 0.05
       );
-      cc.px = (t+cc.xphase)*0.009;
+      cc.px = (t+cc.xphase)*cc.xvf;
     }
   return cc;
 }
