@@ -107,8 +107,8 @@ struct CloudConfig {
     float y0, yamp, yphase, yvf;
 };
 
-vec2 np_cloud(float t, int num) {
-    
+CloudConfig np_cloud_cc(float t, int num) {
+
     CloudConfig cc = CloudConfig(1000.0,1000.0,1000.0,1000.0,1000.0,1000.0, 1000.0);
     if (num==11) {
         
@@ -229,10 +229,16 @@ vec2 np_cloud(float t, int num) {
     cc.yvf = 0.042
     );
     }
+  return cc;
+}
+
+vec2 np_cloud(float t, int num) {
+    CloudConfig cc = np_cloud_cc(t, num);
+
     float y = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
     float x = cc.x0-fract(cc.px) * cc.vx;
 
-    np = vec2(x , y); // x : -1 1
+    vec2 np = vec2(x , y); // x : -1 1
 
     return np;
 }
