@@ -1,8 +1,5 @@
-/**
- * Ping 2.0 14/06/2019
- * 
- * TODO : 	Cloud rocking
-**/
+// Another GLSL deep-Refactoring project
+
 const vec3 c0 = vec3(.042,0.530,0.159);
 const vec3 c1 = vec3(.142,0.630,0.259);
 const vec3 c2 = vec3(0.242,0.730, 0.359);
@@ -142,3 +139,18 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     // Output to screen
     fragColor = vec4(c,1.0);
 }
+
+/*
+Precedence:
+
+https://www.shadertoy.com/view/WtjGRc
+Paper scroll.
+Made with paper, scissors and a little thread.
+Soundcloud music : Jamal Green - Equilinox game music
+Tags: 2d, paper, cutting
+Created by Ping2_0 in 2019-06-14
+ * Ping 2.0 14/06/2019
+ * 
+ * TODO : 	Cloud rocking
+
+*/
