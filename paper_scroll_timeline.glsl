@@ -112,24 +112,26 @@ vec2 np_cloud(float t, int num) {
     CloudConfig cc = CloudConfig(1000.0,1000.0,1000.0,1000.0,1000.0,1000.0, 1000.0);
     if (num==11) {
         
-        cc = CloudConfig(
+    cc = CloudConfig(
          1.41,
          (t+35.0)*0.0067,
          1.5,
-        0.82,
+         0.82,
          0.012,
          0.9,
-        0.035
-        );
+         0.035
+      );
     }
     if (num==12) {
-        cc.x0 = 1.50;
-        cc.px = t*0.011;
-        cc.vx = 1.75;
-        cc.y0 = 0.85;
-        cc.yamp = 0.025;
-        cc.yphase = 0.0;
-        cc.yvf=0.2;
+    cc = CloudConfig(
+        cc.x0 = 1.50,
+        cc.px = t*0.011,
+        cc.vx = 1.75,
+        cc.y0 = 0.85,
+        cc.yamp = 0.025,
+        cc.yphase = 0.0,
+        cc.yvf=0.2
+        );
     }
     if (num==13) {
         cc.x0 = 1.50;
