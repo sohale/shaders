@@ -129,8 +129,8 @@ vec2 np_cloud(float t, int num) {
     }
     if (num==14) {
         cc.x0 = 1.50;
-        cc.px = -1000.0;
-        cc.vx = -1000.0;
+        cc.px = (t+35.0)*0.009;
+        cc.vx = 1.75;
         cc.y0 = -1000.0;
         cc.yamp = -1000.0;
         cc.yphase= -1000.0;
@@ -163,8 +163,7 @@ vec2 np_cloud(float t, int num) {
     np = vec2(cc.x0-fract(cc.px) * cc.vx , cc.ym); // x : -1 1
     }
     if (num==12) {
-            cc.ym = cc.y0 + sin(cc.yphase+t*cc.yvf)*cc.yamp;
-
+    cc.ym = cc.y0 + sin(cc.yphase+t*cc.yvf)*cc.yamp;
 	np = vec2(cc.x0-fract(cc.px) * cc.vx , cc.ym); // x : -1 1
     }
     if (num==13) {
@@ -172,7 +171,8 @@ vec2 np_cloud(float t, int num) {
     np = vec2(cc.x0-fract(cc.px) * cc.vx , cc.ym); // x : -1 1
     }
     if (num==14) {
-   	np = vec2(cc.x0-fract((t+35.0)*0.009) *1.75 , 0.8 + sin(0.5+t*0.05)*0.025); // x : -1 1
+    cc.ym = 0.8 + sin(0.5+t*0.05)*0.025;
+   	np = vec2(cc.x0-fract(cc.px) *cc.vx , cc.ym); // x : -1 1
     }
 
     return np;
