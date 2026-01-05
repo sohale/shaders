@@ -208,10 +208,7 @@ vec2 np_cloud(float t, int num) {
     cc.yphase = 0.5;
     cc.yvf = 0.042;
     }
-    float ym;
-    ym = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
-    if (num==11 || num==12 || num==13 || num==14) {
-    }
+    float ym = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
 
     np = vec2(cc.x0-fract(cc.px) * cc.vx , ym); // x : -1 1
 
