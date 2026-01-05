@@ -241,14 +241,7 @@ vec2 np_cloud2(float t, CloudConfig cc) {
     return np;
 }
 vec2 np_cloud(float t, int num) {
-
-    CloudConfig cc;
-    cc = np_cloud_cc(t, num);
-    float y = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
-    float x = cc.x0 - fract(cc.px) * cc.vx;
-
-    vec2 np = vec2(x , y); // x : -1 1
-
+    CloudConfig cc = np_cloud_cc(t, num);
     return np_cloud2(t, cc);
 }
 
