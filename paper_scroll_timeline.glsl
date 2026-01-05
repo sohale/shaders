@@ -134,64 +134,76 @@ vec2 np_cloud(float t, int num) {
         );
     }
     if (num==13) {
-        cc.x0 = 1.50;
-        cc.px = (t+50.0)*0.01;
-        cc.vx = 1.75;
-        cc.y0 = 0.85;
-        cc.yamp = 0.0125;
-        cc.yphase=1.5;
-        cc.yvf=0.08;
+      cc = CloudConfig(
+        cc.x0 = 1.50,
+        cc.px = (t+50.0)*0.01,
+        cc.vx = 1.75,
+        cc.y0 = 0.85,
+        cc.yamp = 0.0125,
+        cc.yphase=1.5,
+        cc.yvf=0.08
+        );
     }
     if (num==14) {
-        cc.x0 = 1.50;
-        cc.px = (t+35.0)*0.009;
-        cc.vx = 1.75;
-        cc.y0 = 0.8;
-        cc.yamp = 0.025;
-        cc.yphase= 0.5;
-        cc.yvf= 0.05;
+      cc = CloudConfig(
+        cc.x0 = 1.50,
+        cc.px = (t+35.0)*0.009,
+        cc.vx = 1.75,
+        cc.y0 = 0.8,
+        cc.yamp = 0.025,
+        cc.yphase= 0.5,
+        cc.yvf= 0.05
+      );
     }
 
   	vec2 np;
     // float ym;
     if (num==1) {
-    cc.x0 = 1.4;
-    cc.px = (t+50.0)*0.005;
-    cc.vx = 1.5;
-    cc.y0 = 0.8;
-    cc.yamp = 0.0;
-    cc.yphase = DONT_CARE;
-    cc.yvf = DONT_CARE;
+    cc = CloudConfig(
+    cc.x0 = 1.4,
+    cc.px = (t+50.0)*0.005,
+    cc.vx = 1.5,
+    cc.y0 = 0.8,
+    cc.yamp = 0.0,
+    cc.yphase = DONT_CARE,
+    cc.yvf = DONT_CARE
+    );
     }
 
     if (num==2) {
-    cc.x0 = 1.4;
-    cc.px = (t)*0.0055;
-    cc.vx = 1.5;
-    cc.y0 = 0.75;
-    cc.yamp =0.01;
-    cc.yphase = 0.0;
-    cc.yvf = 0.1;
+    cc = CloudConfig(
+    cc.x0 = 1.4,
+    cc.px = (t)*0.0055,
+    cc.vx = 1.5,
+    cc.y0 = 0.75,
+    cc.yamp =0.01,
+    cc.yphase = 0.0,
+    cc.yvf = 0.1
+    );
     }
 
     if (num==3) {
-    cc.x0 = 1.4;
-    cc.px = (t + 100.0)*0.0045;
-    cc.vx = 1.5;
-    cc.y0 = 0.8;
-    cc.yamp = 0.02;
-    cc.yphase = 0.5;
-    cc.yvf = 0.01;
+    cc = CloudConfig(
+    cc.x0 = 1.4,
+    cc.px = (t + 100.0)*0.0045,
+    cc.vx = 1.5,
+    cc.y0 = 0.8,
+    cc.yamp = 0.02,
+    cc.yphase = 0.5,
+    cc.yvf = 0.01
+    );
     }
 
     if (num==4) {
-    cc.x0 = 1.4;
-    cc.px = (t + 0.75)*0.0045;
-    cc.vx = 1.5;
-    cc.y0 = 0.88;
-    cc.yamp = 0.03;
-    cc.yphase = 0.75;
-    cc.yvf = 0.01;
+    cc = CloudConfig(
+    cc.x0 = 1.4,
+    cc.px = (t + 0.75)*0.0045,
+    cc.vx = 1.5,
+    cc.y0 = 0.88,
+    cc.yamp = 0.03,
+    cc.yphase = 0.75,
+    cc.yvf = 0.01
+    );
     }
 
     if (num==5) {
