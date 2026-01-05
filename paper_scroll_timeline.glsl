@@ -98,6 +98,8 @@ vec3 cloud(in vec2 u, in vec2 p, in float iscale,in vec3 c, const in vec3 cloud_
 	return c;
 }
 
+float DONT_CARE = 1000.0;
+
 struct CloudConfig {
     float x0;
     float px;
@@ -150,13 +152,13 @@ vec2 np_cloud(float t, int num) {
     if (num==1) {
     cc.x0 = 1.4;
     cc.y0 = 0.8;
-    cc.yphase = cc.y0;
+    cc.yphase = DONT_CARE;
     cc.vx = 1.5;
     cc.yamp = 0.0;
     ym = cc.y0 + sin(cc.yphase+t*cc.yvf)*cc.yamp;
-    ym = cc.y0 + sin(1.0) * 0.0;
-    cc.yphase = 1000.0; // DontCare value
-    cc.yvf = 1000.0; // DontCare value
+    ym = cc.y0 + sin(1.0) * cc.yamp;
+    cc.yphase = DONT_CARE;
+    cc.yvf = DONT_CARE;
     cc.px = (t+50.0)*0.005;
     }
 
