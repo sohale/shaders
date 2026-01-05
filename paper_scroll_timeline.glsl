@@ -141,27 +141,43 @@ vec2 np_cloud(float t, int num) {
     float ym = cc.y0 + sin(cc.yphase+t*cc.yvf)*cc.yamp;
     cc.y0 = 0.8;
     ym = cc.y0;
-    np = vec2(1.4-fract((iTime+50.0)*0.005) *1.5 , ym);
+    cc.px = (iTime+50.0)*0.005;
+    np = vec2(1.4-fract(cc.px) *1.5 , ym);
     }
 
     if (num==2) {
-	np = vec2(1.4-fract((iTime)*0.0055) *1.5 , 0.75+ sin(iTime*0.1)*0.01); // x : -1 1
+    cc.x0=1.4;
+    cc.px = (iTime)*0.0055;
+    float ym = 0.75+ sin(iTime*0.1)*0.01;
+	np = vec2(cc.x0-fract(cc.px) *1.5 , ym); // x : -1 1
     }
 
     if (num==3) {
-    np = vec2(1.4-fract((iTime + 100.0)*0.0045) *1.5 , 0.8+ sin(0.5+iTime*0.01)*0.02); // x : -1 1
+    cc.x0 = 1.4;
+    cc.px = (iTime + 100.0)*0.0045;
+    float ym = 0.8+ sin(0.5+iTime*0.01)*0.02;
+    np = vec2(cc.x0-fract(cc.px) *1.5 , ym); // x : -1 1
     }
 
     if (num==4) {
-     np = vec2(1.4-fract((iTime + 0.75)*0.0045) *1.5 , 0.88+ sin(0.75+iTime*0.01)*0.03); // x : -1 1
-     }
+    cc.x0 = 1.4;
+    cc.px = (iTime + 0.75)*0.0045;
+    float ym = 0.88+ sin(0.75+iTime*0.01)*0.03;
+     np = vec2(cc.x0-fract(cc.px) *1.5 , ym); // x : -1 1
+    }
 
     if (num==5) {
-	np = vec2(1.41-fract((iTime+75.0)*0.007) *1.5 , 0.88+ sin(iTime*0.05)*0.01); // x : -1 1
+    cc.x0 = 1.41;
+    cc.px = (iTime+75.0)*0.007;
+    float ym = 0.88+ sin(iTime*0.05)*0.01;
+	np = vec2(cc.x0-fract(cc.px) *1.5 ,  ym); // x : -1 1
     }
 
     if (num==6) {
-   	np = vec2(1.41-fract((iTime+50.0)*0.0071) *1.5 , 0.85+ sin(0.5+iTime*0.042)*0.0095); // x : -1 1
+    cc.x0 = 1.41;
+    cc.px = (iTime+50.0)*0.0071;
+    float ym = 0.85+ sin(0.5+iTime*0.042)*0.0095;
+   	np = vec2(cc.x0-fract(cc.px) *1.5 , ym); // x : -1 1
     }
 
 
