@@ -250,8 +250,6 @@ CloudConfig np_cloud_cc(float t, int num) {
         cc.yvf= 0.05
       );
     }
-    cc.px = (t + cc.xphase)*cc.xvf;
-
   return cc;
 }
 
@@ -267,6 +265,8 @@ vec2 np_cloud2(float t, CloudConfig cc) {
 }
 vec2 np_cloud(float t, int num) {
     CloudConfig cc = np_cloud_cc(t, num);
+    cc.px = (t + cc.xphase)*cc.xvf;
+
     return np_cloud2(t, cc);
 }
 
