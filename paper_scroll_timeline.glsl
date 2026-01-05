@@ -148,12 +148,15 @@ vec2 np_cloud(float t, int num) {
   	vec2 np;
     float ym;
     if (num==1) {
-    ym = cc.y0 + sin(cc.yphase+t*cc.yvf)*cc.yamp;
     cc.x0 = 1.4;
     cc.y0 = 0.8;
     cc.yphase = cc.y0;
     cc.vx = 1.5;
-    ym = cc.yphase;
+    cc.yamp = 0.0;
+    ym = cc.y0 + sin(cc.yphase+t*cc.yvf)*cc.yamp;
+    ym = cc.y0 + sin(1.0) * 0.0;
+    cc.yphase = 1000.0; // DontCare value
+    cc.yvf = 1000.0; // DontCare value
     cc.px = (t+50.0)*0.005;
     }
 
