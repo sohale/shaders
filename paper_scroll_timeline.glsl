@@ -256,10 +256,10 @@ CloudConfig np_cloud_cc(float t, int num) {
     cc.px = (t + cc.xphase)*cc.xvf;
     cc.px = (t+cc.xphase)*cc.xvf;
     cc.px = (t+cc.xphase)*cc.xvf;
-      cc.px = (t+cc.xphase)*cc.xvf;
-        cc.px = (t + cc.xphase)*cc.xvf;
-        cc.px=(t+cc.xphase)*cc.xvf;
-      cc.px = (t+cc.xphase)*cc.xvf;
+    cc.px = (t+cc.xphase)*cc.xvf;
+    cc.px = (t + cc.xphase)*cc.xvf;
+    cc.px=(t+cc.xphase)*cc.xvf;
+    cc.px = (t+cc.xphase)*cc.xvf;
 
   return cc;
 }
