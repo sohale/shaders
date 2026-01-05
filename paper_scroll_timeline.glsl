@@ -230,8 +230,8 @@ CloudConfig np_cloud_cc(float t, int num) {
   return cc;
 }
 
-vec2 np_cloud(float t, int num) {
-    CloudConfig cc = np_cloud_cc(t, num);
+
+vec2 np_cloud2(float t, CloudConfig cc) {
 
     float y = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
     float x = cc.x0 - fract(cc.px) * cc.vx;
@@ -240,10 +240,23 @@ vec2 np_cloud(float t, int num) {
 
     return np;
 }
+vec2 np_cloud(float t, int num) {
+
+    CloudConfig cc;
+    cc = np_cloud_cc(t, num);
+    float y = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
+    float x = cc.x0 - fract(cc.px) * cc.vx;
+
+    vec2 np = vec2(x , y); // x : -1 1
+
+    return np_cloud2(t, cc);
+}
 
 vec3 clouds(vec3 c, float iTime, vec2 uv, float shadow_pos) {
 	vec2 np;
     // 1
+    
+    
     np = np_cloud(iTime, 1);
 
     c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.01, 0.03);
