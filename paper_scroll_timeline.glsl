@@ -208,10 +208,10 @@ vec2 np_cloud(float t, int num) {
     cc.yphase = 0.5;
     cc.yvf = 0.042;
     }
-    float ym = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
+    float y = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
+    float x = cc.x0-fract(cc.px) * cc.vx;
 
-    np = vec2(cc.x0-fract(cc.px) * cc.vx , ym); // x : -1 1
-
+    np = vec2(x , y); // x : -1 1
 
     return np;
 }
