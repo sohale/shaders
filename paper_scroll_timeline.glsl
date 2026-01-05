@@ -109,7 +109,7 @@ struct CloudConfig {
     float y0, yamp, yphase, yvf;
 };
 
-CloudConfig np_cloud_cc(float t, int num) {
+CloudConfig np_cloud_cc(int num) {
 
     CloudConfig cc = CloudConfig(DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE);
 
@@ -265,7 +265,7 @@ vec2 np_cloud2(float t, CloudConfig cc) {
     return np;
 }
 vec2 np_cloud(float t, int num) {
-    CloudConfig cc = np_cloud_cc(t, num);
+    CloudConfig cc = np_cloud_cc(num);
 
     return np_cloud2(t, cc);
 }
