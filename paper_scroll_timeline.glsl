@@ -118,7 +118,7 @@ CloudConfig np_cloud_cc(float t, int num) {
     cc = CloudConfig(
     cc.x0 = 1.4,
     DONT_CARE,
-    cc.xvf = DONT_CARE,
+    cc.xvf = 0.005,
     DONT_CARE,
     cc.vx = 1.5,
     cc.y0 = 0.8,
@@ -126,7 +126,7 @@ CloudConfig np_cloud_cc(float t, int num) {
     cc.yphase = DONT_CARE,
     cc.yvf = DONT_CARE
     );
-    cc.px = (t+50.0)*0.005;
+    cc.px = (t+50.0)*cc.xvf;
     }
 
     if (num==2) {
