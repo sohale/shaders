@@ -176,9 +176,8 @@ Paper scroll.
 Made with paper, scissors and a little thread.
 Soundcloud music : Jamal Green - Equilinox game music
 Tags: 2d, paper, cutting
-Created by Ping2_0 in 2019-06-14
+Created by Ping2_0 in 2019-06-14 :
  * Ping 2.0 14/06/2019
  * 
  * TODO : 	Cloud rocking
-
 */
