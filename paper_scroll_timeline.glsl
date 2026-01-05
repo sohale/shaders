@@ -235,16 +235,16 @@ CloudConfig np_cloud_cc(float t, int num) {
     if (num==9) {
       cc = CloudConfig(
         cc.x0 = 1.50,
-        cc.xphase=DONT_CARE,
-        cc.xvf=DONT_CARE,
-        cc.px = (t+50.0)*0.01,
+        cc.xphase=50.0,
+        cc.xvf=0.01,
+        DONT_CARE,
         cc.vx = 1.75,
         cc.y0 = 0.85,
         cc.yamp = 0.0125,
         cc.yphase=1.5,
         cc.yvf=0.08
         );
-        cc.px=(t+50.0)*0.01;
+        cc.px=(t+cc.xphase)*cc.xvf;
     }
     if (num==10) {
       cc = CloudConfig(
