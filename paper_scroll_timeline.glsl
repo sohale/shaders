@@ -155,8 +155,8 @@ vec2 np_cloud(float t, int num) {
     cc.yphase = DONT_CARE;
     cc.vx = 1.5;
     cc.yamp = 0.0;
-    ym = cc.y0 + sin(cc.yphase+t*cc.yvf)*cc.yamp;
-    ym = cc.y0 + sin(1.0) * cc.yamp;
+    ym = cc.y0 + sin(cc.yphase+t*cc.yvf) * cc.yamp;
+    ym = cc.y0 + sin(cc.yphase+t*cc.yvf) * cc.yamp;
     cc.yphase = DONT_CARE;
     cc.yvf = DONT_CARE;
     cc.px = (t+50.0)*0.005;
