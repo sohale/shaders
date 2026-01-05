@@ -102,6 +102,7 @@ float DONT_CARE = 1000.0;
 
 struct CloudConfig {
     float x0;
+    float xvf;
     float px;
     float vx;
     float y0, yamp, yphase, yvf;
@@ -109,12 +110,13 @@ struct CloudConfig {
 
 CloudConfig np_cloud_cc(float t, int num) {
 
-    CloudConfig cc = CloudConfig(DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE);
+    CloudConfig cc = CloudConfig(DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE);
 
 
     if (num==1) {
     cc = CloudConfig(
     cc.x0 = 1.4,
+    cc.xvf = DONT_CARE,
     cc.px = (t+50.0)*0.005,
     cc.vx = 1.5,
     cc.y0 = 0.8,
@@ -127,6 +129,7 @@ CloudConfig np_cloud_cc(float t, int num) {
     if (num==2) {
     cc = CloudConfig(
     cc.x0 = 1.4,
+    DONT_CARE,
     cc.px = (t)*0.0055,
     cc.vx = 1.5,
     cc.y0 = 0.75,
@@ -139,6 +142,7 @@ CloudConfig np_cloud_cc(float t, int num) {
     if (num==3) {
     cc = CloudConfig(
     cc.x0 = 1.4,
+    DONT_CARE,
     cc.px = (t + 100.0)*0.0045,
     cc.vx = 1.5,
     cc.y0 = 0.8,
@@ -151,6 +155,7 @@ CloudConfig np_cloud_cc(float t, int num) {
     if (num==4) {
     cc = CloudConfig(
     cc.x0 = 1.4,
+    DONT_CARE,
     cc.px = (t + 0.75)*0.0045,
     cc.vx = 1.5,
     cc.y0 = 0.88,
@@ -163,6 +168,7 @@ CloudConfig np_cloud_cc(float t, int num) {
     if (num==5) {
     cc = CloudConfig(
     cc.x0 = 1.41,
+    DONT_CARE,
     cc.px = (t+75.0)*0.007,
     cc.vx = 1.5,
     cc.y0 = 0.88,
@@ -175,6 +181,7 @@ CloudConfig np_cloud_cc(float t, int num) {
     if (num==6) {
     cc = CloudConfig(
     cc.x0 = 1.41,
+    DONT_CARE,
     cc.px = (t+50.0)*0.0071,
     cc.vx = 1.5,
     cc.y0 = 0.85,
@@ -187,6 +194,7 @@ CloudConfig np_cloud_cc(float t, int num) {
         
     cc = CloudConfig(
          1.41,
+         DONT_CARE,
          (t+35.0)*0.0067,
          1.5,
          0.82,
@@ -198,6 +206,7 @@ CloudConfig np_cloud_cc(float t, int num) {
     if (num==8) {
     cc = CloudConfig(
         cc.x0 = 1.50,
+        DONT_CARE,
         cc.px = t*0.011,
         cc.vx = 1.75,
         cc.y0 = 0.85,
@@ -209,6 +218,7 @@ CloudConfig np_cloud_cc(float t, int num) {
     if (num==9) {
       cc = CloudConfig(
         cc.x0 = 1.50,
+        DONT_CARE,
         cc.px = (t+50.0)*0.01,
         cc.vx = 1.75,
         cc.y0 = 0.85,
@@ -220,6 +230,7 @@ CloudConfig np_cloud_cc(float t, int num) {
     if (num==10) {
       cc = CloudConfig(
         cc.x0 = 1.50,
+        DONT_CARE,
         cc.px = (t+35.0)*0.009,
         cc.vx = 1.75,
         cc.y0 = 0.8,
