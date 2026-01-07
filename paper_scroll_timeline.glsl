@@ -119,7 +119,7 @@ CloudConfig np_cloud_cc(int num) {
   cca[9] = CloudConfig(1.50, 35.0, 0.009, 1.75, 0.8, 0.025, 0.5, 0.05);
 
 
-  if(num >= 1 && num <= 10) {
+  if(num-1 >= 1-1 && num-1 <= 10-1) {
     return cca[num - 1];
   }
 
