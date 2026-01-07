@@ -121,40 +121,7 @@ CloudConfig np_cloud_cc(int num) {
   cca[7] = CloudConfig(1.50, 0.0, 0.011, 1.75, 0.85, 0.025, 0.0, 0.2);
   cca[8] = CloudConfig(1.50, 50.0, 0.01, 1.75, 0.85, 0.0125, 1.5, 0.08);
   cca[9] = CloudConfig(1.50, 35.0, 0.009, 1.75, 0.8, 0.025, 0.5, 0.05);
-  if(num == 1) {
-    return cca[num - 1];
-  }
-
-  if(num == 2) {
-    return cca[num - 1];
-  }
-
-  if(num == 3) {
-    return cca[num - 1];
-  }
-
-  if(num == 4) {
-    return cca[num - 1];
-  }
-
-  if(num == 5) {
-    return cca[num - 1];
-  }
-
-  if(num == 6) {
-    return cca[num - 1];
-  }
-  if(num == 7) {
-
-    return cca[num - 1];
-  }
-  if(num == 8) {
-    return cca[num - 1];
-  }
-  if(num == 9) {
-    return cca[num - 1];
-  }
-  if(num == 10) {
+  if(num >= 1 && num <= 10) {
     return cca[num - 1];
   }
   return cc0;
