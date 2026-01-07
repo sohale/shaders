@@ -110,7 +110,6 @@ CloudConfig np_cloud_cc(int num) {
   CloudConfig cc0 = CloudConfig(DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE);
 
   CloudConfig[11] cca;
-
   cca[0] = CloudConfig(1.4, 50.0, 0.005, 1.5, 0.8, 0.0, DONT_CARE, DONT_CARE);
   cca[1] = CloudConfig(1.4, 0.0, 0.0055, 1.5, 0.75, 0.01, 0.0, 0.1);
   cca[2] = CloudConfig(1.4, 100.0, 0.0045, 1.5, 0.8, 0.02, 0.5, 0.01);
