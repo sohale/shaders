@@ -105,7 +105,7 @@ struct CloudConfig {
   float y0, yamp, yphase, yvf;
 };
 
-CloudConfig np_cloud_cc(int num) {
+CloudConfig np_cloud_cc(int num1) {
   CloudConfig[11] cca;
   cca[0] = CloudConfig(1.4, 50.0, 0.005, 1.5, 0.8, 0.0, DONT_CARE, DONT_CARE);
   cca[1] = CloudConfig(1.4, 0.0, 0.0055, 1.5, 0.75, 0.01, 0.0, 0.1);
@@ -119,8 +119,8 @@ CloudConfig np_cloud_cc(int num) {
   cca[9] = CloudConfig(1.50, 35.0, 0.009, 1.75, 0.8, 0.025, 0.5, 0.05);
 
 
-  if(num-1 >= 0 && num-1 <= 9) {
-    return cca[num - 1];
+  if(num1-1 >= 0 && num1-1 <= 9) {
+    return cca[num1 - 1];
   }
 
   CloudConfig cc0 = CloudConfig(DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE);
