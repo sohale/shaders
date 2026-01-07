@@ -9,15 +9,15 @@
  * 
  * TODO : 	Cloud rocking
 */
-const vec3 c0 = vec3(.042,0.530,0.159);
-const vec3 c1 = vec3(.142,0.630,0.259);
-const vec3 c2 = vec3(0.242,0.730, 0.359);
-const vec3 c3 = vec3(0.342,0.830,0.459);
-const vec3 c4 = vec3(0.442,0.930,0.559);
+const vec3 c0 = vec3(.042, 0.530, 0.159);
+const vec3 c1 = vec3(.142, 0.630, 0.259);
+const vec3 c2 = vec3(0.242, 0.730, 0.359);
+const vec3 c3 = vec3(0.342, 0.830, 0.459);
+const vec3 c4 = vec3(0.442, 0.930, 0.559);
 
-const vec3 c5 =vec3(1);
-const vec3 c6 = vec3(0.95, 0.95 ,1.0);
-const vec3 c7 = vec3(0.9, 0.9,1.0);
+const vec3 c5 = vec3(1);
+const vec3 c6 = vec3(0.95, 0.95, 1.0);
+const vec3 c7 = vec3(0.9, 0.9, 1.0);
 //const vec3 c8 = vec3(0.85, 0.85 ,1.0);
 //const vec3 c9 = vec3(0.8,0.85, 0.95);
 
@@ -30,312 +30,213 @@ const vec3 c7 = vec3(0.9, 0.9,1.0);
 
 #define txc(c, n, f) c*n + (1.0125-n)*texture(iChannel0, op*f).r
 
-vec3 ground(in vec2 u, in vec3 c, in float shadow_pos)
-{
-	if(u.y<0.4)
-	{
-		const float b = 0.005; //blur
-		vec2 op = u*2.0;
-		op.x += iTime*0.05;
-		c=mix(c, txc(c0, 0.98, vec2(2.5,2.5)), smoothstep(b*5.0, -b*5.0, GRND5));
+vec3 ground(in vec2 u, in vec3 c, in float shadow_pos) {
+  if(u.y < 0.4) {
+    const float b = 0.005; //blur
+    vec2 op = u * 2.0;
+    op.x += iTime * 0.05;
+    c = mix(c, txc(c0, 0.98, vec2(2.5, 2.5)), smoothstep(b * 5.0, -b * 5.0, GRND5));
 
-		op = vec2(u.x*3.0 + iTime*0.1 - shadow_pos, u.y*3.0-0.5);
-		c=mix(c, c*0.75, smoothstep(b*30.0, -b*30.0, GRND4));
-		op.x += shadow_pos;
-		c=mix(c, txc(c1, 0.98, vec2(1.33,1.33)), smoothstep(b*3.0, -b*3.0, GRND4));
+    op = vec2(u.x * 3.0 + iTime * 0.1 - shadow_pos, u.y * 3.0 - 0.5);
+    c = mix(c, c * 0.75, smoothstep(b * 30.0, -b * 30.0, GRND4));
+    op.x += shadow_pos;
+    c = mix(c, txc(c1, 0.98, vec2(1.33, 1.33)), smoothstep(b * 3.0, -b * 3.0, GRND4));
 
-		op = vec2(u.x*4.0 + iTime*0.2 - shadow_pos, u.y*3.0-0.2);
-		c=mix(c, c*0.9, smoothstep(b*10.0, -b*10.0, GRND3));
-		op.x += shadow_pos;
-		c=mix(c, txc(c2, 0.98, vec2(0.75, 1.0)), smoothstep(b*0.5, -b*0.5, GRND3));
-		
-		op = vec2(u.x*5.0 + iTime*0.4 - shadow_pos, u.y*2.0);
-		c=mix(c, c*0.82, smoothstep(b*20.0, -b*20.0, GRND2));
-		op.x += shadow_pos;
-		c=mix(c, txc(c3, 0.98, vec2(0.4,1.0)), smoothstep(b*3.0, -b*3.0, GRND2));
-		
-		op = vec2(u.x*8.0 + iTime -shadow_pos, u.y*2.0+0.02);
-		c=mix(c, c*0.75, smoothstep(b*30.0, -b*30.0, GRND1));
-		op += vec2(shadow_pos, -0.02);
-        c=mix(c, txc(c4, 0.96, vec2(0.5, 1.0)), smoothstep(b*5.0, -b*5.0, GRND1));		
-	}	
-	return c;
+    op = vec2(u.x * 4.0 + iTime * 0.2 - shadow_pos, u.y * 3.0 - 0.2);
+    c = mix(c, c * 0.9, smoothstep(b * 10.0, -b * 10.0, GRND3));
+    op.x += shadow_pos;
+    c = mix(c, txc(c2, 0.98, vec2(0.75, 1.0)), smoothstep(b * 0.5, -b * 0.5, GRND3));
+
+    op = vec2(u.x * 5.0 + iTime * 0.4 - shadow_pos, u.y * 2.0);
+    c = mix(c, c * 0.82, smoothstep(b * 20.0, -b * 20.0, GRND2));
+    op.x += shadow_pos;
+    c = mix(c, txc(c3, 0.98, vec2(0.4, 1.0)), smoothstep(b * 3.0, -b * 3.0, GRND2));
+
+    op = vec2(u.x * 8.0 + iTime - shadow_pos, u.y * 2.0 + 0.02);
+    c = mix(c, c * 0.75, smoothstep(b * 30.0, -b * 30.0, GRND1));
+    op += vec2(shadow_pos, -0.02);
+    c = mix(c, txc(c4, 0.96, vec2(0.5, 1.0)), smoothstep(b * 5.0, -b * 5.0, GRND1));
+  }
+  return c;
 }
 
 // https://iquilezles.org/articles/distfunctions2d
-float sdLine( in vec2 p, in vec2 a, in vec2 b )
-{
-    vec2 pa = p-a, ba = b-a;
-    float h = clamp( dot(pa,ba)/dot(ba,ba), 0.0, 1.0 );
-    return length( pa - ba*h );
+float sdLine(in vec2 p, in vec2 a, in vec2 b) {
+  vec2 pa = p - a, ba = b - a;
+  float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+  return length(pa - ba * h);
 }
 
-vec3 cloud(in vec2 u, in vec2 p, in float iscale,in vec3 c, const in vec3 cloud_color, in vec2 shadow_pos, in float shadow_factor, in float blur, in float shadow_blur)
-{
-	u *= iscale;
-	p *= iscale;
-    
+vec3 cloud(in vec2 u, in vec2 p, in float iscale, in vec3 c, const in vec3 cloud_color, in vec2 shadow_pos, in float shadow_factor, in float blur, in float shadow_blur) {
+  u *= iscale;
+  p *= iscale;
+
     // thread shadow
-	c=mix(c, c*.95, smoothstep(shadow_blur*0.2, -shadow_blur*0.2, sdLine(u, p+vec2(shadow_pos.x,0.07), vec2(p.x + shadow_pos.x, iscale))));
-    
+  c = mix(c, c * .95, smoothstep(shadow_blur * 0.2, -shadow_blur * 0.2, sdLine(u, p + vec2(shadow_pos.x, 0.07), vec2(p.x + shadow_pos.x, iscale))));
+
     // cloud shadow
-	vec2 st = u - p -shadow_pos ;
-	float d = length(st) - 0.07;
-	d = min(d, length((st  -vec2(0.06, 0))) - 0.055);
-	d = min(d, length((st  +vec2(0.06, 0))) - 0.055);
-	c=mix(c, c*shadow_factor, smoothstep(shadow_blur, -shadow_blur, d));
-	
+  vec2 st = u - p - shadow_pos;
+  float d = length(st) - 0.07;
+  d = min(d, length((st - vec2(0.06, 0))) - 0.055);
+  d = min(d, length((st + vec2(0.06, 0))) - 0.055);
+  c = mix(c, c * shadow_factor, smoothstep(shadow_blur, -shadow_blur, d));
+
     // cloud
-	st += shadow_pos;
-	d = length(st) - 0.07;
-	d = min(d, length((st  -vec2(0.06, 0))) - 0.055);
-	d = min(d, length((st  +vec2(0.06, 0))) - 0.055);
-    vec2 op = st; 
-	c=mix(c, cloud_color*0.98 + (1.0-0.98)*texture(iChannel0, st*2.5).r, smoothstep(blur, -blur, d));
-	
+  st += shadow_pos;
+  d = length(st) - 0.07;
+  d = min(d, length((st - vec2(0.06, 0))) - 0.055);
+  d = min(d, length((st + vec2(0.06, 0))) - 0.055);
+  vec2 op = st;
+  c = mix(c, cloud_color * 0.98 + (1.0 - 0.98) * texture(iChannel0, st * 2.5).r, smoothstep(blur, -blur, d));
+
     // thread
-	c=mix(c, cloud_color*0.65, smoothstep(blur / (iscale*iscale), -(blur*0.5)/(iscale*iscale), sdLine(u, p + vec2(0,0.065), vec2(p.x, iscale))));
-	return c;
+  c = mix(c, cloud_color * 0.65, smoothstep(blur / (iscale * iscale), -(blur * 0.5) / (iscale * iscale), sdLine(u, p + vec2(0, 0.065), vec2(p.x, iscale))));
+  return c;
 }
 
 float DONT_CARE = 1000.0;
 
 struct CloudConfig {
-    float x0;
-    float xphase;
-    float xvf;
+  float x0;
+  float xphase;
+  float xvf;
     // float px; // todo: remove
-    float vx;
-    float y0, yamp, yphase, yvf;
+  float vx;
+  float y0, yamp, yphase, yvf;
 };
 
 CloudConfig np_cloud_cc(int num) {
 
-    CloudConfig cc0 = CloudConfig(DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE);
+  CloudConfig cc0 = CloudConfig(DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE);
 
-    CloudConfig[11] cca;
+  CloudConfig[11] cca;
 
-    if (num==1) {
-    cca[1-1] = CloudConfig(
-     1.4,
-     50.0,
-     0.005,
-    1.5,
-    0.8,
-    0.0,
-    DONT_CARE,
-     DONT_CARE
-    );
-    return cca[num-1];
-    }
+  if(num == 1) {
+    cca[1 - 1] = CloudConfig(1.4, 50.0, 0.005, 1.5, 0.8, 0.0, DONT_CARE, DONT_CARE);
+    return cca[num - 1];
+  }
 
-    if (num==2) {
-    cca[2-1] = CloudConfig(
-    1.4,
-    0.0,
-    0.0055,
-    1.5,
-     0.75,
-    0.01,
-     0.0,
-     0.1
-    );
-    return cca[num-1];
-    }
+  if(num == 2) {
+    cca[2 - 1] = CloudConfig(1.4, 0.0, 0.0055, 1.5, 0.75, 0.01, 0.0, 0.1);
+    return cca[num - 1];
+  }
 
-    if (num==3) {
-    cca[3-1] = CloudConfig(
-     1.4,
-     100.0,
-    0.0045,
-     1.5,
-     0.8,
-     0.02,
-     0.5,
-     0.01
-    );
-    return cca[num-1];
-    }
+  if(num == 3) {
+    cca[3 - 1] = CloudConfig(1.4, 100.0, 0.0045, 1.5, 0.8, 0.02, 0.5, 0.01);
+    return cca[num - 1];
+  }
 
-    if (num==4) {
-    cca[4-1] = CloudConfig(
-    1.4,
-     0.75,
-    0.0045,
-     1.5,
-    0.88,
-     0.03,
-    0.75,
-     0.01
-    );
-    return cca[num-1];
-    }
+  if(num == 4) {
+    cca[4 - 1] = CloudConfig(1.4, 0.75, 0.0045, 1.5, 0.88, 0.03, 0.75, 0.01);
+    return cca[num - 1];
+  }
 
-    if (num==5) {
-    cca[5-1] = CloudConfig(
-     1.41,
-    75.0,
-    0.007,
-     1.5,
-     0.88,
-     0.01,
-    0.0,
-    0.05
-    );
-    return cca[num-1];
-    }
+  if(num == 5) {
+    cca[5 - 1] = CloudConfig(1.41, 75.0, 0.007, 1.5, 0.88, 0.01, 0.0, 0.05);
+    return cca[num - 1];
+  }
 
-    if (num==6) {
-    cca[6-1] = CloudConfig(
-     1.41,
-    50.0,
-    0.0071,
-    1.5,
-    0.85,
-     0.0095,
-     0.5,
-     0.042
-    );
-    return cca[num-1];
-    }
-    if (num==7) {
-        
-    cca[7-1] = CloudConfig(
-         1.41,
-         35.0,
-         0.0067,
-         1.5,
-         0.82,
-         0.012,
-         0.9,
-         0.035
-      );
-    return cca[num-1];
-    }
-    if (num==8) {
-    cca[8-1] = CloudConfig(
-         1.50,
-        0.0,
-        0.011,
-        1.75,
-        0.85,
-         0.025,
-         0.0,
-        0.2
-        );
-    return cca[num-1];
-    }
-    if (num==9) {
-      cca[9-1] = CloudConfig(
-         1.50,
-        50.0,
-        0.01,
-        1.75,
-         0.85,
-         0.0125,
-        1.5,
-        0.08
-        );
-      return cca[num-1];
-    }
-    if (num==10) {
-      cca[10-1] = CloudConfig(
-        1.50,
-       35.0,
-        0.009,
-        1.75,
-        0.8,
-        0.025,
-        0.5,
-        0.05
-      );
-      return cca[num-1];
-    }
+  if(num == 6) {
+    cca[6 - 1] = CloudConfig(1.41, 50.0, 0.0071, 1.5, 0.85, 0.0095, 0.5, 0.042);
+    return cca[num - 1];
+  }
+  if(num == 7) {
+
+    cca[7 - 1] = CloudConfig(1.41, 35.0, 0.0067, 1.5, 0.82, 0.012, 0.9, 0.035);
+    return cca[num - 1];
+  }
+  if(num == 8) {
+    cca[8 - 1] = CloudConfig(1.50, 0.0, 0.011, 1.75, 0.85, 0.025, 0.0, 0.2);
+    return cca[num - 1];
+  }
+  if(num == 9) {
+    cca[9 - 1] = CloudConfig(1.50, 50.0, 0.01, 1.75, 0.85, 0.0125, 1.5, 0.08);
+    return cca[num - 1];
+  }
+  if(num == 10) {
+    cca[10 - 1] = CloudConfig(1.50, 35.0, 0.009, 1.75, 0.8, 0.025, 0.5, 0.05);
+    return cca[num - 1];
+  }
   return cc0;
 }
 
-
 vec2 np_cloud2(float t, CloudConfig cc) {
 
-    float px = (t + cc.xphase)*cc.xvf;
-    float y = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
-    float x = cc.x0 - fract(px) * cc.vx;
+  float px = (t + cc.xphase) * cc.xvf;
+  float y = cc.y0 + sin(cc.yphase + t * cc.yvf) * cc.yamp;
+  float x = cc.x0 - fract(px) * cc.vx;
 
-    vec2 np = vec2(x , y); // x : -1 1
+  vec2 np = vec2(x, y); // x : -1 1
 
-    return np;
+  return np;
 }
 vec2 np_cloud(float t, int num) {
-    CloudConfig cc = np_cloud_cc(num);
+  CloudConfig cc = np_cloud_cc(num);
 
-    return np_cloud2(t, cc);
+  return np_cloud2(t, cc);
 }
 
 vec3 clouds(vec3 c, float iTime, vec2 uv, float shadow_pos) {
-	vec2 np;
+  vec2 np;
     // 1
-    
-    
-    np = np_cloud(iTime, 1);
 
-    c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.01, 0.03);
-	
+  np = np_cloud(iTime, 1);
+
+  c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.01, 0.03);
+
     // 2
-    np = np_cloud(iTime, 2);
-	c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.01, 0.03);
+  np = np_cloud(iTime, 2);
+  c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.01, 0.03);
 
     // 3
-    np = np_cloud(iTime, 3);
-    c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.01, 0.03);
+  np = np_cloud(iTime, 3);
+  c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.01, 0.03);
 
     // 4
-    np = np_cloud(iTime, 4);
-    c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.01, 0.03);
-    
+  np = np_cloud(iTime, 4);
+  c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.01, 0.03);
+
     // 5
-    np = np_cloud(iTime, 5);
-	c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.005, 0.04);
+  np = np_cloud(iTime, 5);
+  c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.005, 0.04);
 
     // 6
-    np = np_cloud(iTime, 6);
-	c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.005, 0.04);
+  np = np_cloud(iTime, 6);
+  c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.005, 0.04);
 
+  np = np_cloud(iTime, 7);
+  c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.005, 0.04);
 
-    np = np_cloud(iTime, 7); 
-    c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.005, 0.04);
+  np = np_cloud(iTime, 8);
+  c = cloud(uv, np, 1.0, c, c5, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.002, 0.04);
 
-    np = np_cloud(iTime, 8);
-	c = cloud(uv , np, 1.0, c, c5, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.002, 0.04);
+  np = np_cloud(iTime, 9);
+  c = cloud(uv, np, 1.0, c, c5, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.002, 0.04);
 
-    np = np_cloud(iTime, 9);
-	c = cloud(uv , np, 1.0, c, c5, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.002, 0.04);
+  np = np_cloud(iTime, 10);
+  c = cloud(uv, np, 1.0, c, c5, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.002, 0.04);
 
-    np = np_cloud(iTime, 10);
-	c = cloud(uv , np, 1.0, c, c5, vec2(shadow_pos, -0.1)*0.2, 0.8,  0.002, 0.04);
-
-   return c;
+  return c;
 }
-vec3 mainImage1( out vec4 fragColor, in vec2 fragCoord )
-{
-    vec2 uv = fragCoord/iResolution.xy;
-    uv.x *= 4.0/3.0; // dev in 4/3 screen
-    
+vec3 mainImage1(out vec4 fragColor, in vec2 fragCoord) {
+  vec2 uv = fragCoord / iResolution.xy;
+  uv.x *= 4.0 / 3.0; // dev in 4/3 screen
+
     // beautiful sky
-	float d = length(uv-vec2(0.25,0.5)); // -0.5;
-   	vec3 c = mix(vec3(.4,0.4,.8), vec3(0.55,0.8,0.8), smoothstep(1.7, 0., d));
+  float d = length(uv - vec2(0.25, 0.5)); // -0.5;
+  vec3 c = mix(vec3(.4, 0.4, .8), vec3(0.55, 0.8, 0.8), smoothstep(1.7, 0., d));
 
     // gorgeous ground
-	float shadow_pos =  - smoothstep(1.0, 0.0, uv.x)*0.06 - 0.1 ;
-	c = ground(uv, c, shadow_pos);
-	
+  float shadow_pos = -smoothstep(1.0, 0.0, uv.x) * 0.06 - 0.1;
+  c = ground(uv, c, shadow_pos);
+
     // wonderful clouds
-	c = clouds(c, iTime, uv, shadow_pos);
-    return c;
+  c = clouds(c, iTime, uv, shadow_pos);
+  return c;
 }
-void mainImage( out vec4 fragColor, in vec2 fragCoord )
-{
-    vec3 c3 = mainImage1( fragColor, fragCoord );
-    fragColor = vec4(c3,1.0);
+void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+  vec3 c3 = mainImage1(fragColor, fragCoord);
+  fragColor = vec4(c3, 1.0);
 }
 
 /*
