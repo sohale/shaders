@@ -104,14 +104,14 @@ struct CloudConfig {
     float x0;
     float xphase;
     float xvf;
-    float px; // todo: remove
+    // float px; // todo: remove
     float vx;
     float y0, yamp, yphase, yvf;
 };
 
 CloudConfig np_cloud_cc(int num) {
 
-    CloudConfig cc = CloudConfig(DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE);
+    CloudConfig cc = CloudConfig(DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE);
 
     CloudConfig[11] cca;
 
@@ -120,7 +120,6 @@ CloudConfig np_cloud_cc(int num) {
     cc.x0 = 1.4,
     cc.xphase = 50.0,
     cc.xvf = 0.005,
-    DONT_CARE,
     cc.vx = 1.5,
     cc.y0 = 0.8,
     cc.yamp = 0.0,
@@ -135,7 +134,6 @@ CloudConfig np_cloud_cc(int num) {
     cc.x0 = 1.4,
     cc.xphase=0.0,
     cc.xvf=0.0055,
-    DONT_CARE,
     cc.vx = 1.5,
     cc.y0 = 0.75,
     cc.yamp =0.01,
@@ -150,7 +148,6 @@ CloudConfig np_cloud_cc(int num) {
     cc.x0 = 1.4,
     cc.xphase = 100.0,
     cc.xvf=0.0045,
-    DONT_CARE,
     cc.vx = 1.5,
     cc.y0 = 0.8,
     cc.yamp = 0.02,
@@ -165,7 +162,6 @@ CloudConfig np_cloud_cc(int num) {
     cc.x0 = 1.4,
     cc.xphase = 0.75,
     cc.xvf=0.0045,
-    DONT_CARE,
     cc.vx = 1.5,
     cc.y0 = 0.88,
     cc.yamp = 0.03,
@@ -180,7 +176,6 @@ CloudConfig np_cloud_cc(int num) {
     cc.x0 = 1.41,
     cc.xphase =75.0,
     cc.xvf=0.007,
-    DONT_CARE,
     cc.vx = 1.5,
     cc.y0 = 0.88,
     cc.yamp = 0.01,
@@ -195,7 +190,6 @@ CloudConfig np_cloud_cc(int num) {
     cc.x0 = 1.41,
     cc.xphase=50.0,
     cc.xvf=0.0071,
-    DONT_CARE,
     cc.vx = 1.5,
     cc.y0 = 0.85,
     cc.yamp = 0.0095,
@@ -210,7 +204,6 @@ CloudConfig np_cloud_cc(int num) {
          1.41,
          cc.xphase=35.0,
          cc.xvf=0.0067,
-         DONT_CARE,
          1.5,
          0.82,
          0.012,
@@ -224,7 +217,6 @@ CloudConfig np_cloud_cc(int num) {
         cc.x0 = 1.50,
         cc.xphase=0.0,
         cc.xvf=0.011,
-        DONT_CARE,
         cc.vx = 1.75,
         cc.y0 = 0.85,
         cc.yamp = 0.025,
@@ -238,7 +230,6 @@ CloudConfig np_cloud_cc(int num) {
         cc.x0 = 1.50,
         cc.xphase=50.0,
         cc.xvf=0.01,
-        DONT_CARE,
         cc.vx = 1.75,
         cc.y0 = 0.85,
         cc.yamp = 0.0125,
@@ -252,7 +243,6 @@ CloudConfig np_cloud_cc(int num) {
         cc.x0 = 1.50,
         cc.xphase= 35.0,
         cc.xvf=0.009,
-        DONT_CARE,
         cc.vx = 1.75,
         cc.y0 = 0.8,
         cc.yamp = 0.025,
