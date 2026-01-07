@@ -146,7 +146,7 @@ CloudConfig np_cloud_cc(int num) {
     }
 
     if (num==3) {
-    cca[num-1] = CloudConfig(
+    cca[3-1] = CloudConfig(
     cc.x0 = 1.4,
     cc.xphase = 100.0,
     cc.xvf=0.0045,
@@ -161,7 +161,7 @@ CloudConfig np_cloud_cc(int num) {
     }
 
     if (num==4) {
-    cca[num-1] = CloudConfig(
+    cca[4-1] = CloudConfig(
     cc.x0 = 1.4,
     cc.xphase = 0.75,
     cc.xvf=0.0045,
@@ -176,7 +176,7 @@ CloudConfig np_cloud_cc(int num) {
     }
 
     if (num==5) {
-    cca[num-1] = CloudConfig(
+    cca[5-1] = CloudConfig(
     cc.x0 = 1.41,
     cc.xphase =75.0,
     cc.xvf=0.007,
@@ -191,7 +191,7 @@ CloudConfig np_cloud_cc(int num) {
     }
 
     if (num==6) {
-    cca[num-1] = CloudConfig(
+    cca[6-1] = CloudConfig(
     cc.x0 = 1.41,
     cc.xphase=50.0,
     cc.xvf=0.0071,
@@ -206,7 +206,7 @@ CloudConfig np_cloud_cc(int num) {
     }
     if (num==7) {
         
-    cca[num-1] = CloudConfig(
+    cca[7-1] = CloudConfig(
          1.41,
          cc.xphase=35.0,
          cc.xvf=0.0067,
@@ -220,7 +220,7 @@ CloudConfig np_cloud_cc(int num) {
     return cca[num-1];
     }
     if (num==8) {
-    cca[num-1] = CloudConfig(
+    cca[8-1] = CloudConfig(
         cc.x0 = 1.50,
         cc.xphase=0.0,
         cc.xvf=0.011,
@@ -234,7 +234,7 @@ CloudConfig np_cloud_cc(int num) {
     return cca[num-1];
     }
     if (num==9) {
-      cca[num-1] = CloudConfig(
+      cca[9-1] = CloudConfig(
         cc.x0 = 1.50,
         cc.xphase=50.0,
         cc.xvf=0.01,
@@ -248,7 +248,7 @@ CloudConfig np_cloud_cc(int num) {
       return cca[num-1];
     }
     if (num==10) {
-      cca[num-1] = CloudConfig(
+      cca[10-1] = CloudConfig(
         cc.x0 = 1.50,
         cc.xphase= 35.0,
         cc.xvf=0.009,
