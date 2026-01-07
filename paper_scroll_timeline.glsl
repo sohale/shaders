@@ -142,45 +142,60 @@ vec2 np_cloud(float t, int num) {
   return np_cloud2(t, cc);
 }
 
+struct CloudBConf {
+  vec2 uv;
+  vec2 p;
+  float iscale;
+  vec3 c;
+  vec3 cloud_color;
+  vec2 shadow_pos;
+  float shadow_factor;
+  float blur;
+  float shadow_blur;
+};
+vec3 cloud1(CloudBConf cc) {
+  return cloud(cc.uv, cc.p, cc.iscale, cc.c, cc.cloud_color, cc.shadow_pos, cc.shadow_factor, cc.blur, cc.shadow_blur);
+}
+
 vec3 clouds(vec3 c, float iTime, vec2 uv, float shadow_pos) {
   vec2 np;
     // 1
 
   np = np_cloud(iTime, 1);
 
-  c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.01, 0.03);
+  c = cloud1(CloudBConf(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.01, 0.03));
 
     // 2
   np = np_cloud(iTime, 2);
-  c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.01, 0.03);
+  c = cloud1(CloudBConf(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.01, 0.03));
 
     // 3
   np = np_cloud(iTime, 3);
-  c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.01, 0.03);
+  c = cloud1(CloudBConf(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.01, 0.03));
 
     // 4
   np = np_cloud(iTime, 4);
-  c = cloud(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.01, 0.03);
+  c = cloud1(CloudBConf(uv, np, 2.0, c, c7, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.01, 0.03));
 
     // 5
   np = np_cloud(iTime, 5);
-  c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.005, 0.04);
+  c = cloud1(CloudBConf(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.005, 0.04));
 
     // 6
   np = np_cloud(iTime, 6);
-  c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.005, 0.04);
+  c = cloud1(CloudBConf(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.005, 0.04));
 
   np = np_cloud(iTime, 7);
-  c = cloud(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.005, 0.04);
+  c = cloud1(CloudBConf(uv, np, 1.5, c, c6, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.005, 0.04));
 
   np = np_cloud(iTime, 8);
-  c = cloud(uv, np, 1.0, c, c5, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.002, 0.04);
+  c = cloud1(CloudBConf(uv, np, 1.0, c, c5, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.002, 0.04));
 
   np = np_cloud(iTime, 9);
-  c = cloud(uv, np, 1.0, c, c5, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.002, 0.04);
+  c = cloud1(CloudBConf(uv, np, 1.0, c, c5, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.002, 0.04));
 
   np = np_cloud(iTime, 10);
-  c = cloud(uv, np, 1.0, c, c5, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.002, 0.04);
+  c = cloud1(CloudBConf(uv, np, 1.0, c, c5, vec2(shadow_pos, -0.1) * 0.2, 0.8, 0.002, 0.04));
 
   return c;
 }
