@@ -105,7 +105,7 @@ struct CloudConfig {
   float y0, yamp, yphase, yvf;
 };
 
-  CloudConfig[10] cca =  CloudConfig[10](
+CloudConfig[10] cca =  CloudConfig[10](
   CloudConfig(1.4, 50.0, 0.005, 1.5, 0.8, 0.0, DONT_CARE, DONT_CARE),
   CloudConfig(1.4, 0.0, 0.0055, 1.5, 0.75, 0.01, 0.0, 0.1),
   CloudConfig(1.4, 100.0, 0.0045, 1.5, 0.8, 0.02, 0.5, 0.01),
@@ -116,13 +116,12 @@ struct CloudConfig {
   CloudConfig(1.50, 0.0, 0.011, 1.75, 0.85, 0.025, 0.0, 0.2),
   CloudConfig(1.50, 50.0, 0.01, 1.75, 0.85, 0.0125, 1.5, 0.08),
   CloudConfig(1.50, 35.0, 0.009, 1.75, 0.8, 0.025, 0.5, 0.05)
-  );
-CloudConfig np_cloud_cc(int num1) {
+);
 
+CloudConfig np_cloud_cc(int num1) {
   if(num1 - 1 >= 0 && num1 - 1 <= 9) {
     return cca[num1 - 1];
   }
-
   CloudConfig cc0 = CloudConfig(DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE);
   return cc0;
 }
