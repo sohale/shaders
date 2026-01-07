@@ -116,7 +116,7 @@ CloudConfig np_cloud_cc(int num) {
     CloudConfig[11] cca;
 
     if (num==1) {
-    cca[num-1] = CloudConfig(
+    cca[1-1] = CloudConfig(
     cc.x0 = 1.4,
     cc.xphase = 50.0,
     cc.xvf = 0.005,
@@ -131,7 +131,7 @@ CloudConfig np_cloud_cc(int num) {
     }
 
     if (num==2) {
-    cc = CloudConfig(
+    cca[2-1] = CloudConfig(
     cc.x0 = 1.4,
     cc.xphase=0.0,
     cc.xvf=0.0055,
@@ -142,6 +142,7 @@ CloudConfig np_cloud_cc(int num) {
     cc.yphase = 0.0,
     cc.yvf = 0.1
     );
+    return cca[num-1];
     }
 
     if (num==3) {
