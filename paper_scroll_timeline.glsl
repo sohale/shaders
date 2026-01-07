@@ -169,7 +169,9 @@ vec3 clouds(vec3 c, float iTime, vec2 uv, float shadow_pos) {
 
   np = np_cloud(iTime, 1);
 
+  // 👮 todo: now move np out of this:
   ccb[1]=CloudBConf(1,uv, np, 2.0, c, c7,  1.0 * 0.2, 0.8, 0.01, 0.03);
+
   c = cloud1(1,ccb[1], vec2(shadow_pos, -0.1));
 
     // 2
