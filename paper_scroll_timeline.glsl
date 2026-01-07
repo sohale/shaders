@@ -146,7 +146,7 @@ CloudConfig np_cloud_cc(int num) {
     }
 
     if (num==3) {
-    cc = CloudConfig(
+    cca[num-1] = CloudConfig(
     cc.x0 = 1.4,
     cc.xphase = 100.0,
     cc.xvf=0.0045,
@@ -157,10 +157,11 @@ CloudConfig np_cloud_cc(int num) {
     cc.yphase = 0.5,
     cc.yvf = 0.01
     );
+    return cca[num-1];
     }
 
     if (num==4) {
-    cc = CloudConfig(
+    cca[num-1] = CloudConfig(
     cc.x0 = 1.4,
     cc.xphase = 0.75,
     cc.xvf=0.0045,
@@ -171,10 +172,11 @@ CloudConfig np_cloud_cc(int num) {
     cc.yphase = 0.75,
     cc.yvf = 0.01
     );
+    return cca[num-1];
     }
 
     if (num==5) {
-    cc = CloudConfig(
+    cca[num-1] = CloudConfig(
     cc.x0 = 1.41,
     cc.xphase =75.0,
     cc.xvf=0.007,
@@ -185,10 +187,11 @@ CloudConfig np_cloud_cc(int num) {
     cc.yphase = 0.0,
     cc.yvf =0.05
     );
+    return cca[num-1];
     }
 
     if (num==6) {
-    cc = CloudConfig(
+    cca[num-1] = CloudConfig(
     cc.x0 = 1.41,
     cc.xphase=50.0,
     cc.xvf=0.0071,
@@ -199,10 +202,11 @@ CloudConfig np_cloud_cc(int num) {
     cc.yphase = 0.5,
     cc.yvf = 0.042
     );
+    return cca[num-1];
     }
     if (num==7) {
         
-    cc = CloudConfig(
+    cca[num-1] = CloudConfig(
          1.41,
          cc.xphase=35.0,
          cc.xvf=0.0067,
@@ -213,9 +217,10 @@ CloudConfig np_cloud_cc(int num) {
          0.9,
          0.035
       );
+    return cca[num-1];
     }
     if (num==8) {
-    cc = CloudConfig(
+    cca[num-1] = CloudConfig(
         cc.x0 = 1.50,
         cc.xphase=0.0,
         cc.xvf=0.011,
@@ -226,9 +231,10 @@ CloudConfig np_cloud_cc(int num) {
         cc.yphase = 0.0,
         cc.yvf=0.2
         );
+    return cca[num-1];
     }
     if (num==9) {
-      cc = CloudConfig(
+      cca[num-1] = CloudConfig(
         cc.x0 = 1.50,
         cc.xphase=50.0,
         cc.xvf=0.01,
@@ -239,9 +245,10 @@ CloudConfig np_cloud_cc(int num) {
         cc.yphase=1.5,
         cc.yvf=0.08
         );
+      return cca[num-1];
     }
     if (num==10) {
-      cc = CloudConfig(
+      cca[num-1] = CloudConfig(
         cc.x0 = 1.50,
         cc.xphase= 35.0,
         cc.xvf=0.009,
@@ -252,6 +259,7 @@ CloudConfig np_cloud_cc(int num) {
         cc.yphase= 0.5,
         cc.yvf= 0.05
       );
+      return cca[num-1];
     }
   return cc;
 }
