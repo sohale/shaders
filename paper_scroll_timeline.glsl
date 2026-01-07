@@ -113,10 +113,10 @@ CloudConfig np_cloud_cc(int num) {
 
     CloudConfig cc = CloudConfig(DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE);
 
-    CloudConfig[10] cca;
+    CloudConfig[11] cca;
 
     if (num==1) {
-    cc = CloudConfig(
+    cca[num-1] = CloudConfig(
     cc.x0 = 1.4,
     cc.xphase = 50.0,
     cc.xvf = 0.005,
@@ -127,7 +127,7 @@ CloudConfig np_cloud_cc(int num) {
     cc.yphase = DONT_CARE,
     cc.yvf = DONT_CARE
     );
-    cca[num-1] = cc;
+    return cca[num-1];
     }
 
     if (num==2) {
