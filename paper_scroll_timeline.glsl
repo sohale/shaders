@@ -118,11 +118,12 @@ CloudConfig np_cloud_cc(int num) {
   cca[8] = CloudConfig(1.50, 50.0, 0.01, 1.75, 0.85, 0.0125, 1.5, 0.08);
   cca[9] = CloudConfig(1.50, 35.0, 0.009, 1.75, 0.8, 0.025, 0.5, 0.05);
 
-  CloudConfig cc0 = CloudConfig(DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE);
 
   if(num >= 1 && num <= 10) {
     return cca[num - 1];
   }
+
+  CloudConfig cc0 = CloudConfig(DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE, DONT_CARE);
   return cc0;
 }
 
