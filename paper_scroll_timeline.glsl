@@ -111,90 +111,90 @@ struct CloudConfig {
 
 CloudConfig np_cloud_cc(int num) {
 
-    CloudConfig cc = CloudConfig(DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE);
+    CloudConfig cc0 = CloudConfig(DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE,DONT_CARE);
 
     CloudConfig[11] cca;
 
     if (num==1) {
     cca[1-1] = CloudConfig(
-    cc.x0 = 1.4,
-    cc.xphase = 50.0,
-    cc.xvf = 0.005,
-    cc.vx = 1.5,
-    cc.y0 = 0.8,
-    cc.yamp = 0.0,
-    cc.yphase = DONT_CARE,
-    cc.yvf = DONT_CARE
+     1.4,
+     50.0,
+     0.005,
+    1.5,
+    0.8,
+    0.0,
+    DONT_CARE,
+     DONT_CARE
     );
     return cca[num-1];
     }
 
     if (num==2) {
     cca[2-1] = CloudConfig(
-    cc.x0 = 1.4,
-    cc.xphase=0.0,
-    cc.xvf=0.0055,
-    cc.vx = 1.5,
-    cc.y0 = 0.75,
-    cc.yamp =0.01,
-    cc.yphase = 0.0,
-    cc.yvf = 0.1
+    1.4,
+    0.0,
+    0.0055,
+    1.5,
+     0.75,
+    0.01,
+     0.0,
+     0.1
     );
     return cca[num-1];
     }
 
     if (num==3) {
     cca[3-1] = CloudConfig(
-    cc.x0 = 1.4,
-    cc.xphase = 100.0,
-    cc.xvf=0.0045,
-    cc.vx = 1.5,
-    cc.y0 = 0.8,
-    cc.yamp = 0.02,
-    cc.yphase = 0.5,
-    cc.yvf = 0.01
+     1.4,
+     100.0,
+    0.0045,
+     1.5,
+     0.8,
+     0.02,
+     0.5,
+     0.01
     );
     return cca[num-1];
     }
 
     if (num==4) {
     cca[4-1] = CloudConfig(
-    cc.x0 = 1.4,
-    cc.xphase = 0.75,
-    cc.xvf=0.0045,
-    cc.vx = 1.5,
-    cc.y0 = 0.88,
-    cc.yamp = 0.03,
-    cc.yphase = 0.75,
-    cc.yvf = 0.01
+    1.4,
+     0.75,
+    0.0045,
+     1.5,
+    0.88,
+     0.03,
+    0.75,
+     0.01
     );
     return cca[num-1];
     }
 
     if (num==5) {
     cca[5-1] = CloudConfig(
-    cc.x0 = 1.41,
-    cc.xphase =75.0,
-    cc.xvf=0.007,
-    cc.vx = 1.5,
-    cc.y0 = 0.88,
-    cc.yamp = 0.01,
-    cc.yphase = 0.0,
-    cc.yvf =0.05
+     1.41,
+    75.0,
+    0.007,
+     1.5,
+     0.88,
+     0.01,
+    0.0,
+    0.05
     );
     return cca[num-1];
     }
 
     if (num==6) {
     cca[6-1] = CloudConfig(
-    cc.x0 = 1.41,
-    cc.xphase=50.0,
-    cc.xvf=0.0071,
-    cc.vx = 1.5,
-    cc.y0 = 0.85,
-    cc.yamp = 0.0095,
-    cc.yphase = 0.5,
-    cc.yvf = 0.042
+     1.41,
+    50.0,
+    0.0071,
+    1.5,
+    0.85,
+     0.0095,
+     0.5,
+     0.042
     );
     return cca[num-1];
     }
@@ -202,8 +202,8 @@ CloudConfig np_cloud_cc(int num) {
         
     cca[7-1] = CloudConfig(
          1.41,
-         cc.xphase=35.0,
-         cc.xvf=0.0067,
+         35.0,
+         0.0067,
          1.5,
          0.82,
          0.012,
@@ -214,44 +214,44 @@ CloudConfig np_cloud_cc(int num) {
     }
     if (num==8) {
     cca[8-1] = CloudConfig(
-        cc.x0 = 1.50,
-        cc.xphase=0.0,
-        cc.xvf=0.011,
-        cc.vx = 1.75,
-        cc.y0 = 0.85,
-        cc.yamp = 0.025,
-        cc.yphase = 0.0,
-        cc.yvf=0.2
+         1.50,
+        0.0,
+        0.011,
+        1.75,
+        0.85,
+         0.025,
+         0.0,
+        0.2
         );
     return cca[num-1];
     }
     if (num==9) {
       cca[9-1] = CloudConfig(
-        cc.x0 = 1.50,
-        cc.xphase=50.0,
-        cc.xvf=0.01,
-        cc.vx = 1.75,
-        cc.y0 = 0.85,
-        cc.yamp = 0.0125,
-        cc.yphase=1.5,
-        cc.yvf=0.08
+         1.50,
+        50.0,
+        0.01,
+        1.75,
+         0.85,
+         0.0125,
+        1.5,
+        0.08
         );
       return cca[num-1];
     }
     if (num==10) {
       cca[10-1] = CloudConfig(
-        cc.x0 = 1.50,
-        cc.xphase= 35.0,
-        cc.xvf=0.009,
-        cc.vx = 1.75,
-        cc.y0 = 0.8,
-        cc.yamp = 0.025,
-        cc.yphase= 0.5,
-        cc.yvf= 0.05
+        1.50,
+       35.0,
+        0.009,
+        1.75,
+        0.8,
+        0.025,
+        0.5,
+        0.05
       );
       return cca[num-1];
     }
-  return cc;
+  return cc0;
 }
 
 
